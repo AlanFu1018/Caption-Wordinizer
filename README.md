@@ -3,17 +3,15 @@
 > - [English Description](#-Caption-Wordinizer)
 
 
-
-# 日文字幕單字分詞顯示工具
-
 ---
 
+# 日文字幕單字分詞顯示工具
 ## 目次
 - [規格和設計](doc/spec.md)
 - [待完成的功能](doc/wait-feat.md)
 - [這是什麼]()
 - [安裝教學]()
----
+
 
 ## 這是什麼?
 這是一款能幫助您學習與理解日文的 Chrome 擴充功能：
@@ -27,16 +25,13 @@
 7. 目前共有兩種目標翻譯語言可供選擇。
 
 ## 安裝教學
-> ---
-# Caption-Wordinizer
 
 ---
 
+# Caption-Wordinizer
 ## Table of contents
 - [The design and spec of this extension](doc/spec.md)
 - [Features that has NOT been implemented yet](doc/wait-feat.md)
-
----
 
 ## What is it?
 It's a chrome extension that can help you learn and understand Japanese.
