@@ -17,5 +17,6 @@ It's a chrome extension that can help you learn and understand Japanese.
 4. You can **add any specific word as your wordcard** if you want to.
 5. Wordcards you added can be exported and be **imported to Anki**.
 6. In addition to the original caption, you'll also **see the complete translation of that line** in real time.
+7. There are now currently two target translation language you can choose from 
 
 ## Setup Guide
