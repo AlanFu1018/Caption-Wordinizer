@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/yt-jp-cc-translate-wordcard.iml" filepath="$PROJECT_DIR$/yt-jp-cc-translate-wordcard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/caption-wordinizer.iml" filepath="$PROJECT_DIR$/caption-wordinizer.iml" />
     </modules>
   </component>
 </project>
