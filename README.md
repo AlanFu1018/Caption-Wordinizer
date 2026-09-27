@@ -1,10 +1,10 @@
 > # 語言 / Language
-> - [中文說明](#-日文字幕單字分詞顯示-(Caption-Wordinizer))
+> - [中文說明](#-日文字幕單字分詞顯示工具)
 > - [English Description](#-Caption-Wordinizer)
 
 
 
-# 日文字幕單字分詞顯示 (Caption-Wordinizer)
+# 日文字幕單字分詞顯示工具
 
 ---
 
