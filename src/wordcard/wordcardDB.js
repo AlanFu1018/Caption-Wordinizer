@@ -11,8 +11,9 @@ async function getAllWordcards() {
     return stored[KEY] || [];
 }
 
-async function findWordcard(word) {
-    return (await getAllWordcards()).find(c => c.word === word) || null;
+async function findWordcard(word, type = "word") {
+    // 單字卡和文法卡分開算重複（舊的卡片沒有 type，視為單字卡）
+    return (await getAllWordcards()).find(c => c.word === word && (c.type || "word") === type) || null;
 }
 
 async function addWordcard(card) {

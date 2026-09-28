@@ -47,8 +47,8 @@ const STYLE = {
 };
 
 const LABELS = {
-    "zh-TW": { reading: "讀音", meaning: "解釋", examples: "例句" },
-    "en": { reading: "Reading", meaning: "Meaning", examples: "Examples" },
+    "zh-TW": { reading: "讀音", meaning: "解釋", examples: "例句", grammar: "文法" },
+    "en": { reading: "Reading", meaning: "Meaning", examples: "Examples", grammar: "Grammar" },
 };
 
 const div = (style, html) => `<div style="${style}">${html}</div>`;
@@ -66,7 +66,8 @@ function buildBack(c, labels) {
     const sections = [];
     if (c.reading && c.reading !== c.word) sections.push([labels.reading, div(STYLE.reading, escapeField(c.reading))]);
 
-    const pos = c.pos ? `<span style="${STYLE.pos}">${escapeField(c.pos)}</span>` : "";
+    const posText = c.type === "grammar" ? `${labels.grammar}・${c.pos || ""}` : c.pos;
+    const pos = posText ? `<span style="${STYLE.pos}">${escapeField(posText)}</span>` : "";
     let meaning = "";
     if (c.meaning || pos) meaning += div(STYLE.meaning, escapeField(c.meaning) + pos);
     if (c.explanation) meaning += div(STYLE.explanation, escapeField(c.explanation));
@@ -91,7 +92,8 @@ function toAnkiTsv(cards, lang = "zh-TW") {
         "#columns:Front\tBack\tWord\tReading\tMeaning\tPartOfSpeech\tExplanation\tSentence\tSentenceTranslation\tSource\tExamples",
     ];
     const rows = cards.map(c => [
-        div(STYLE.front, escapeField(c.word)),
+        // 文法卡前面加「〜」，表示接在其他詞後面
+        div(STYLE.front, escapeField(c.type === "grammar" ? `〜${c.word}` : c.word)),
         buildBack(c, labels),
         escapeField(c.word),
         escapeField(c.reading),

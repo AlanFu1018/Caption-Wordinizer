@@ -12,6 +12,11 @@ function el(tag, className, text) {
     return node;
 }
 
+// 顯示用的單字：文法卡前面加「〜」，表示接在其他詞後面（〜たら、〜たんだ）
+function displayWord(card) {
+    return card.type === "grammar" ? `〜${card.word}` : card.word;
+}
+
 // 句子中的 target 加粗
 function buildJp(sentence, target) {
     const jp = el("span", "cw-card-jp");
@@ -50,9 +55,10 @@ function buildWordcardBody(card, { lang, onClose, onTimeClick, newTab = false, o
     kicker.append(kickerLabel, close);
 
     const head = el("div", "cw-card-head");
-    head.append(el("span", "cw-card-word", card.word));
+    const grammar = card.type === "grammar";
+    head.append(el("span", "cw-card-word", displayWord(card)));
     if (card.reading && card.reading !== card.word) head.append(el("span", "cw-card-reading", card.reading));
-    head.append(el("span", "cw-tag cw-tag-accent cw-card-pos", card.pos));
+    head.append(el("span", "cw-tag cw-tag-accent cw-card-pos", grammar ? t(lang, "grammarTag") : card.pos));
     body.append(kicker, head);
 
     if (card.meaning) body.append(el("div", "cw-card-meaning", card.meaning));
@@ -111,4 +117,4 @@ function buildWordcardBody(card, { lang, onClose, onTimeClick, newTab = false, o
     return body;
 }
 
-export { buildWordcardBody };
+export { buildWordcardBody, displayWord };

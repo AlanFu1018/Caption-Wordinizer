@@ -10,7 +10,9 @@ caption-wordinizer/
 ├── manifest.json
 ├── doc/
 │   ├── spec.md
-│   └── wait-feat.md
+│   ├── wait-feat.md
+│   ├── cover.png / showcase.png   # README 用的圖片
+│   └── UI mockups form/           # 設計稿（不提交）
 │
 ├── src/
 │   ├── background/
@@ -29,6 +31,7 @@ caption-wordinizer/
 │   │   ├── ccFetcher.js
 │   │   ├── ccSegmenter.js         # 重新斷句（標點 / 詞性＋停頓）
 │   │   ├── ccTokenizer.js
+│   │   ├── tokenGrouper.js        # 依斷詞單位把 token 分組（詞 / 語幹＋語尾 / 詞組）
 │   │   ├── tokenColorizer.js
 │   │   ├── ccDisplayer.js
 │   │   └── translationScheduler.js    # 依播放位置分段翻譯
@@ -53,18 +56,23 @@ caption-wordinizer/
 │       ├── geminiClient.js
 │       └── gptClient.js
 │
-└── res/
-    ├── popup/
-    │   ├── popup.html
-    │   ├── popup.css
-    │   └── popup.js
-    ├── style/
-    │   └── style.css              # 字幕覆蓋層、提示框、toast、單字卡預覽
-    ├── fonts/                     # Caprasimo / Figtree / Huninn / Zen Maru Gothic (OFL)，fonts.css + woff2 子集
-    ├── icons/
-    │   └── icon128.png
-    └── lib-vendor/
-        └── kuromoji/              # kuromoji.js 0.1.2 + IPADIC 字典 (Apache-2.0)
+├── res/
+│   ├── popup/
+│   │   ├── popup.html
+│   │   ├── popup.css
+│   │   └── popup.js
+│   ├── style/
+│   │   └── style.css              # 字幕覆蓋層、提示框、toast、單字卡預覽
+│   ├── fonts/                     # Caprasimo / Figtree / Huninn / Zen Maru Gothic (OFL)，fonts.css + woff2 子集
+│   ├── icons/
+│   │   └── icon128.png
+│   └── lib-vendor/
+│       └── kuromoji/              # kuromoji.js 0.1.2 + IPADIC 字典 (Apache-2.0)
+│
+└── test/
+    ├── segmenter-eval.mjs         # 斷句評估腳本
+    ├── kuromojiNode.mjs           # 在 Node 載入內附的 kuromoji
+    └── fixtures/                  # YouTube json3 字幕（測試資料）
 ```
 
 ## 執行流程
@@ -81,10 +89,10 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 1. `content.js` 在 `/watch` 頁面（包含 YouTube 單頁應用的換頁事件 `yt-navigate-finish`）取得 videoId。
 2. `ccFetcher` 透過 `ytBridge` 拿到字幕軌，下載整支影片的日文字幕（json3）。
 3. `ccSegmenter` 重新斷句：有標點依標點，沒標點的自動字幕依詞性＋停頓（設定 `sentenceSplit`，可關閉）。
-4. `ccTokenizer` 用 kuromoji 斷詞，`tokenColorizer` 依詞性上色。
+4. `ccTokenizer` 用 kuromoji 斷詞，`tokenGrouper` 依斷詞單位分組，`tokenColorizer` 依詞性上色。
 5. `ccDisplayer` 把字幕蓋在播放器上（原生字幕會被隱藏），並依影片時間切換句子。
 6. `translationScheduler` 依播放位置分段翻譯：只翻目前位置往後約 2 分鐘的字幕，跳轉時新位置優先。
-7. 點擊單字 → background 產生單字卡並存進 `chrome.storage.local`。
+7. 點擊單字（或文法單位）→ background 產生單字卡（或文法卡）並存進 `chrome.storage.local`。
 
 ## 模組設計
 ### ytBridge
@@ -137,9 +145,26 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 設定 `sentenceSplit`（「重新斷句」，預設開啟）可關閉，切換時會重新處理字幕。
 ### ccTokenizer
 將所有字幕，處理詞性切割
-- 使用 kuromoji（IPADIC），每個 token 為 `{ surface, pos, posDetail, basicForm, reading, basicReading }`，讀音轉成平假名。
-- `reading` 是出現形的讀音（生き → いき）；`basicReading` 是把原形再斷詞一次得到的原形讀音（生きる → いきる），用於提示框與單字卡。
+- 使用 kuromoji（IPADIC），斷詞後交給 `tokenGrouper` 依設定 `tokenUnit` 分組，每個顯示單位為 `{ surface, kind, pos, posDetail, basicForm, reading, basicReading, host?, parts? }`，讀音轉成平假名。
+- `kind`：`word` = 單字（點了建立單字卡）、`grammar` = 文法（助詞、助動詞、語尾，點了建立文法卡）。
+- 單字：`basicForm` 是主要自立語的原形；`reading` 是出現形的讀音（生き → いき），`basicReading` 是把原形再斷詞一次得到的原形讀音（生きる → いきる）。
+- 文法：`basicForm` 就是出現的樣子（たら、たんだ）；`host` 是它前面最近的單字原形（回る），給 LLM 當上下文；`parts` 是組成（た＋ん＋だ）。
+- 斷詞前先正規化：自動字幕有時把平假名的擬聲詞寫成夾片假名的長音（ぐルーって），會讓 kuromoji 斷錯（今なんかぐ → 今｜な｜ん｜かぐ）。前面是平假名、後面不是片假名時，把「片假名 1 字 + ー」轉回平假名（ぐるーって）；片假名單字（ぐルーム、コーヒー）不受影響。
+- 字典裡沒有的詞沒有讀音；整個詞都是假名時，讀音就是它本身。
 - kuromoji 內部用 `path.join` 組字典網址，會把 `chrome-extension://` 壓成 `chrome-extension:/`，載入字典時會暫時修正 XHR 網址。
+### tokenGrouper
+IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依設定 `tokenUnit` 分組：
+
+| 斷詞單位 | 例：今なんかぐるーって回ったら元いた場所に戻ったんだよね |
+|---|---|
+| `word` 詞 | 今｜なんか｜ぐるー｜って｜回っ｜たら｜元｜い｜た｜場所｜に｜戻っ｜た｜ん｜だ｜よ｜ね |
+| `stem` 語幹＋語尾（預設） | 今｜なんか｜ぐるー｜って｜回っ｜たら｜元｜い｜た｜場所｜に｜戻っ｜たんだ｜よね |
+| `phrase` 詞組 | 今｜なんか｜ぐるー｜って｜回ったら｜元｜いた｜場所｜に｜戻ったんだ｜よね |
+
+- 語尾：助動詞、補助動詞（いる、しまう…）、動詞接尾（れる、させる）、接續助詞 て / で / ば / ちゃ / じゃ / たり、以及後面接助動詞的「ん / の」（〜んだ、〜のです）。語幹＋語尾時連續的語尾併成一個文法單位（てしまった、なければならないのです）；詞組時併進前面的單字。
+- 連續的終助詞併在一起（よね、かな）。
+- 其他助詞（に、は、って、なんか）一律獨立，屬於文法。語幹一律和語尾分開，包括一個字的語幹（い｜た）。
+- kuromoji 單獨切出的長音「ー」（ぐる｜ー）接回前一個。
 ### tokenColorizer
 將不同詞性的字幕上色。顏色以 OKLCH 產生（各詞性共用同一亮度，助詞 / 記号 / フィラー / その他 為中性色），分三組：
 - `POS_COLORS`：深色字幕框上的文字
@@ -148,13 +173,13 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### ccDisplayer
 將所有部分組裝顯示
 - 覆蓋層掛在 `#movie_player` 內，以 `requestAnimationFrame` + 二分搜尋對應目前的句子。
-- 每個 token 上方可顯示詞性名稱（依設定的詞性清單），點擊即加入單字卡。
+- 每個 token 上方可顯示詞性名稱（依設定的詞性清單），點擊即加入單字卡；文法單位（`kind: "grammar"`）點擊則加入文法卡。
 - 標點符號不可點擊：詞性為「記号」，或整個 token 都是標點 / 符號 / 空白（Unicode `\p{P}\p{S}\s`，因為半形 `!?`、`%`、`♪` 會被 kuromoji 標成名詞）。這些 token 沒有提示框、滑鼠停留不反白、點了不會建立單字卡。
 - 字幕位置與大小（`applyLayout`）：依設定 `captionPosition`（下方 / 上方）、`captionOffset`（距離邊緣，播放器高度的 0～50%）、`captionSize`（70～200%），設定覆蓋層的 CSS 變數 `--cw-offset`、`--cw-scale` 與 `.cw-at-top`。字幕字體、詞性名稱、翻譯與字幕框內距一起縮放，提示框與預覽卡不縮放。下方時距離底部 70px（控制列隱藏時 24px）＋ offset，上方時距離頂部 60px（控制列隱藏時 16px）＋ offset。設定改變時即時套用。
 - 字幕在上方時，提示框改到單字下方；預覽卡則看單字上下哪邊空間大就放哪邊（`.cw-card-below` 時箭頭在卡片上緣）。
-- 提示框（取代原本的 `title`）：原形 + 原形讀音、`詞性・細分類` 與出現形讀音標籤、「點一下加入單字卡」。
+- 提示框（取代原本的 `title`）：原形 + 原形讀音、`詞性・細分類` 與出現形讀音標籤、「點一下加入單字卡」。文法單位改為「〜たんだ」、`文法・詞性` 與組成（た＋ん＋だ）標籤、「點一下加入文法卡」。
 - `toast(message, state)`：state 為 `loading` / `success` / `duplicate` / `warning` / `error`，各有圖示與顏色；loading 會留著直到被取代，其他 2.5 秒後消失。建立期間點擊的單字保持反白。
-- `showCard(card, tokenEl)`：加入成功後在單字上方顯示預覽卡（意思、說明、例句、時間連結），以單字為中心並限制在播放器內；播放器太矮時內容可捲動。按 ✕、點外面或換句子時關閉。
+- `showCard(card, tokenEl)`：加入成功後在單字上方顯示預覽卡（意思、說明、例句、更多例句、時間連結），以單字為中心並限制在播放器內；播放器太矮時內容可捲動。按 ✕、點外面或換句子時關閉。
 - 預覽卡的時間連結：卡片的 `videoId` 等於目前播放中的影片時，直接跳到該句（不重新載入頁面）；是不同影片時不跳轉，改顯示提示「這張單字卡來自另一支影片（{videoId}），無法跳轉」。Ctrl / Shift / 中鍵點擊仍可開新分頁。
 - 重複、警告、錯誤仍使用 toast；字幕已換句找不到點擊的單字時，成功也改用 toast。
 ### translationScheduler
@@ -170,13 +195,17 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### translatorFactory
 依照設定 `translateProvider`（`google` / `gemini`）選擇具體的翻譯實作
 ### WordCardInfoProvider
-將單字卡的資訊生成（介面：`getInfo(input, targetLang) → { meaning, reading, explanation, examples }`，`examples` 為 LLM 補充的 2 句例句 `[{ sentence, translation }]`）
+將單字卡的資訊生成（介面：`getInfo(input, targetLang) → { meaning, reading, explanation, examples }`，`examples` 為 LLM 補充的 2 句例句 `[{ sentence, translation }]`）。`input.kind` 為 `grammar` 時，`word` 是文法本身（たら、たんだ），`host` 是它接在後面的單字，改生成文法卡的內容（見 wordcardGenerator）。
 ### wordcardInfoFactory
 選擇具體用哪一個 llm 的實作生成單字卡資訊（目前只有 `gemini`）
 ### wordcardGenerator
-產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt }`。影片只以 `videoId` 辨識，在點擊單字當下記錄（等待回應期間換了影片也不會記錯）。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
+產生完整單字卡：`{ id, type, word(原形), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt, host? }`。
+- `type`：`word` 單字卡、`grammar` 文法卡（點文法單位時建立；`word` 是文法本身，例如「たら」，`host` 是它接在後面的單字）。舊的卡片沒有 `type`，視為單字卡。
+- 文法卡由 `GeminiWordcardProvider.getGrammarInfo` 生成：`meaning` 是這個文法在句中的功能，`explanation` 說明接續方式、語感和句中意思（多個部分組成時逐一說明），另附 2 個例句。
+- 顯示時文法卡前面加「〜」（〜たら），詞性標籤顯示「文法」；popup 清單的圓圈顯示「文」；Anki 匯出的正面也是「〜たら」。
+- 重複檢查依 `type` 分開（`findWordcard(word, type)`）。影片只以 `videoId` 辨識，在點擊單字當下記錄（等待回應期間換了影片也不會記錯）。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
 ### wordcardDB
-保存單字卡（`chrome.storage.local` 的 `wordcards`），以原形去除重複
+保存單字卡（`chrome.storage.local` 的 `wordcards`），以原形＋`type` 去除重複（單字卡和文法卡分開算）
 ### wordcardExporter
 將單字卡依照anki支援的格式匯出：UTF-8 TSV，帶有 `#separator:tab`、`#html:true`、`#columns:` 標頭，例句中的單字會以粗體標示。
 - 欄位順序：`Front`、`Back`、`Word`、`Reading`、`Meaning`、`PartOfSpeech`、`Explanation`、`Sentence`、`SentenceTranslation`、`Source`、`Examples`。
@@ -189,11 +218,11 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### background
 MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`、`wordcard:regenerate`（把沒有 `meaning` 的單字卡逐張重跑 LLM，遇到錯誤就停止，回傳 `{ fixed, error? }`）。
 ### settings / popup
-一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、翻譯語言（繁體中文 / English）、翻譯引擎、字幕外觀（位置 `captionPosition`、距離邊緣 `captionOffset`、大小 `captionSize`）、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
+一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、斷詞單位 `tokenUnit`（詞 / 語幹＋語尾 / 詞組，預設語幹＋語尾）、翻譯語言（繁體中文 / English）、翻譯引擎、字幕外觀（位置 `captionPosition`、距離邊緣 `captionOffset`、大小 `captionSize`）、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
 - 字幕外觀的兩個滑桿拖動時只更新數字，放開才儲存：`storage.sync` 每分鐘的寫入次數有上限，拖動時每一格都寫入會超過。
 popup 分兩個分頁（會記住上次的分頁）：
-- 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip。
-- 單字卡：頂端顯示生成失敗（沒有字義）的單字卡數量與「一鍵補生成」按鈕；最新的在最上面，每張顯示詞性、單字、讀音、意思。**點卡片會跳出完整預覽卡**（和影片上的 1d 同一個樣式，由 `wordcardView.js` 產生）：單字、讀音、詞性、完整意思、說明、例句、例句翻譯、時間連結（開新分頁）與刪除。還沒取得字義的卡片會提示到設定頁補生成。按 ✕、點背景或 Esc 關閉；補生成更新了這張卡時會即時更新內容。底部為匯出與全部清除。
+- 設定：header 有介面語言切換（中 / EN）與啟用開關；斷詞單位、翻譯語言、翻譯引擎、字幕位置用分段按鈕；詞性用可點選的 chip。
+- 單字卡：頂端顯示生成失敗（沒有字義）的單字卡數量與「一鍵補生成」按鈕；最新的在最上面，每張顯示詞性、單字、讀音、意思。**點卡片會跳出完整預覽卡**（和影片上的 1d 同一個樣式，由 `wordcardView.js` 產生）：單字、讀音、詞性、完整意思、說明、例句、例句翻譯、時間連結（開新分頁）與刪除。還沒取得字義的卡片會提示用「一鍵補生成」補上。按 ✕、點背景或 Esc 關閉；補生成更新了這張卡時會即時更新內容。底部為匯出與全部清除。
 - popup 也載入 `res/style/style.css` 取得預覽卡的樣式（`.cw-card` 上有自己的色彩變數，不依賴 `.cw-overlay`）。
 ### UI 設計（Organic）
 依 `doc/UI mockups form/design_handoff_caption_wordinizer_organic/README.md` 實作，採用的版本為 1a（字幕 + 提示框）、1c（toast）、1d（單字卡預覽）、2a（設定分頁）、1h（單字卡分頁）。
@@ -274,57 +303,248 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 問題：背面沒有標示哪段是讀音 / 解釋 / 例句，而且意思、說明、例句字級都差不多，閱讀時分不出主次。
 - 背面分成「讀音 / 解釋 / 例句」三段並加上小標題，段落間用細線分隔；字級改成固定大小並拉開層級，正面單字放大。
 
+### 2026-09-28 — 斷詞單位與文法卡
+- 問題：IPADIC 把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），詞性名稱又比單一個字寬，字幕看起來很散。
+- 新增 `tokenGrouper.js` 與設定「斷詞單位」：詞 / **語幹＋語尾**（預設，戻っ｜たんだ｜よね）/ 詞組（戻ったんだ｜よね）。
+- 助詞、助動詞、語尾改為「文法」：點了建立文法卡（`type: "grammar"`），由 Gemini 說明功能、接續、語感與句中意思並附例句；卡片顯示為「〜たんだ」、標籤「文法」。提示框顯示組成（た＋ん＋だ）。
+- 斷詞前正規化夾在平假名中的片假名長音（ぐルーって → ぐるーって），修正「なんか」被斷成「な｜ん｜かぐ」的問題。
+- 已用 Node 測試分組與正規化，並在 headless Chrome 載入實際的 kuromoji 端到端檢查三種模式的顯示與文法提示框。
+
 ---
 # English
 ## Architecture
-See the tree above. On top of the original design, three files were added:
-`src/content/ytBridge.js` (page MAIN world bridge), `src/background/background.js` (service worker for network/LLM calls), `src/common/settings.js` (shared settings, in `storage.sync`) and `src/common/secrets.js` (API key in `storage.local`, restricted to trusted extension contexts so content scripts can't read it).
+The directory tree is the same as in the [Chinese section](#這個專案的架構) above (its comments are in Chinese). In short:
+- `src/background/` — MV3 service worker for translation and LLM requests.
+- `src/common/` — shared settings (`storage.sync`), API key storage, UI strings (zh-TW / en), Lucide icons, and the wordcard preview card shared by the video overlay and the popup.
+- `src/content/` — content script entry point, the page-world bridge, and the caption pipeline (fetch → re-split → tokenize → group → color → display, plus playback-driven translation).
+- `src/translate/`, `src/wordcard/`, `src/llmLib/` — translation providers, wordcard generation / storage / Anki export, LLM clients.
+- `res/` — popup, overlay stylesheet, bundled fonts (Caprasimo / Figtree / Huninn / Zen Maru Gothic, OFL), icon, and kuromoji.js 0.1.2 + IPADIC dictionary (Apache-2.0).
+- `test/` — sentence-splitting evaluation script, a Node loader for the bundled kuromoji, and json3 caption fixtures.
 
-## Modules
-| Module | Role |
+## Execution flow
+See the diagram in the Chinese section.
+
+1. `content.js` gets the videoId on `/watch` pages (including YouTube's SPA navigation event `yt-navigate-finish`).
+2. `ccFetcher` gets the caption tracks through `ytBridge` and downloads the whole video's Japanese captions (json3).
+3. `ccSegmenter` re-splits sentences: at punctuation when present; unpunctuated auto captions by part of speech + pauses (setting `sentenceSplit`, can be turned off).
+4. `ccTokenizer` tokenizes with kuromoji, `tokenGrouper` groups tokens by the segmentation unit, and `tokenColorizer` colors by part of speech.
+5. `ccDisplayer` overlays the captions on the player (native captions are hidden) and switches lines by video time.
+6. `translationScheduler` translates in chunks around playback: only ~2 minutes ahead of the current position; seeks take priority.
+7. Clicking a word (or grammar unit) → the background builds a wordcard (or grammar card) and saves it in `chrome.storage.local`.
+
+## Module design
+### ytBridge
+Runs in the page's MAIN world (`"world": "MAIN"` in the manifest). Content scripts can't read `window.ytInitialPlayerResponse`, so it reads `#movie_player.getPlayerResponse()` and hands it over with `postMessage`.
+It also captures the `/api/timedtext` URL the player requests itself. YouTube now often requires an extra proof-of-origin parameter (pot), so downloading from `baseUrl` directly may return nothing; in that case the player's URL is used.
+### ccFetcher
+Fetches all captions of the video at once.
+- Prefers manual Japanese captions, falls back to auto-generated (ASR).
+- Tries `baseUrl&fmt=json3` first; on failure asks `ytBridge` to turn on the player's captions, captures the request URL and downloads that.
+- Output: `[{ text, start, end, words? }]` (seconds). Overlapping ASR segments are cut at the start of the next line.
+- `words: [{ text, start }]`: in auto captions each seg is one word and `tOffsetMs` is its offset in the line. Attached only when word timing exists and the words join back into the cleaned text, so `ccSegmenter` can cut timing precisely.
+- Removes bracket tags (`[音楽]`, `[拍手]`, `［笑い］`, half-width `[]` and full-width `［］`) and extra spaces; lines that contain only a tag are dropped. Anything inside brackets is removed, so real `[…]` text in a caption is removed too.
+### ccSegmenter
+Re-splits captions so each line is one sentence. YouTube lines often cut one sentence across several lines or pack several sentences into one. The entry point `segmentCaptions(lines, { tokenize })` picks a method per track:
+
+| Captions | Method |
 |---|---|
-| ytBridge | Reads the player response in the page world and captures the player's own `/api/timedtext` URL (it carries YouTube's proof-of-origin token). |
-| ccFetcher | Downloads all Japanese captions of a video at once (manual track preferred, ASR fallback) as `[{text, start, end}]`. |
-| ccSegmenter | Re-splits captions so each line is one sentence (optional, `sentenceSplit`): at punctuation when present; for unpunctuated auto captions, by kuromoji POS / conjugation rules plus speech pauses; unpunctuated manual captions are left as-is. Evaluated with `test/segmenter-eval.mjs`. |
-| ccTokenizer | Segments each line with kuromoji (IPADIC); readings converted to hiragana. |
-| tokenColorizer | Assigns a color per part of speech. |
-| ccDisplayer | Overlay on the player: colored tokens, optional POS labels, translation line, click-to-add wordcard. |
-| translationScheduler | Playback-driven translation: only translates ~120 s ahead of the current position in 20-line chunks (2 concurrent requests, 1 retry); seeking reprioritizes the new position. |
-| Translator / translatorFactory | `translateBatch(texts, lang)`; Google Translate (no key) or Gemini. |
-| WordcardInfoProvider / wordcardInfoFactory | LLM-generated meaning, reading and explanation (Gemini). |
-| wordcardGenerator / wordcardDB | Builds and stores cards in `chrome.storage.local`, de-duplicated by dictionary form. |
-| wordcardExporter | Anki-importable TSV with `#separator`, `#html`, `#columns` headers. The first two columns are a ready-made Front (word) and Back (labeled Reading / Meaning / Examples sections with a clear type hierarchy, plus the link) for Anki's built-in Basic note type; the individual fields follow for custom note types. |
-| llmLib | Gemini and OpenAI clients. |
+| ≥ 20% of lines have sentence-ending punctuation | Punctuation splitting `segmentByPunctuation` |
+| No punctuation, word timing available (auto captions) | POS splitting `segmentByPos` |
+| Manual captions without punctuation | Left as-is (POS splitting did not beat the original lines in evaluation) |
+
+Shared approach: all caption lines are joined into one "character stream" (`buildStream`) that records each character's start / end time and the pauses between words and lines. With word timing, a character's time is spread evenly between "this word's start ~ next word's start"; without it, by character count. Splitting means choosing cut points on the stream (`selectCuts`), so both methods benefit from word timing.
+
+**Punctuation splitting**
+- Always cut after 「。．！？!?…」 (optionally followed by closing marks such as 」』); 「、」 is not a cut point.
+- A sentence is at most 42 characters / 8 seconds; longer ones are cut at a caption-line boundary.
+
+**POS splitting** (uses kuromoji's POS, `pos_detail_1` and `conjugated_form`)
+- No cut when: the next token is a particle / auxiliary verb / suffix / non-independent word / symbol; or the previous token is a prefix, a case / binding / adverbial / parallel particle, 「の」, a conjunctive particle, or a mid-conjugation form (連用形, 未然形…).
+- Score: sentence-final particle, sentence-ending auxiliary (ます / です / た / だ / う / ん / じゃん…), imperative, interjection +3; other auxiliaries, plain-form verb / adjective +1. Next token is a conjunction or sentence-initial 「では / じゃあ」 +2, an adnominal +2 (requires a score before it), an interjection / filler +1.
+- Pauses: > 0.8 s +3, > 0.4 s +1.5, > 1.5 s always cut. Pause = next word start − this word start − estimated speaking time (0.13 s per character).
+- Cut when the score ≥ 3 and the sentence is ≥ 4 characters; above 42 characters / 8 seconds, cut at the highest-scoring position in the span.
+- kuromoji splits a sentence-initial 「では」 into auxiliary 「で」 + 「は」; this is special-cased as a valid cut.
+
+**Evaluation** (`test/segmenter-eval.mjs`)
+- Take real punctuated captions, remove 「。！？」 and 「、」, and check whether splitting recovers the original sentence ends (±1 character). The text is identical, so it can be compared character by character.
+- Test data is YouTube json3 captions (`test/fixtures/`, not committed; see the top of the script for how to download them). kuromoji is loaded straight from `res/lib-vendor` (`test/kuromojiNode.mjs`), so no packages need to be installed.
+- Results on 2026-09-28 (2 auto-caption videos, 6 manual-caption videos):
+
+| | Precision | Recall | F1 | Acceptable (cut at sentence end or comma) |
+|---|---|---|---|---|
+| Auto: YouTube's original lines | 19.7% | 27.1% | 22.7% | 23.2% |
+| Auto: pauses only | 50.1% | 42.9% | 45.8% | 56.9% |
+| **Auto: POS + pauses** | **69.7%** | **77.6%** | **73.1%** | **75.2%** |
+| Manual: original lines | 65.7% | 56.5% | 60.4% | 73.3% |
+| Manual: POS + pauses | 63.2% | 56.7% | 59.2% | 72.8% |
+
+- Known limitation: when two sentences both end in a plain-form adjective / verb with no pause between them (e.g. 「頭が痛い｜天気が悪くて頭が痛い」), no cut is made, because the plain form can also be an attributive form modifying a noun.
+
+The `sentenceSplit` setting ("Re-split sentences", on by default) can turn this off; toggling it reprocesses the captions.
+### ccTokenizer
+Splits all captions by part of speech.
+- Uses kuromoji (IPADIC); the tokens are then grouped by `tokenGrouper` according to the `tokenUnit` setting. Each display unit is `{ surface, kind, pos, posDetail, basicForm, reading, basicReading, host?, parts? }`, readings converted to hiragana.
+- `kind`: `word` = a word (click to create a wordcard), `grammar` = grammar (particles, auxiliaries, endings; click to create a grammar card).
+- Words: `basicForm` is the dictionary form of the main independent word; `reading` is the reading of the surface form (生き → いき), and `basicReading` is the reading of the dictionary form, obtained by tokenizing the dictionary form again (生きる → いきる).
+- Grammar: `basicForm` is the surface form as it appears (たら, たんだ); `host` is the dictionary form of the nearest word before it (回る), given to the LLM as context; `parts` lists its components (た＋ん＋だ).
+- Text is normalized before tokenizing: auto captions sometimes write a hiragana onomatopoeia with a katakana long vowel in the middle (ぐルーって), which makes kuromoji split wrongly (今なんかぐ → 今｜な｜ん｜かぐ). When preceded by hiragana and not followed by katakana, "one katakana character + ー" is converted back to hiragana (ぐるーって); katakana words (ぐルーム, コーヒー) are unaffected.
+- Words not in the dictionary have no reading; if the whole word is kana, its reading is the word itself.
+- kuromoji builds dictionary URLs with `path.join`, which collapses `chrome-extension://` into `chrome-extension:/`; the XHR URL is patched temporarily while the dictionary loads.
+### tokenGrouper
+IPADIC splits conjugations into tiny pieces (戻っ｜た｜ん｜だ｜よ｜ね). Tokens are grouped by the `tokenUnit` setting:
+
+| Unit | Example: 今なんかぐるーって回ったら元いた場所に戻ったんだよね |
+|---|---|
+| `word` Word | 今｜なんか｜ぐるー｜って｜回っ｜たら｜元｜い｜た｜場所｜に｜戻っ｜た｜ん｜だ｜よ｜ね |
+| `stem` Stem + ending (default) | 今｜なんか｜ぐるー｜って｜回っ｜たら｜元｜い｜た｜場所｜に｜戻っ｜たんだ｜よね |
+| `phrase` Phrase | 今｜なんか｜ぐるー｜って｜回ったら｜元｜いた｜場所｜に｜戻ったんだ｜よね |
+
+- Endings: auxiliary verbs, subsidiary verbs (いる, しまう…), verb suffixes (れる, させる), the conjunctive particles て / で / ば / ちゃ / じゃ / たり, and 「ん / の」 followed by an auxiliary (〜んだ, 〜のです). With stem + ending, consecutive endings merge into one grammar unit (てしまった, なければならないのです); with phrase, they merge into the preceding word.
+- Consecutive sentence-final particles merge (よね, かな).
+- Other particles (に, は, って, なんか) always stand alone as grammar. The stem is always separated from its ending, including one-character stems (い｜た).
+- A long vowel 「ー」 split off by kuromoji (ぐる｜ー) is joined back to the previous unit.
+### tokenColorizer
+Colors captions by part of speech. Colors are generated in OKLCH (all POS share one lightness; particles / 記号 / フィラー / その他 are neutral) in three sets:
+- `POS_COLORS`: text on the dark caption box
+- `POS_COLORS_LIGHT`: text on the beige background (popup dots, POS circle on wordcards)
+- `POS_TINTS`: fills (selected POS chips, POS circle background on wordcards)
+### ccDisplayer
+Assembles and displays everything.
+- The overlay is mounted inside `#movie_player`; the current line is found with `requestAnimationFrame` + binary search.
+- Each token can show its POS name above it (per the POS list in settings); clicking adds a wordcard, and clicking a grammar unit (`kind: "grammar"`) adds a grammar card.
+- Punctuation is not clickable: POS 「記号」, or tokens made only of punctuation / symbols / spaces (Unicode `\p{P}\p{S}\s`, because kuromoji tags half-width `!?`, `%`, `♪` as nouns). These tokens have no tooltip, no hover highlight, and don't create wordcards.
+- Caption position and size (`applyLayout`): from `captionPosition` (bottom / top), `captionOffset` (distance from edge, 0–50% of player height) and `captionSize` (70–200%), sets the overlay's CSS variables `--cw-offset`, `--cw-scale` and `.cw-at-top`. Caption text, POS labels, translation and box padding scale together; the tooltip and preview card don't. Bottom: 70px from the bottom (24px when controls are hidden) + offset; top: 60px from the top (16px when controls are hidden) + offset. Changes apply live.
+- With captions at the top, the tooltip opens below the word; the preview card goes to whichever side of the word has more room (with `.cw-card-below` the arrow is on the card's top edge).
+- Tooltip (replaces the old `title`): dictionary form + its reading, `POS・subcategory` and surface-reading tags, "Click to add a wordcard". Grammar units show 「〜たんだ」, a `Grammar・POS` tag and a components tag (た＋ん＋だ), and "Click to add as a grammar card".
+- `toast(message, state)`: state is `loading` / `success` / `duplicate` / `warning` / `error`, each with its own icon and color; loading stays until replaced, others disappear after 2.5 s. The clicked word stays highlighted while the card is being created.
+- `showCard(card, tokenEl)`: after a successful add, shows the preview card above the word (meaning, explanation, sentence, extra examples, timestamp link), centered on the word and kept inside the player; content scrolls when the player is too short. Closed by ✕, clicking outside, or a line change.
+- Preview card timestamp: when the card's `videoId` matches the playing video, it seeks to that line (no page reload); for a different video it doesn't navigate and shows "This wordcard is from another video ({videoId}), can't jump there". Ctrl / Shift / middle click still opens a new tab.
+- Duplicates, warnings and errors still use toasts; if the line has changed and the clicked word is gone, success also falls back to a toast.
+### translationScheduler
+Translates in chunks around playback, so long videos (20+ minutes) don't wait a long time for translations.
+- Captions are grouped into chunks of 20 lines; only chunks covering "current position ~ 120 s ahead" are translated; parts never watched are never translated.
+- Listens to the video's `timeupdate` / `seeking` / `play`: fetches the next chunk as playback advances, and starts from the new position's chunk on seek.
+- At most 2 concurrent requests; a failure is retried once, and an error toast is shown once if it still fails.
+- Changing the translation language, engine, or toggling translation only restarts translation without refetching captions; already translated lines come straight from the background cache.
+### Translator
+Translates whole caption lines (interface: `translateBatch(texts, targetLang) → string[]`).
+- `GoogleTranslateProvider`: Google Translate public endpoint, no API key. Lines are joined with newlines into one request; if the line count doesn't match, it falls back to line-by-line.
+- `GeminiTranslateProvider`: sends a batch of lines to Gemini together as context and asks for a JSON array back.
+### translatorFactory
+Picks the implementation from the `translateProvider` setting (`google` / `gemini`).
+### WordcardInfoProvider
+Generates wordcard info (interface: `getInfo(input, targetLang) → { meaning, reading, explanation, examples }`; `examples` are 2 extra LLM sentences `[{ sentence, translation }]`). When `input.kind` is `grammar`, `word` is the grammar itself (たら, たんだ) and `host` is the word it attaches to, and grammar card content is generated instead (see wordcardGenerator).
+### wordcardInfoFactory
+Picks which LLM implementation generates wordcard info (currently only `gemini`).
+### wordcardGenerator
+Builds a full wordcard: `{ id, type, word (dictionary form), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt, host? }`.
+- `type`: `word` wordcard, `grammar` grammar card (created when a grammar unit is clicked; `word` is the grammar itself, e.g. 「たら」, and `host` is the word it attaches to). Old cards without `type` are treated as wordcards.
+- Grammar cards are generated by `GeminiWordcardProvider.getGrammarInfo`: `meaning` is the grammar's function in the sentence, `explanation` covers how it attaches, its nuance and its meaning in this sentence (each component explained when there are several), plus 2 example sentences.
+- Grammar cards are shown with a leading 「〜」 (〜たら) and a "Grammar" POS tag; the circle in the popup list shows "G" (「文」 in Chinese); the Anki front is also 「〜たら」.
+- Duplicates are checked per `type` (`findWordcard(word, type)`). The video is identified by `videoId` only, recorded at click time (so switching videos while waiting doesn't mislabel it). If the LLM fails (e.g. no API key), the basic data is still saved and a warning is returned.
+### wordcardDB
+Stores wordcards (`wordcards` in `chrome.storage.local`), de-duplicated by dictionary form + `type` (wordcards and grammar cards are counted separately).
+### wordcardExporter
+Exports wordcards in an Anki-importable format: UTF-8 TSV with `#separator:tab`, `#html:true` and `#columns:` headers; the word is bolded in sentences.
+- Column order: `Front`, `Back`, `Word`, `Reading`, `Meaning`, `PartOfSpeech`, `Explanation`, `Sentence`, `SentenceTranslation`, `Source`, `Examples`.
+- Anki's built-in Basic note type only has Front / Back and maps the first two columns in order, so these two are ready-made: `Front` = the word (large); `Back` has three labeled sections: **Reading**, **Meaning** (meaning + POS, explanation), **Examples** (the video sentence + extra examples, word in bold, each with its translation), then the YouTube link. Fixed font sizes with a clear hierarchy (reading 24px > meaning 19px > sentences 17px > explanation / translation 14px > labels / link 12–13px); secondary text is dimmed with opacity, so it works in dark and light mode. Section labels follow the UI language (中 / EN). Importing with Basic shows everything.
+- The individual fields after them are for custom note types: map them to your own fields when importing and set unneeded ones to "Nothing".
+### llmLib
+LLM API clients.
+- `geminiClient`: Gemini `generateContent`, supports JSON output.
+- `gptClient`: OpenAI Chat Completions (implemented, not yet wired to a provider).
+### background
+MV3 service worker. All outgoing network requests happen here (they need `host_permissions`), and translations are cached. Messages: `translate`, `wordcard:add`, `wordcard:regenerate` (re-runs the LLM card by card for wordcards without `meaning`, stops at the first error, returns `{ fixed, error? }`).
+### settings / popup
+General settings are stored as `settings` in `chrome.storage.sync`: enabled, UI language `uiLang` (`zh-TW` / `en`, independent of the translation language), show translation, re-split sentences `sentenceSplit`, segmentation unit `tokenUnit` (word / stem + ending / phrase, default stem + ending), translation language (Traditional Chinese / English), translation engine, caption appearance (position `captionPosition`, distance from edge `captionOffset`, size `captionSize`), Gemini model (default `gemini-3.1-flash-lite`), and which POS show their names.
+- The two caption-appearance sliders only update the number while dragging and save on release: `storage.sync` limits writes per minute, and saving every step while dragging would exceed it.
+
+The popup has two tabs (the last one is remembered):
+- Settings: the header has the UI language switch (中 / EN) and the enable toggle; segmentation unit, translation language, translation engine and caption position use segmented buttons; POS use clickable chips.
+- Wordcards: the top shows how many cards failed to generate (no meaning) and a "Regenerate all" button; newest first, each showing POS, word, reading and meaning. **Clicking a card opens the full preview card** (same design as 1d on the video, built by `wordcardView.js`): word, reading, POS, full meaning, explanation, sentence, sentence translation, timestamp link (new tab) and delete. Cards without a meaning point to "Regenerate all". Closed by ✕, clicking the backdrop, or Esc; if regeneration updates the card, it refreshes live. Export and Clear all are at the bottom.
+- The popup also loads `res/style/style.css` for the preview card styles (`.cw-card` carries its own color variables and doesn't depend on `.cw-overlay`).
+### UI design (Organic)
+Implemented from `doc/UI mockups form/design_handoff_caption_wordinizer_organic/README.md`, using variants 1a (captions + tooltip), 1c (toast), 1d (wordcard preview), 2a (settings tab) and 1h (wordcards tab).
+- Colors: beige `#f5ead8` background, terracotta `#c67139` accent, sage green `#7a8a5e` for success.
+- Fonts: Caprasimo (headings), Figtree (body), Huninn (Chinese), Zen Maru Gothic (Japanese). All bundled in `res/fonts/`; the popup links `fonts.css` directly, and the content script reads `fonts.css`, rewrites relative paths to `chrome-extension://` URLs and injects it into the YouTube page.
+- Icons: Lucide (`src/common/icons.js`).
+- Differences from the mockup: the model field default stays `gemini-3.1-flash-lite` (the mockup says `gemini-2.5-flash`); the preview card scrolls when the player is too short.
+### secrets (API key storage)
+- The Gemini API key is stored on its own as `geminiApiKey` in `chrome.storage.local`, separate from the general settings.
+- On every start, the background calls `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })`, so `local` (API key, wordcards) is readable only by the background and popup, not content scripts.
+- The API key is merged with settings only inside the background to call Gemini, and is never sent to content scripts.
+- Limitation: `storage.local` is not encrypted on disk; anyone who can read the Chrome profile can get it. Restrict the key to the Gemini API in Google Cloud Console and set a usage quota.
+- Old v0.1 settings (everything in `local.settings`) are split and migrated automatically when the background starts.
 
 ## Changelog
-### 2026-09-28 — v0.1
-- All modules in the spec implemented; popup settings and wordcard management added.
-- Verified in Node: json3 parsing, tokenizing/coloring, Anki export, Google Translate. Not yet tested end-to-end in Chrome.
-### 2026-09-28 — API key storage
-- The Gemini API key is stored on its own in `storage.local`, which is restricted to `TRUSTED_CONTEXTS`; the key never reaches content scripts. Other settings moved to `storage.sync`. Default model is now `gemini-3.1-flash-lite`.
+### 2026-09-28 — v0.1 first release
+- All modules in the spec implemented: caption fetching, tokenizing, coloring, display, translation (Google / Gemini), wordcard generation / storage / Anki export, popup settings.
+- Added `ytBridge.js` (MAIN world), `background.js` and `common/settings.js`; the architecture tree was updated.
+- Bundled kuromoji 0.1.2 and its dictionary, generated `icon128.png`.
+- Verified in Node: json3 parsing, kuromoji tokenizing and coloring, Anki TSV export, Google Translate (zh-TW / en).
+- Not yet tested in Chrome: the YouTube caption download flow and the Gemini API (needs an API key).
+
+### 2026-09-28 — Better API key storage
+- The API key moved out of `settings` into `local.geminiApiKey` managed by `secrets.js`, and `storage.local` is restricted to extension pages; general settings moved to `storage.sync`.
+- Default model is now `gemini-3.1-flash-lite`; a saved `gemini-2.5-flash` from older versions is reset to the default during migration.
+
 ### 2026-09-28 — Chunked translation for long videos
-- Added `translationScheduler.js`. Translation no longer runs through the whole video; it follows playback and seeks, so 20+ minute videos show translations right away.
+- Added `translationScheduler.js`: previously the whole video was translated in order from the current position (40 lines per batch, one batch at a time), so long videos took a long time and seeks had to wait in line. Now only 120 s ahead of the current position is translated (20-line chunks, 2 concurrent requests), and seeks take priority.
+- Verified by simulating a 30-minute (600-line) video in Node: only the first 60 lines are translated at the start; after seeking to 20:00 the first request is for that position; watching a few parts translated only 140 lines in total.
+
 ### 2026-09-28 — Organic UI redesign
-- Implemented the handoff in `doc/UI mockups form` (picks 1a, 1c, 1d, 2a, 1h): caption box, hover tooltip, toast states, wordcard preview card, and a tabbed popup.
-- New: UI language setting (`uiLang`), dictionary-form readings (`basicReading`), OKLCH POS palettes, `i18n.js`, `icons.js`, bundled fonts in `res/fonts/`.
+- Redesigned from the mockup: caption box, hover tooltip, toasts in four states, wordcard preview card, and a popup with Settings / Wordcards tabs.
+- Added features the mockup had and the extension didn't: UI language switch (`uiLang`), dictionary-form reading in the tooltip (`basicReading`), wordcard preview with timestamp jump after adding, popup tabs and expandable cards, wordcard timestamp links, remembering the last tab.
+- POS colors changed to three OKLCH sets (`POS_COLORS` / `POS_COLORS_LIGHT` / `POS_TINTS`); added `i18n.js`, `icons.js`, `popup.css`, and bundled fonts in `res/fonts/`.
+- Checked with headless Chrome screenshots: popup (中 / EN, both tabs), tooltip, preview card and toasts.
+
 ### 2026-09-28 — Preview timestamp checks the video ID
-- The preview card's timestamp only seeks when the card's `videoId` matches the video that is playing; otherwise it shows a notice and does not navigate. Videos are identified by `videoId` only.
+- The preview card's timestamp compares the card's `videoId` with the playing video: it seeks only when they match; for a different video it shows a notice and does not navigate.
+- Videos are identified by `videoId` only; titles and channels are not stored. `videoId` is recorded at click time.
+
 ### 2026-09-28 — Full preview card in the popup
-- Clicking a wordcard in the popup opens the full preview card (same design as 1d, built by the shared `src/common/wordcardView.js`) instead of expanding in place.
-- Fixed the "Regenerate all" click handler being registered inside `selectTab()`, which added a duplicate listener on every tab switch.
+- Clicking a card in the popup Wordcards tab now opens the full preview card (instead of expanding in place), showing the full meaning and explanation, with the timestamp link and delete.
+- The preview card content moved into `src/common/wordcardView.js`, shared by the video overlay and the popup so both look the same.
+- Fix: the "Regenerate all" click handler was registered inside `selectTab()`, adding another listener on every tab switch, so one click sent several requests; it's now registered once at the top level.
+
 ### 2026-09-28 — Strip bracket tags from captions
-- `parseJson3()` removes tags such as `[音楽]`, `[拍手]` and `［笑い］` (half- and full-width brackets); lines that contain only a tag are dropped.
+- `ccFetcher.parseJson3()` removes tags such as `[音楽]`, `[拍手]` and `［笑い］`; lines that contain only a tag are dropped, so tags no longer appear in tokenizing, translation or wordcards.
+- Verified in Node: tag-only lines, tags at the start / middle / end, tags split across two segments, full-width brackets.
+
 ### 2026-09-28 — Split captions by punctuation
-- Added `ccSegmenter.js`: lines are merged or split at sentence-ending punctuation (。！？ etc.) so each caption shows one sentence; timing within a line is split by character count. Toggle: `sentenceSplit` (on by default). Tracks with little punctuation are left as-is.
+- Added `ccSegmenter.js`: sentences spanning several lines are merged and lines with several sentences are split, so each caption shows one sentence; translation also gets whole sentences.
+- New "Split by punctuation" toggle in Settings (`sentenceSplit`, on by default); tracks with almost no punctuation keep their original lines.
+- Verified in Node: cross-line merging, splitting multi-sentence lines, quotes, pause-based splitting, length limit, almost no punctuation.
+
 ### 2026-09-28 — Punctuation is not clickable
-- Punctuation and symbol tokens (POS 記号, or text made only of punctuation / symbols / spaces) have no tooltip, no hover highlight, and can't be added as wordcards.
+- Punctuation in captions (「」。、！？…♪ etc.) can no longer be clicked to add a wordcard, and shows no tooltip or highlight.
+- Verified with kuromoji: `!?`, `%`, `♪` are tagged as nouns but are still detected as punctuation; ordinary words (including `ｗｗｗ`) stay clickable.
+
 ### 2026-09-28 — POS-based sentence splitting
-- Auto captions keep word-level timing (`words`); punctuation splitting now uses it, so auto-caption line changes are timed to the word.
-- Unpunctuated auto captions are split by POS / conjugation rules plus pauses. On real captions with punctuation removed, F1 rose from 22.7% (YouTube's own lines) to 73.1%; precision is 69.7%, short of the 80% goal. Unpunctuated manual captions are left as-is because POS splitting did not beat their original lines.
-- Added `test/segmenter-eval.mjs` and `test/kuromojiNode.mjs`; the setting is now labeled "Re-split sentences".
+- Checked real data first: downloaded captions of 6 videos with yt-dlp (2 have both manual and auto captions). Japanese auto captions **mostly have punctuation now**, and every word has a `tOffsetMs`.
+- `ccFetcher` keeps auto-caption word timing (`words`); `ccSegmenter` was rewritten as "character stream + cut selection", and punctuation splitting uses word timing too, so auto-caption line changes are timed to the word instead of by character count.
+- Added POS splitting (rules in the ccSegmenter section) for unpunctuated auto captions; unpunctuated manual captions are left as-is.
+- Added the evaluation script `test/segmenter-eval.mjs` and `test/kuromojiNode.mjs`, and tuned rules and parameters on the results (threshold 3, min 4 characters, line boundary +2). Auto-caption F1 rose from 22.7% (original lines) to 73.1%.
+- The setting is renamed "Re-split sentences" (still `sentenceSplit`).
+- Not met: the planned precision goal was 80%; it's currently 69.7% (75.2% acceptable, i.e. cut at a sentence end or comma).
+
 ### 2026-09-28 — Caption position and size
-- New "Caption appearance" settings: position (bottom / top), distance from edge (0–50% of player height) and size (70–200%), applied live. With captions at the top, the tooltip opens below the word and the preview card picks whichever side has more room.
+- New "Caption appearance" settings: position (bottom / top), distance from edge (0–50%), size (70–200%), applied live to the playing video.
+- With captions at the top, the tooltip opens below the word; the preview card picks its side by available space.
+- Checked with headless Chrome screenshots: settings page, top + tooltip, top + preview card, bottom at 150%, bottom at 70% + preview card.
+
 ### 2026-09-28 — Anki export works with the Basic note type
-- The export now starts with ready-made Front and Back columns, so importing with Anki's built-in Basic note type shows the reading, meaning, part of speech, explanation and sentences. The individual fields moved after them; custom note-type mappings need to be set again.
+- Problem: importing with Anki's built-in Basic note type maps only one column each to Front / Back, so the reading, meaning, POS, sentences etc. were missing.
+- The first two columns are now a ready-made `Front` (word) and `Back` (reading, meaning, POS, explanation, sentence, translation, extra examples, link), so Basic works directly; the individual fields moved after them.
+- Note: the column order changed; anyone who imported with a custom note type needs to set the field mapping again.
+
 ### 2026-09-28 — Anki card back redesign
-- The back is split into labeled Reading / Meaning / Examples sections with dividers, fixed font sizes with a clear hierarchy, and a larger word on the front. Labels follow the UI language.
+- Problem: the back didn't label which part is the reading / meaning / examples, and meaning, explanation and sentences were about the same size, so there was no clear hierarchy.
+- The back is split into labeled Reading / Meaning / Examples sections with thin dividers; fixed font sizes with a wider hierarchy, and a larger word on the front.
+
+### 2026-09-28 — Segmentation unit and grammar cards
+- Problem: IPADIC splits conjugations into tiny pieces (戻っ｜た｜ん｜だ｜よ｜ね), and POS labels are wider than a single character, so captions looked scattered.
+- Added `tokenGrouper.js` and a "Segmentation" setting: word / **stem + ending** (default, 戻っ｜たんだ｜よね) / phrase (戻ったんだ｜よね).
+- Particles, auxiliaries and endings are now "grammar": clicking one creates a grammar card (`type: "grammar"`), with Gemini explaining its function, how it attaches, its nuance and its meaning in the sentence, plus examples; the card is shown as 「〜たんだ」 with a "Grammar" tag. The tooltip shows the components (た＋ん＋だ).
+- Katakana long vowels inside hiragana words are normalized before tokenizing (ぐルーって → ぐるーって), fixing 「なんか」 being split into 「な｜ん｜かぐ」.
+- Tested grouping and normalization in Node, and checked all three modes and the grammar tooltip end to end in headless Chrome with the real kuromoji.

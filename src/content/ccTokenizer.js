@@ -1,6 +1,9 @@
 // ccTokenizer.js
 // 用 kuromoji 將所有字幕做詞性切割
 // kuromoji.js 由 manifest 的 content_scripts 先載入，會掛在全域的 kuromoji 上
+// 斷詞後依「斷詞單位」分組（tokenGrouper），每個顯示單位是單字（word）或文法（grammar）
+
+import { groupTokens } from "./tokenGrouper.js";
 
 let tokenizerPromise = null;
 
@@ -50,28 +53,63 @@ function basicReadingOf(tokenizer, basicForm, cache) {
     return cache.get(basicForm);
 }
 
-function toToken(t, tokenizer, cache) {
-    const surface = t.surface_form;
-    const basicForm = t.basic_form && t.basic_form !== "*" ? t.basic_form : surface;
-    const reading = readingOf(t);
-    return {
-        surface,
-        pos: t.pos,
-        posDetail: t.pos_detail_1 !== "*" ? t.pos_detail_1 : "",
-        basicForm,
-        reading,
-        basicReading: basicForm === surface ? reading : basicReadingOf(tokenizer, basicForm, cache),
-    };
+function normalizeText(text) {
+    /*自動字幕有時會把平假名的擬聲詞寫成夾片假名的長音（ぐルーって），kuromoji 會因此斷錯
+      （今なんかぐ → 今｜な｜ん｜かぐ）。前面是平假名、後面不是片假名時，把「片假名 1 字 + ー」轉回平假名*/
+    return text.replace(/(?<=[ぁ-ゖ])([ァ-ヶ])(ー+)(?![ァ-ヶー])/g, (_, kana, bar) => katakanaToHiragana(kana) + bar);
 }
 
-async function tokenizeCaptions(captions) {
-    /*captions: [{text, start, end}] → 每句多一個 tokens 陣列*/
+function toToken(group, host, tokenizer, cache) {
+    /*一組 kuromoji token（見 tokenGrouper）→ 顯示用的 token*/
+    const { tokens: parts, kind, head } = group;
+    const surface = parts.map(t => t.surface_form).join("");
+    let reading = parts.every(readingOf) ? parts.map(readingOf).join("") : "";
+    // 字典裡沒有的詞（擬聲詞等）沒有讀音；整個詞都是假名時，讀音就是它本身
+    if (!reading && /^[ぁ-ゖァ-ヶー]+$/.test(surface)) reading = katakanaToHiragana(surface);
+    const token = {
+        surface,
+        kind,
+        pos: head.pos,
+        posDetail: head.pos_detail_1 !== "*" ? head.pos_detail_1 : "",
+        reading,
+    };
+    if (kind === "grammar") {
+        // 文法：以出現的樣子為準（たら、たんだ），記下接在哪個單字後面，給 LLM 當上下文
+        token.basicForm = surface;
+        token.basicReading = reading;
+        token.host = host || "";
+        if (parts.length > 1) token.parts = parts.map(t => t.surface_form);
+        return token;
+    }
+    // 後面只接了長音「ー」（ぐる＋ー）時，原形就是整個詞（ぐるー）
+    if (parts.slice(1).every(t => /^ー+$/.test(t.surface_form))) {
+        const headBasic = head.basic_form && head.basic_form !== "*" ? head.basic_form : head.surface_form;
+        if (headBasic === head.surface_form) {
+            token.basicForm = surface;
+            token.basicReading = reading;
+            return token;
+        }
+    }
+    const basicForm = head.basic_form && head.basic_form !== "*" ? head.basic_form : head.surface_form;
+    token.basicForm = basicForm;
+    token.basicReading = basicForm === head.surface_form ? (readingOf(head) || reading) : basicReadingOf(tokenizer, basicForm, cache);
+    return token;
+}
+
+async function tokenizeCaptions(captions, { unit = "stem" } = {}) {
+    /*captions: [{text, start, end}] → 每句多一個 tokens 陣列；unit 是斷詞單位（word / stem / phrase，見 tokenGrouper）*/
     const tokenizer = await getTokenizer();
     const cache = new Map();
-    return captions.map(line => ({
-        ...line,
-        tokens: tokenizer.tokenize(line.text).map(t => toToken(t, tokenizer, cache)),
-    }));
+    return captions.map(line => {
+        const text = normalizeText(line.text);
+        let host = "";
+        const tokens = groupTokens(tokenizer.tokenize(text), unit).map(group => {
+            const token = toToken(group, host, tokenizer, cache);
+            if (token.kind === "word") host = token.basicForm;
+            return token;
+        });
+        return { ...line, text, tokens };
+    });
 }
 
-export { getTokenizer, tokenizeCaptions, katakanaToHiragana };
+export { getTokenizer, tokenizeCaptions, katakanaToHiragana, normalizeText };

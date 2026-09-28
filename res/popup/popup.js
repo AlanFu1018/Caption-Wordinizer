@@ -5,7 +5,7 @@ import { POS_LIST, TARGET_LANGUAGES, loadSettings, saveSettings } from "../../sr
 import { getGeminiApiKey, setGeminiApiKey } from "../../src/common/secrets.js";
 import { t } from "../../src/common/i18n.js";
 import { icon } from "../../src/common/icons.js";
-import { buildWordcardBody } from "../../src/common/wordcardView.js";
+import { buildWordcardBody, displayWord } from "../../src/common/wordcardView.js";
 import { POS_COLORS_LIGHT, POS_TINTS, colorOf } from "../../src/content/tokenColorizer.js";
 import { getAllWordcards, removeWordcard, clearWordcards, isFailedWordcard } from "../../src/wordcard/wordcardDB.js";
 import { toAnkiTsv } from "../../src/wordcard/wordcardExporter.js";
@@ -97,7 +97,7 @@ async function initSettings() {
 
     buildSegmented($("targetLang"), "targetLang", Object.entries(TARGET_LANGUAGES), settings.targetLang,
         (value) => update({ targetLang: value }));
-    for (const name of ["translateProvider", "captionPosition"]) {
+    for (const name of ["translateProvider", "captionPosition", "tokenUnit"]) {
         for (const input of document.querySelectorAll(`input[name="${name}"]`)) {
             input.checked = input.value === settings[name];
             input.addEventListener("change", () => update({ [name]: input.value }));
@@ -136,12 +136,13 @@ function buildCardItem(card) {
     const item = el("button", "card-item");
     item.type = "button";
 
-    const posCircle = el("span", "card-pos", (card.pos || "?")[0]);
+    // 文法卡的圓圈顯示「文」，單字卡顯示詞性的第一個字
+    const posCircle = el("span", "card-pos", card.type === "grammar" ? str("grammarShort") : (card.pos || "?")[0]);
     posCircle.style.background = colorOf(card.pos, POS_TINTS);
     posCircle.style.color = colorOf(card.pos, POS_COLORS_LIGHT);
     const main = el("span", "card-main");
     const title = el("span", "card-title");
-    title.append(el("span", "card-word", card.word));
+    title.append(el("span", "card-word", displayWord(card)));
     if (card.reading && card.reading !== card.word) title.append(el("span", "card-reading", card.reading));
     main.append(title, el("span", "card-meaning", card.meaning || ""));
     item.append(posCircle, main);

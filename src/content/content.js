@@ -131,7 +131,7 @@ async function main() {
             captions = segmentCaptions(raw, { tokenize: (text) => tokenizer.tokenize(text) });
         }
 
-        const lines = colorizeLines(await tokenizeCaptions(captions));
+        const lines = colorizeLines(await tokenizeCaptions(captions, { unit: settings.tokenUnit }));
         if (mySession !== session) return;
 
         displayer.setLines(lines);
@@ -148,7 +148,7 @@ async function main() {
         const prev = settings;
         settings = next;
         displayer.setOptions(settings);
-        if (prev.enabled !== next.enabled || prev.sentenceSplit !== next.sentenceSplit) {
+        if (prev.enabled !== next.enabled || prev.sentenceSplit !== next.sentenceSplit || prev.tokenUnit !== next.tokenUnit) {
             // 斷句方式改變要重新處理字幕
             loadedVideoId = null;
             loadVideo();

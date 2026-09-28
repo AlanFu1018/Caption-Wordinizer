@@ -39,7 +39,7 @@ async function handleTranslate({ texts }) {
 }
 
 async function handleAddWordcard(msg) {
-    const existing = await findWordcard(msg.token.basicForm);
+    const existing = await findWordcard(msg.token.basicForm, msg.token.kind === "grammar" ? "grammar" : "word");
     if (existing) return { card: existing, duplicated: true };
     const settings = await loadSettingsWithSecrets();
     const { card, warning } = await generateWordcard(msg, settings);

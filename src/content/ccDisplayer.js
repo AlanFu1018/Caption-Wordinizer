@@ -193,9 +193,18 @@ class CcDisplayer {
     }
 
     buildTooltip(token) {
-        /*滑鼠停留時顯示：原形 + 原形讀音 / 詞性・細分類 + 出現形讀音 / 提示*/
+        /*滑鼠停留時顯示：原形 + 原形讀音 / 詞性・細分類 + 出現形讀音 / 提示
+          文法單位：〜たんだ / 文法 + 組成（た＋ん＋だ）/ 提示*/
         const tip = el("span", "cw-tip");
         const head = el("span", "cw-tip-head");
+        if (token.kind === "grammar") {
+            head.append(el("span", "cw-tip-word", `〜${token.surface}`));
+            const tags = el("span", "cw-tip-tags");
+            tags.append(el("span", "cw-tag cw-tag-accent", `${t(this.uiLang, "grammarTag")}・${token.pos}`));
+            if (token.parts) tags.append(el("span", "cw-tag cw-tag-neutral", token.parts.join("＋")));
+            tip.append(head, tags, el("span", "cw-tip-hint", t(this.uiLang, "tooltipHintGrammar")));
+            return tip;
+        }
         head.append(el("span", "cw-tip-word", token.basicForm));
         if (token.basicReading && token.basicReading !== token.basicForm) {
             head.append(el("span", "cw-tip-reading", token.basicReading));

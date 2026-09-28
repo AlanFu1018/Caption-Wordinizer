@@ -3,7 +3,8 @@
 
 class WordcardInfoProvider {
     /**
-     * @param {{word: string, surface: string, reading: string, pos: string, sentence: string}} input
+     * @param {{kind: "word"|"grammar", word: string, surface: string, reading: string, pos: string, sentence: string, host?: string}} input
+     *   kind = "grammar" 時 word 是文法本身（たら、たんだ），host 是它接在後面的單字
      * @param {string} targetLang "zh-TW" | "en"
      * @returns {Promise<{meaning: string, reading?: string, explanation?: string, examples?: {sentence: string, translation: string}[]}>}
      */
