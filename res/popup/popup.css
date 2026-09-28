@@ -323,6 +323,76 @@ h2 {
     outline: none;
 }
 
+/* 下拉選單：箭頭內縮到膠囊內；支援 base-select 時連選項清單一併套用風格 */
+select.input {
+    appearance: none;
+    padding-right: 38px;
+    background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23645c50' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center;
+    cursor: pointer;
+}
+
+@supports (appearance: base-select) {
+    select.input,
+    select.input::picker(select) {
+        appearance: base-select;
+    }
+
+    select.input {
+        display: flex;
+        align-items: center;
+        padding-right: 14px;
+        background-image: none;
+    }
+
+    /* 收合時箭頭朝左，展開時轉為朝下 */
+    select.input::picker-icon {
+        content: "";
+        width: 14px;
+        height: 14px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23645c50' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center;
+        transition: rotate 0.15s;
+    }
+
+    select.input:open::picker-icon {
+        rotate: -90deg;
+    }
+
+    /* 固定往下展開，不因空間不足翻到上方 */
+    select.input::picker(select) {
+        position-area: block-end span-inline-end;
+        position-try-fallbacks: none;
+        position-try-order: normal;
+        margin-top: 4px;
+        padding: 4px;
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        background: var(--bg);
+        box-shadow: 0 6px 18px rgba(46, 43, 37, 0.18);
+    }
+
+    select.input option {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font: 400 14px var(--font-body);
+        cursor: pointer;
+    }
+
+    select.input option::checkmark {
+        display: none;
+    }
+
+    select.input option:hover,
+    select.input option:focus-visible {
+        background: rgba(32, 30, 29, 0.07);
+        outline: none;
+    }
+
+    select.input option:checked {
+        background: var(--accent);
+        color: var(--bg);
+    }
+}
+
 .row > label {
     white-space: nowrap;
 }
