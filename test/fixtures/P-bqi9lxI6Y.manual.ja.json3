@@ -1,0 +1,943 @@
+{
+  "wireMagic": "pb3",
+  "pens": [ {
+  
+  } ],
+  "wsWinStyles": [ {
+  
+  } ],
+  "wpWinPositions": [ {
+  
+  } ],
+  "events": [ {
+    "tStartMs": 680,
+    "dDurationMs": 2475,
+    "segs": [ {
+      "utf8": "まいど！おおきに！"
+    } ]
+  }, {
+    "tStartMs": 3155,
+    "dDurationMs": 2931,
+    "segs": [ {
+      "utf8": "みなさんこんにちは！日本語の森のゆかです！"
+    } ]
+  }, {
+    "tStartMs": 6086,
+    "dDurationMs": 3862,
+    "segs": [ {
+      "utf8": "今日も元気に関西弁講座やっていきたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 9948,
+    "dDurationMs": 3204,
+    "segs": [ {
+      "utf8": "今日なんと7回目ですね！"
+    } ]
+  }, {
+    "tStartMs": 13152,
+    "dDurationMs": 3907,
+    "segs": [ {
+      "utf8": "今まで、文法の授業と語尾の授業、"
+    } ]
+  }, {
+    "tStartMs": 17059,
+    "dDurationMs": 3595,
+    "segs": [ {
+      "utf8": "それからイントネーションの授業やったんですけど"
+    } ]
+  }, {
+    "tStartMs": 20654,
+    "dDurationMs": 5611,
+    "segs": [ {
+      "utf8": "今日は基本の関西弁の単語を覚えていきたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 26265,
+    "dDurationMs": 2857,
+    "segs": [ {
+      "utf8": "関西弁は東京の話し方と、"
+    } ]
+  }, {
+    "tStartMs": 29122,
+    "dDurationMs": 4866,
+    "segs": [ {
+      "utf8": "単語とか言い方が違うということがたくさんあります。"
+    } ]
+  }, {
+    "tStartMs": 33988,
+    "dDurationMs": 5603,
+    "segs": [ {
+      "utf8": "今日は会話の中でよく使う5つの言葉を持ってきました。"
+    } ]
+  }, {
+    "tStartMs": 39591,
+    "dDurationMs": 3739,
+    "segs": [ {
+      "utf8": "みんなで練習して関西人になっていきましょう。"
+    } ]
+  }, {
+    "tStartMs": 56025,
+    "dDurationMs": 2891,
+    "segs": [ {
+      "utf8": "…ということで、さっそく1個目です。"
+    } ]
+  }, {
+    "tStartMs": 58916,
+    "dDurationMs": 5434,
+    "segs": [ {
+      "utf8": "これ有名ですよね。「だめ」"
+    } ]
+  }, {
+    "tStartMs": 64350,
+    "dDurationMs": 4185,
+    "segs": [ {
+      "utf8": "これ関西弁で何と言うか知っていますか？"
+    } ]
+  }, {
+    "tStartMs": 68535,
+    "dDurationMs": 6607,
+    "segs": [ {
+      "utf8": "そうですね、関西だと「あかん」になります。"
+    } ]
+  }, {
+    "tStartMs": 75142,
+    "dDurationMs": 3649,
+    "segs": [ {
+      "utf8": "関西の人「だめ」って絶対に言わないです。"
+    } ]
+  }, {
+    "tStartMs": 78791,
+    "dDurationMs": 3579,
+    "segs": [ {
+      "utf8": "私も敬語を話す時は言うんですけど、"
+    } ]
+  }, {
+    "tStartMs": 82370,
+    "dDurationMs": 4117,
+    "segs": [ {
+      "utf8": "全部「あかん」って言いますね。"
+    } ]
+  }, {
+    "tStartMs": 86487,
+    "dDurationMs": 2555,
+    "segs": [ {
+      "utf8": "じゃあちょっと例文見てみましょう。"
+    } ]
+  }, {
+    "tStartMs": 89042,
+    "dDurationMs": 6414,
+    "segs": [ {
+      "utf8": "東京の話し方「そんなにお酒飲んじゃだめだよ」"
+    } ]
+  }, {
+    "tStartMs": 95456,
+    "dDurationMs": 4684,
+    "segs": [ {
+      "utf8": "私、本当によくお酒を飲むので、よく言われるんですが"
+    } ]
+  }, {
+    "tStartMs": 100140,
+    "dDurationMs": 6812,
+    "segs": [ {
+      "utf8": "そんなにお酒飲んじゃだめだよ、これ関西弁で言うと…"
+    } ]
+  }, {
+    "tStartMs": 106952,
+    "dDurationMs": 4419,
+    "segs": [ {
+      "utf8": "「そんなにお酒飲んだらあかんで」になります。"
+    } ]
+  }, {
+    "tStartMs": 111371,
+    "dDurationMs": 2863,
+    "segs": [ {
+      "utf8": "「だめ」は「あかん」になります。"
+    } ]
+  }, {
+    "tStartMs": 114234,
+    "dDurationMs": 2722,
+    "segs": [ {
+      "utf8": "「そんなお酒飲んだらあかんで」"
+    } ]
+  }, {
+    "tStartMs": 116956,
+    "dDurationMs": 5375,
+    "segs": [ {
+      "utf8": "そしてここの「飲んじゃ」これ「飲んでは」と同じなんですけど"
+    } ]
+  }, {
+    "tStartMs": 122331,
+    "dDurationMs": 4173,
+    "segs": [ {
+      "utf8": "関西弁にする時、絶対「たら」にしてください。"
+    } ]
+  }, {
+    "tStartMs": 126504,
+    "dDurationMs": 3222,
+    "segs": [ {
+      "utf8": "「飲んじゃあかんで」は言いません。"
+    } ]
+  }, {
+    "tStartMs": 129726,
+    "dDurationMs": 3612,
+    "segs": [ {
+      "utf8": "「飲んだらあかんで」とか「食べたらあかんで」とか"
+    } ]
+  }, {
+    "tStartMs": 133338,
+    "dDurationMs": 4864,
+    "segs": [ {
+      "utf8": "「行ったらあかんで」と言います。ここセットですね。"
+    } ]
+  }, {
+    "tStartMs": 138202,
+    "dDurationMs": 2634,
+    "segs": [ {
+      "utf8": "あかん！あかん！覚えてください。"
+    } ]
+  }, {
+    "tStartMs": 140836,
+    "dDurationMs": 2862,
+    "segs": [ {
+      "utf8": "2つ目「いい」です。"
+    } ]
+  }, {
+    "tStartMs": 143698,
+    "dDurationMs": 5067,
+    "segs": [ {
+      "utf8": "これは「良い」の意味ですね。good!この意味です。"
+    } ]
+  }, {
+    "tStartMs": 148765,
+    "dDurationMs": 5905,
+    "segs": [ {
+      "utf8": "「いい」は関西弁では「ええ」になります。"
+    } ]
+  }, {
+    "tStartMs": 154670,
+    "dDurationMs": 3669,
+    "segs": [ {
+      "utf8": "例文見ましょう。東京の言い方…"
+    } ]
+  }, {
+    "tStartMs": 158339,
+    "dDurationMs": 4163,
+    "segs": [ {
+      "utf8": "「その服めっちゃいいね」人をほめる時ですね。"
+    } ]
+  }, {
+    "tStartMs": 162502,
+    "dDurationMs": 5714,
+    "segs": [ {
+      "utf8": "「えー！その服めっちゃいいね！」関西弁では…"
+    } ]
+  }, {
+    "tStartMs": 168216,
+    "dDurationMs": 3848,
+    "segs": [ {
+      "utf8": "「その服めっちゃええな」と言います。"
+    } ]
+  }, {
+    "tStartMs": 172064,
+    "dDurationMs": 3091,
+    "segs": [ {
+      "utf8": "「いい」が「ええ」になります。"
+    } ]
+  }, {
+    "tStartMs": 175155,
+    "dDurationMs": 3636,
+    "segs": [ {
+      "utf8": "「その服めっちゃええな」「そのカバンめっちゃええな」"
+    } ]
+  }, {
+    "tStartMs": 178791,
+    "dDurationMs": 2340,
+    "segs": [ {
+      "utf8": "「そのくつ、めっちゃええな」"
+    } ]
+  }, {
+    "tStartMs": 181131,
+    "dDurationMs": 3420,
+    "segs": [ {
+      "utf8": "「ええな」です。いいですか？"
+    } ]
+  }, {
+    "tStartMs": 184551,
+    "dDurationMs": 5221,
+    "segs": [ {
+      "utf8": "じゃあ3つ目いきましょう。「そうだ」ですね。"
+    } ]
+  }, {
+    "tStartMs": 189772,
+    "dDurationMs": 4645,
+    "segs": [ {
+      "utf8": "何かをいきなり思い出した時「あ、そうだ！」言いますね。"
+    } ]
+  }, {
+    "tStartMs": 194417,
+    "dDurationMs": 6167,
+    "segs": [ {
+      "utf8": "これ関西弁では「せや」になります。ちょっと短いですね。"
+    } ]
+  }, {
+    "tStartMs": 200584,
+    "dDurationMs": 3565,
+    "segs": [ {
+      "utf8": "「あ、せや！せやせやせやせや！」これです。"
+    } ]
+  }, {
+    "tStartMs": 204149,
+    "dDurationMs": 7000,
+    "segs": [ {
+      "utf8": "例文見てみましょう、東京の言い方…「そうだよね」"
+    } ]
+  }, {
+    "tStartMs": 211149,
+    "dDurationMs": 6458,
+    "segs": [ {
+      "utf8": "話してて「N1すごく難しいんだ」「あーそうだよね」"
+    } ]
+  }, {
+    "tStartMs": 217607,
+    "dDurationMs": 2649,
+    "segs": [ {
+      "utf8": "これ関西弁では、"
+    } ]
+  }, {
+    "tStartMs": 220256,
+    "dDurationMs": 5978,
+    "segs": [ {
+      "utf8": "「N1すごく難しいんだ」「あ、 せやんな」になります。"
+    } ]
+  }, {
+    "tStartMs": 226234,
+    "dDurationMs": 2761,
+    "segs": [ {
+      "utf8": "「せやんな」です。"
+    } ]
+  }, {
+    "tStartMs": 228995,
+    "dDurationMs": 5064,
+    "segs": [ {
+      "utf8": "他にも「そうだっけ」この「そう」の部分ですね。"
+    } ]
+  }, {
+    "tStartMs": 234059,
+    "dDurationMs": 5404,
+    "segs": [ {
+      "utf8": "これが「せや」になるので、「そうだっけ」と言うとき、"
+    } ]
+  }, {
+    "tStartMs": 239463,
+    "dDurationMs": 3266,
+    "segs": [ {
+      "utf8": "「ゆか先生って神戸に住んでるんだっけ？」"
+    } ]
+  }, {
+    "tStartMs": 242729,
+    "dDurationMs": 4641,
+    "segs": [ {
+      "utf8": "「ああ、そうだっけ？」これ関西弁だと…"
+    } ]
+  }, {
+    "tStartMs": 247370,
+    "dDurationMs": 2904,
+    "segs": [ {
+      "utf8": "「せやっけ？」になります。"
+    } ]
+  }, {
+    "tStartMs": 250274,
+    "dDurationMs": 2440,
+    "segs": [ {
+      "utf8": "「そうだ」が「せや」になりますからね。"
+    } ]
+  }, {
+    "tStartMs": 252714,
+    "dDurationMs": 4484,
+    "segs": [ {
+      "utf8": "他にも「そうだね」会話でよく使いますね。"
+    } ]
+  }, {
+    "tStartMs": 257198,
+    "dDurationMs": 4829,
+    "segs": [ {
+      "utf8": "「あぁ、日本語の勉強難しいね」「うん、そうだね」"
+    } ]
+  }, {
+    "tStartMs": 262027,
+    "dDurationMs": 5303,
+    "segs": [ {
+      "utf8": "これは「せやな」になります。「あぁ…せやな、せやな」"
+    } ]
+  }, {
+    "tStartMs": 267330,
+    "dDurationMs": 4544,
+    "segs": [ {
+      "utf8": "こんな感じで「そうだ」は「せや」に変わります。"
+    } ]
+  }, {
+    "tStartMs": 271874,
+    "dDurationMs": 2407,
+    "segs": [ {
+      "utf8": "「せやんな」とか「せやっけ」とか"
+    } ]
+  }, {
+    "tStartMs": 274281,
+    "dDurationMs": 4386,
+    "segs": [ {
+      "utf8": "「せやな」と使います。いいですか？"
+    } ]
+  }, {
+    "tStartMs": 278667,
+    "dDurationMs": 4702,
+    "segs": [ {
+      "utf8": "じゃあ4つ目いきましょう。これも結構有名ですね。"
+    } ]
+  }, {
+    "tStartMs": 283369,
+    "dDurationMs": 3267,
+    "segs": [ {
+      "utf8": "「違う」です。"
+    } ]
+  }, {
+    "tStartMs": 286636,
+    "dDurationMs": 6324,
+    "segs": [ {
+      "utf8": "これ関西弁では「ちゃう」になります。"
+    } ]
+  }, {
+    "tStartMs": 292960,
+    "dDurationMs": 4258,
+    "segs": [ {
+      "utf8": "これ聞いたことがあるんじゃないですか？"
+    } ]
+  }, {
+    "tStartMs": 297218,
+    "dDurationMs": 6521,
+    "segs": [ {
+      "utf8": "例文見てみましょう。東京の言い方「え、違うよ？」"
+    } ]
+  }, {
+    "tStartMs": 303739,
+    "dDurationMs": 4637,
+    "segs": [ {
+      "utf8": "「え、それ違うよ？」これ関西だと…"
+    } ]
+  }, {
+    "tStartMs": 308376,
+    "dDurationMs": 2971,
+    "segs": [ {
+      "utf8": "「え、ちゃうで？」になります。"
+    } ]
+  }, {
+    "tStartMs": 311347,
+    "dDurationMs": 3411,
+    "segs": [ {
+      "utf8": "えーそれちゃうで？ちゃうちゃうちゃうちゃう！ちゃうで！"
+    } ]
+  }, {
+    "tStartMs": 314758,
+    "dDurationMs": 4695,
+    "segs": [ {
+      "utf8": "「違う」は「ちゃう」になります。いいですか？"
+    } ]
+  }, {
+    "tStartMs": 319453,
+    "dDurationMs": 1744,
+    "segs": [ {
+      "utf8": "じゃあ最後5つ目です。"
+    } ]
+  }, {
+    "tStartMs": 321197,
+    "dDurationMs": 3063,
+    "segs": [ {
+      "utf8": "これも有名なんじゃないかなと思います。"
+    } ]
+  }, {
+    "tStartMs": 324260,
+    "dDurationMs": 5908,
+    "segs": [ {
+      "utf8": "「いくら」「何円ですか」という意味の「いくら」ですね。"
+    } ]
+  }, {
+    "tStartMs": 330168,
+    "dDurationMs": 6076,
+    "segs": [ {
+      "utf8": "これは関西では「なんぼ？」です。"
+    } ]
+  }, {
+    "tStartMs": 336244,
+    "dDurationMs": 8151,
+    "segs": [ {
+      "utf8": "例文行きましょう！東京の言い方「その本いくらだった？」"
+    } ]
+  }, {
+    "tStartMs": 344395,
+    "dDurationMs": 7854,
+    "segs": [ {
+      "utf8": "これ関西では「その本なんぼやった？」と言います。"
+    } ]
+  }, {
+    "tStartMs": 352249,
+    "dDurationMs": 3648,
+    "segs": [ {
+      "utf8": "「いくらだった？」「なんぼやった？」"
+    } ]
+  }, {
+    "tStartMs": 355897,
+    "dDurationMs": 3837,
+    "segs": [ {
+      "utf8": "「いくら」が「なんぼ」になります。"
+    } ]
+  }, {
+    "tStartMs": 359734,
+    "dDurationMs": 4968,
+    "segs": [ {
+      "utf8": "はい、みなさん、この5つ会話でよく使うので覚えてください。"
+    } ]
+  }, {
+    "tStartMs": 364702,
+    "dDurationMs": 2693,
+    "segs": [ {
+      "utf8": "最後に問題いきましょうか！"
+    } ]
+  }, {
+    "tStartMs": 367395,
+    "dDurationMs": 3004,
+    "segs": [ {
+      "utf8": "ちょっと長い文章を作りました。"
+    } ]
+  }, {
+    "tStartMs": 370399,
+    "dDurationMs": 3346,
+    "segs": [ {
+      "utf8": "これは東京の話し方です。"
+    } ]
+  }, {
+    "tStartMs": 373745,
+    "dDurationMs": 3983,
+    "segs": [ {
+      "utf8": "まず会話見てみましょう。AさんとBさんがいます。"
+    } ]
+  }, {
+    "tStartMs": 377728,
+    "dDurationMs": 1932,
+    "segs": [ {
+      "utf8": "友達ですね。"
+    } ]
+  }, {
+    "tStartMs": 379660,
+    "dDurationMs": 5804,
+    "segs": [ {
+      "utf8": "「お、新しい髪型いいじゃん！自分で切ったの？」"
+    } ]
+  }, {
+    "tStartMs": 385464,
+    "dDurationMs": 4156,
+    "segs": [ {
+      "utf8": "Bさん「違うよ。美容院。」"
+    } ]
+  }, {
+    "tStartMs": 389620,
+    "dDurationMs": 3553,
+    "segs": [ {
+      "utf8": "自分じゃなくて、美容院で切ったと言っています。"
+    } ]
+  }, {
+    "tStartMs": 393173,
+    "dDurationMs": 5562,
+    "segs": [ {
+      "utf8": "Aさん「まぁ、そうだよね。いくらだった？」"
+    } ]
+  }, {
+    "tStartMs": 398735,
+    "dDurationMs": 2891,
+    "segs": [ {
+      "utf8": "「3000円くらい。」"
+    } ]
+  }, {
+    "tStartMs": 401626,
+    "dDurationMs": 2530,
+    "segs": [ {
+      "utf8": "「いいね、似合ってる！」"
+    } ]
+  }, {
+    "tStartMs": 404156,
+    "dDurationMs": 5253,
+    "segs": [ {
+      "utf8": "「あ、そうだ！明日ゆかと飲むけど、来る？」"
+    } ]
+  }, {
+    "tStartMs": 409409,
+    "dDurationMs": 4062,
+    "segs": [ {
+      "utf8": "「明日はだめだ、バイトある。」"
+    } ]
+  }, {
+    "tStartMs": 413471,
+    "dDurationMs": 2401,
+    "segs": [ {
+      "utf8": "こういう会話です。いいですか？"
+    } ]
+  }, {
+    "tStartMs": 415872,
+    "dDurationMs": 5353,
+    "segs": [ {
+      "utf8": "これを関西弁の会話に変えていきたいと思います。いいですか？"
+    } ]
+  }, {
+    "tStartMs": 421225,
+    "dDurationMs": 1941,
+    "segs": [ {
+      "utf8": "はい、赤色に変わりました！"
+    } ]
+  }, {
+    "tStartMs": 423166,
+    "dDurationMs": 3716,
+    "segs": [ {
+      "utf8": "関西弁にできそうな部分は、ここですね。"
+    } ]
+  }, {
+    "tStartMs": 426882,
+    "dDurationMs": 3868,
+    "segs": [ {
+      "utf8": "線を引きました。1つずつ見てみましょう。"
+    } ]
+  }, {
+    "tStartMs": 430750,
+    "dDurationMs": 5830,
+    "segs": [ {
+      "utf8": "まず1行目「お、新しい髪型、いいじゃん！」"
+    } ]
+  }, {
+    "tStartMs": 436580,
+    "dDurationMs": 3129,
+    "segs": [ {
+      "utf8": "「いい」は「ええ」になるんでしたよね。"
+    } ]
+  }, {
+    "tStartMs": 439709,
+    "dDurationMs": 5191,
+    "segs": [ {
+      "utf8": "「新しい髪型ええやん」になります。"
+    } ]
+  }, {
+    "tStartMs": 444900,
+    "dDurationMs": 1709,
+    "segs": [ {
+      "utf8": "ちょっと、勉強してないんですけど"
+    } ]
+  }, {
+    "tStartMs": 446609,
+    "dDurationMs": 4403,
+    "segs": [ {
+      "utf8": "「いいじゃん」の「じゃん」も関西では言わないです。"
+    } ]
+  }, {
+    "tStartMs": 451012,
+    "dDurationMs": 2185,
+    "segs": [ {
+      "utf8": "「じゃん」とか言わないですね。"
+    } ]
+  }, {
+    "tStartMs": 453197,
+    "dDurationMs": 1797,
+    "segs": [ {
+      "utf8": "「やん」に変えてください。"
+    } ]
+  }, {
+    "tStartMs": 454994,
+    "dDurationMs": 4007,
+    "segs": [ {
+      "utf8": "「いいじゃん」は「ええやん」ですね。"
+    } ]
+  }, {
+    "tStartMs": 459001,
+    "dDurationMs": 2785,
+    "segs": [ {
+      "utf8": "「お、新しい髪型ええやん」"
+    } ]
+  }, {
+    "tStartMs": 461786,
+    "dDurationMs": 5335,
+    "segs": [ {
+      "utf8": "次、「自分で切ったの？」これもまだ勉強してないかな。"
+    } ]
+  }, {
+    "tStartMs": 467121,
+    "dDurationMs": 2797,
+    "segs": [ {
+      "utf8": "切ったの？と質問する時、"
+    } ]
+  }, {
+    "tStartMs": 469918,
+    "dDurationMs": 4943,
+    "segs": [ {
+      "utf8": "これ関西だと「切ったん？」になります。"
+    } ]
+  }, {
+    "tStartMs": 474861,
+    "dDurationMs": 2212,
+    "segs": [ {
+      "utf8": "覚えてください。よく使います。"
+    } ]
+  }, {
+    "tStartMs": 477073,
+    "dDurationMs": 3728,
+    "segs": [ {
+      "utf8": "お、新しい髪型ええやん。自分で切ったん？"
+    } ]
+  }, {
+    "tStartMs": 480801,
+    "dDurationMs": 3179,
+    "segs": [ {
+      "utf8": "自分で切ったの？という質問です。"
+    } ]
+  }, {
+    "tStartMs": 483980,
+    "dDurationMs": 4666,
+    "segs": [ {
+      "utf8": "次、Bさんが「違うよ。美容院」と言っています。"
+    } ]
+  }, {
+    "tStartMs": 488646,
+    "dDurationMs": 5529,
+    "segs": [ {
+      "utf8": "「違う」は？そうですね。「ちゃう」でしたよね。"
+    } ]
+  }, {
+    "tStartMs": 494175,
+    "dDurationMs": 3554,
+    "segs": [ {
+      "utf8": "「ちゃうで。美容院」と言っています。"
+    } ]
+  }, {
+    "tStartMs": 497729,
+    "dDurationMs": 3457,
+    "segs": [ {
+      "utf8": "ちゃう、ちゃう、ちゃう、ちゃうで、美容院で切ってん。"
+    } ]
+  }, {
+    "tStartMs": 501186,
+    "dDurationMs": 4736,
+    "segs": [ {
+      "utf8": "Aさん「まあ、そうだよね」何でしたか？"
+    } ]
+  }, {
+    "tStartMs": 505922,
+    "dDurationMs": 6720,
+    "segs": [ {
+      "utf8": "「そうだよね」は、ちょっと短くなって「せやんな」でしたね。"
+    } ]
+  }, {
+    "tStartMs": 512642,
+    "dDurationMs": 2998,
+    "segs": [ {
+      "utf8": "せやんな、自分では切らへんか。"
+    } ]
+  }, {
+    "tStartMs": 515640,
+    "dDurationMs": 2759,
+    "segs": [ {
+      "utf8": "まぁ美容院で切ったやんな、まぁせやんな。"
+    } ]
+  }, {
+    "tStartMs": 518399,
+    "dDurationMs": 5883,
+    "segs": [ {
+      "utf8": "次「いくらだった？」「いくら」は…？いいですね。"
+    } ]
+  }, {
+    "tStartMs": 524282,
+    "dDurationMs": 3134,
+    "segs": [ {
+      "utf8": "「なんぼやった？」です。"
+    } ]
+  }, {
+    "tStartMs": 527416,
+    "dDurationMs": 3802,
+    "segs": [ {
+      "utf8": "「なんぼやった？」「いくらだった？」「なんぼやった？」"
+    } ]
+  }, {
+    "tStartMs": 531218,
+    "dDurationMs": 2831,
+    "segs": [ {
+      "utf8": "うん、いいですね。「3000円くらい」"
+    } ]
+  }, {
+    "tStartMs": 534049,
+    "dDurationMs": 4129,
+    "segs": [ {
+      "utf8": "次、お！また来ましたね。「いいね！」これは？"
+    } ]
+  }, {
+    "tStartMs": 538178,
+    "dDurationMs": 4677,
+    "segs": [ {
+      "utf8": "「いい」は？そうですね。「ええな」に変わります。"
+    } ]
+  }, {
+    "tStartMs": 542855,
+    "dDurationMs": 3360,
+    "segs": [ {
+      "utf8": "ええな、似合ってる！"
+    } ]
+  }, {
+    "tStartMs": 546215,
+    "dDurationMs": 3147,
+    "segs": [ {
+      "utf8": "「あ、そうだ！」何か思い出しました。"
+    } ]
+  }, {
+    "tStartMs": 549362,
+    "dDurationMs": 6414,
+    "segs": [ {
+      "utf8": "「そうだ」は？そうですね。「あ、せや！」ですね。"
+    } ]
+  }, {
+    "tStartMs": 555776,
+    "dDurationMs": 2285,
+    "segs": [ {
+      "utf8": "あ、せやせやせやせやせや！思い出しました。"
+    } ]
+  }, {
+    "tStartMs": 558061,
+    "dDurationMs": 4802,
+    "segs": [ {
+      "utf8": "せやせやせや！「明日ゆかと飲むけど来る？」"
+    } ]
+  }, {
+    "tStartMs": 562863,
+    "dDurationMs": 6158,
+    "segs": [ {
+      "utf8": "返事は？「明日はだめだ」「だめ」は何でしたか？"
+    } ]
+  }, {
+    "tStartMs": 569021,
+    "dDurationMs": 5450,
+    "segs": [ {
+      "utf8": "「だめ」は？そうですね。「あかんわ」ですね。"
+    } ]
+  }, {
+    "tStartMs": 574471,
+    "dDurationMs": 4021,
+    "segs": [ {
+      "utf8": "「明日はあかんわ、バイトある」"
+    } ]
+  }, {
+    "tStartMs": 578492,
+    "dDurationMs": 3511,
+    "segs": [ {
+      "utf8": "バイトあるから行かれへん…て言ってます。"
+    } ]
+  }, {
+    "tStartMs": 582003,
+    "dDurationMs": 4278,
+    "segs": [ {
+      "utf8": "はい！これで完璧な関西弁の会話になりました。"
+    } ]
+  }, {
+    "tStartMs": 586281,
+    "dDurationMs": 3182,
+    "segs": [ {
+      "utf8": "ちょっと上からもう1回読んでみますね。"
+    } ]
+  }, {
+    "tStartMs": 589463,
+    "dDurationMs": 6308,
+    "segs": [ {
+      "utf8": "お、新しい髪型ええやん！自分で切ったん？"
+    } ]
+  }, {
+    "tStartMs": 595771,
+    "dDurationMs": 3283,
+    "segs": [ {
+      "utf8": "ちゃうで、美容院！"
+    } ]
+  }, {
+    "tStartMs": 599054,
+    "dDurationMs": 4352,
+    "segs": [ {
+      "utf8": "まぁ、せやんな。なんぼやった？"
+    } ]
+  }, {
+    "tStartMs": 603406,
+    "dDurationMs": 2801,
+    "segs": [ {
+      "utf8": "3000円くらい。"
+    } ]
+  }, {
+    "tStartMs": 606207,
+    "dDurationMs": 3151,
+    "segs": [ {
+      "utf8": "ええな、似合ってる！"
+    } ]
+  }, {
+    "tStartMs": 609358,
+    "dDurationMs": 5666,
+    "segs": [ {
+      "utf8": "あ、せや！明日ゆかと飲むけど、来る？"
+    } ]
+  }, {
+    "tStartMs": 615024,
+    "dDurationMs": 4081,
+    "segs": [ {
+      "utf8": "明日はあかんわ、バイトある。"
+    } ]
+  }, {
+    "tStartMs": 619105,
+    "dDurationMs": 3949,
+    "segs": [ {
+      "utf8": "はい！これで完璧な関西弁の会話になりました。"
+    } ]
+  }, {
+    "tStartMs": 623054,
+    "dDurationMs": 1780,
+    "segs": [ {
+      "utf8": "もう、ここまでできたらね、"
+    } ]
+  }, {
+    "tStartMs": 624834,
+    "dDurationMs": 3735,
+    "segs": [ {
+      "utf8": "そろそろ、もう関西人みたいに話せるように"
+    } ]
+  }, {
+    "tStartMs": 628569,
+    "dDurationMs": 2523,
+    "segs": [ {
+      "utf8": "なっているのではないかなと思います！"
+    } ]
+  }, {
+    "tStartMs": 631092,
+    "dDurationMs": 2062,
+    "segs": [ {
+      "utf8": "今回7回目なんですけど、"
+    } ]
+  }, {
+    "tStartMs": 633154,
+    "dDurationMs": 3919,
+    "segs": [ {
+      "utf8": "1回目から6回目までの関西弁講座もあるので"
+    } ]
+  }, {
+    "tStartMs": 637073,
+    "dDurationMs": 3678,
+    "segs": [ {
+      "utf8": "ぜひ皆さん、もう1回見て練習してください。"
+    } ]
+  }, {
+    "tStartMs": 640751,
+    "dDurationMs": 3199,
+    "segs": [ {
+      "utf8": "では、みなさん、また次の動画でお会いしましょう！"
+    } ]
+  }, {
+    "tStartMs": 643950,
+    "dDurationMs": 7717,
+    "segs": [ {
+      "utf8": "ほなな〜おおきに〜まいど〜なんぼやねん〜ばいばい〜"
+    } ]
+  } ]
+}

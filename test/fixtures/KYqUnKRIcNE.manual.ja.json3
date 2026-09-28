@@ -1,0 +1,841 @@
+{
+  "wireMagic": "pb3",
+  "pens": [ {
+  
+  } ],
+  "wsWinStyles": [ {
+  
+  } ],
+  "wpWinPositions": [ {
+  
+  } ],
+  "events": [ {
+    "tStartMs": 12905,
+    "dDurationMs": 2698,
+    "segs": [ {
+      "utf8": "教科書にない日本語"
+    } ]
+  }, {
+    "tStartMs": 15603,
+    "dDurationMs": 6817,
+    "segs": [ {
+      "utf8": "露骨に、理不尽、割に合わない、悪気はない、爆睡する"
+    } ]
+  }, {
+    "tStartMs": 25781,
+    "dDurationMs": 1725,
+    "segs": [ {
+      "utf8": "ねえ、今度飲み会しようよ！"
+    } ]
+  }, {
+    "tStartMs": 27506,
+    "dDurationMs": 2833,
+    "segs": [ {
+      "utf8": "いいね！やろう！"
+    } ]
+  }, {
+    "tStartMs": 30339,
+    "dDurationMs": 1878,
+    "segs": [ {
+      "utf8": "あと、他の人も誘おうか。"
+    } ]
+  }, {
+    "tStartMs": 32217,
+    "dDurationMs": 2252,
+    "segs": [ {
+      "utf8": "うん、いいね。誰を誘う？"
+    } ]
+  }, {
+    "tStartMs": 34469,
+    "dDurationMs": 4182,
+    "segs": [ {
+      "utf8": "えっと…アインちゃん呼ぼうか。"
+    } ]
+  }, {
+    "tStartMs": 38651,
+    "dDurationMs": 2057,
+    "segs": [ {
+      "utf8": "うん、いいね！アインちゃん呼ぼう。"
+    } ]
+  }, {
+    "tStartMs": 40708,
+    "dDurationMs": 2476,
+    "segs": [ {
+      "utf8": "それから、キーちゃんも？"
+    } ]
+  }, {
+    "tStartMs": 43184,
+    "dDurationMs": 2728,
+    "segs": [ {
+      "utf8": "いいね！最高！キーちゃん呼ぼう！"
+    } ]
+  }, {
+    "tStartMs": 45912,
+    "dDurationMs": 5028,
+    "segs": [ {
+      "utf8": "あとは…ゆうき君とか？"
+    } ]
+  }, {
+    "tStartMs": 50940,
+    "dDurationMs": 1934,
+    "segs": [ {
+      "utf8": "え？"
+    } ]
+  }, {
+    "tStartMs": 52874,
+    "dDurationMs": 1664,
+    "segs": [ {
+      "utf8": "え、何？"
+    } ]
+  }, {
+    "tStartMs": 54538,
+    "dDurationMs": 2947,
+    "segs": [ {
+      "utf8": "え、ゆうき君？"
+    } ]
+  }, {
+    "tStartMs": 57485,
+    "dDurationMs": 1746,
+    "segs": [ {
+      "utf8": "うん、だめ？"
+    } ]
+  }, {
+    "tStartMs": 59231,
+    "dDurationMs": 3254,
+    "segs": [ {
+      "utf8": "いや、だめじゃないけど…。"
+    } ]
+  }, {
+    "tStartMs": 62485,
+    "dDurationMs": 2329,
+    "segs": [ {
+      "utf8": "うん、呼ぼうか。"
+    } ]
+  }, {
+    "tStartMs": 64814,
+    "dDurationMs": 2442,
+    "segs": [ {
+      "utf8": "呼ぶの嫌なんだ？"
+    } ]
+  }, {
+    "tStartMs": 67256,
+    "dDurationMs": 4519,
+    "segs": [ {
+      "utf8": "いや、そんなことないよ。なんで？"
+    } ]
+  }, {
+    "tStartMs": 71775,
+    "dDurationMs": 11127,
+    "segs": [ {
+      "utf8": "だって、露骨に嫌な顔してるもん。"
+    } ]
+  }, {
+    "tStartMs": 82902,
+    "dDurationMs": 2137,
+    "segs": [ {
+      "utf8": "『露骨に』"
+    } ]
+  }, {
+    "tStartMs": 85039,
+    "dDurationMs": 4249,
+    "segs": [ {
+      "utf8": "いや？そんなことないよ？"
+    } ]
+  }, {
+    "tStartMs": 89288,
+    "dDurationMs": 1677,
+    "segs": [ {
+      "utf8": "じゃあ、アインさん呼ぶ？"
+    } ]
+  }, {
+    "tStartMs": 90965,
+    "dDurationMs": 1299,
+    "segs": [ {
+      "utf8": "うん！"
+    } ]
+  }, {
+    "tStartMs": 92264,
+    "dDurationMs": 1284,
+    "segs": [ {
+      "utf8": "キーさんは？"
+    } ]
+  }, {
+    "tStartMs": 93548,
+    "dDurationMs": 1306,
+    "segs": [ {
+      "utf8": "うん！呼ぶ！"
+    } ]
+  }, {
+    "tStartMs": 94854,
+    "dDurationMs": 1157,
+    "segs": [ {
+      "utf8": "ゆうき君は？"
+    } ]
+  }, {
+    "tStartMs": 96011,
+    "dDurationMs": 1433,
+    "segs": [ {
+      "utf8": "・・・。"
+    } ]
+  }, {
+    "tStartMs": 97444,
+    "dDurationMs": 4355,
+    "segs": [ {
+      "utf8": "ほら！露骨に嫌そう！"
+    } ]
+  }, {
+    "tStartMs": 101799,
+    "dDurationMs": 3205,
+    "segs": [ {
+      "utf8": "『露骨に』"
+    } ]
+  }, {
+    "tStartMs": 105004,
+    "dDurationMs": 4244,
+    "segs": [ {
+      "utf8": "隠さないでそのまま表すという意味です。"
+    } ]
+  }, {
+    "tStartMs": 109248,
+    "dDurationMs": 2896,
+    "segs": [ {
+      "utf8": "特に、悪い気持ちや考えなど、"
+    } ]
+  }, {
+    "tStartMs": 112144,
+    "dDurationMs": 3452,
+    "segs": [ {
+      "utf8": "本当は見せない方がいいものを、遠慮しないで"
+    } ]
+  }, {
+    "tStartMs": 115596,
+    "dDurationMs": 3971,
+    "segs": [ {
+      "utf8": "全部見せる、と言う時に使う言葉です。"
+    } ]
+  }, {
+    "tStartMs": 119750,
+    "dDurationMs": 3105,
+    "segs": [ {
+      "utf8": "『理不尽』"
+    } ]
+  }, {
+    "tStartMs": 122855,
+    "dDurationMs": 2267,
+    "segs": [ {
+      "utf8": "はぁ…。"
+    } ]
+  }, {
+    "tStartMs": 125122,
+    "dDurationMs": 2342,
+    "segs": [ {
+      "utf8": "ゆかちゃん、どうしたの？"
+    } ]
+  }, {
+    "tStartMs": 127464,
+    "dDurationMs": 2597,
+    "segs": [ {
+      "utf8": "最近、バイトが大変でさ。"
+    } ]
+  }, {
+    "tStartMs": 130061,
+    "dDurationMs": 2938,
+    "segs": [ {
+      "utf8": "何か嫌なことあったの？"
+    } ]
+  }, {
+    "tStartMs": 132999,
+    "dDurationMs": 3559,
+    "segs": [ {
+      "utf8": "変なお客さんばっかり来るんだよね。"
+    } ]
+  }, {
+    "tStartMs": 136558,
+    "dDurationMs": 1819,
+    "segs": [ {
+      "utf8": "え〜？"
+    } ]
+  }, {
+    "tStartMs": 138377,
+    "dDurationMs": 3777,
+    "segs": [ {
+      "utf8": "お客さん、ケーキ3つしか頼んでないのに、"
+    } ]
+  }, {
+    "tStartMs": 142154,
+    "dDurationMs": 3586,
+    "segs": [ {
+      "utf8": "もう1つ入れてください。って言ってくるし…。"
+    } ]
+  }, {
+    "tStartMs": 145740,
+    "dDurationMs": 2445,
+    "segs": [ {
+      "utf8": "え？そんなこと言うの？"
+    } ]
+  }, {
+    "tStartMs": 148185,
+    "dDurationMs": 5113,
+    "segs": [ {
+      "utf8": "しかも、値段も安くしてくれって言ってくるしさ。"
+    } ]
+  }, {
+    "tStartMs": 153298,
+    "dDurationMs": 8188,
+    "segs": [ {
+      "utf8": "えぇ？何それ、理不尽だな。"
+    } ]
+  }, {
+    "tStartMs": 161486,
+    "dDurationMs": 1941,
+    "segs": [ {
+      "utf8": "『理不尽』"
+    } ]
+  }, {
+    "tStartMs": 163427,
+    "dDurationMs": 3846,
+    "segs": [ {
+      "utf8": "うーん、でしょ？本当に困るよ。"
+    } ]
+  }, {
+    "tStartMs": 167273,
+    "dDurationMs": 1849,
+    "segs": [ {
+      "utf8": "大変だね。"
+    } ]
+  }, {
+    "tStartMs": 169122,
+    "dDurationMs": 2776,
+    "segs": [ {
+      "utf8": "だから私も、お客さんに、"
+    } ]
+  }, {
+    "tStartMs": 171898,
+    "dDurationMs": 3533,
+    "segs": [ {
+      "utf8": "「謝るまでお店から出しません」って言って"
+    } ]
+  }, {
+    "tStartMs": 175431,
+    "dDurationMs": 2660,
+    "segs": [ {
+      "utf8": "ドアに鍵かけてるんだ。"
+    } ]
+  }, {
+    "tStartMs": 178091,
+    "dDurationMs": 2204,
+    "segs": [ {
+      "utf8": "え？それ大丈夫なの？"
+    } ]
+  }, {
+    "tStartMs": 180295,
+    "dDurationMs": 2146,
+    "segs": [ {
+      "utf8": "うん、大丈夫でしょ？"
+    } ]
+  }, {
+    "tStartMs": 182441,
+    "dDurationMs": 4553,
+    "segs": [ {
+      "utf8": "え？大丈夫じゃないよ！お客さんでしょ？"
+    } ]
+  }, {
+    "tStartMs": 186994,
+    "dDurationMs": 3627,
+    "segs": [ {
+      "utf8": "あなたの方がよっぽど理不尽だね。"
+    } ]
+  }, {
+    "tStartMs": 190621,
+    "dDurationMs": 2640,
+    "segs": [ {
+      "utf8": "そうかな？"
+    } ]
+  }, {
+    "tStartMs": 193261,
+    "dDurationMs": 3192,
+    "segs": [ {
+      "utf8": "『理不尽』"
+    } ]
+  }, {
+    "tStartMs": 196453,
+    "dDurationMs": 2905,
+    "segs": [ {
+      "utf8": "道理に合わないという意味です。"
+    } ]
+  }, {
+    "tStartMs": 199358,
+    "dDurationMs": 5642,
+    "segs": [ {
+      "utf8": "正しい論理ではないから納得できないという時に使います。"
+    } ]
+  }, {
+    "tStartMs": 205000,
+    "dDurationMs": 5500,
+    "segs": [ {
+      "utf8": "理不尽な要求、理不尽な扱い、理不尽なクレーム"
+    } ]
+  }, {
+    "tStartMs": 210500,
+    "dDurationMs": 3034,
+    "segs": [ {
+      "utf8": "のように使うことが多いです。"
+    } ]
+  }, {
+    "tStartMs": 213534,
+    "dDurationMs": 3113,
+    "segs": [ {
+      "utf8": "『割に合わない』"
+    } ]
+  }, {
+    "tStartMs": 219562,
+    "dDurationMs": 2241,
+    "segs": [ {
+      "utf8": "はぁ…。おはよう。"
+    } ]
+  }, {
+    "tStartMs": 221803,
+    "dDurationMs": 3977,
+    "segs": [ {
+      "utf8": "おはよう！あれ？なんか疲れてる？"
+    } ]
+  }, {
+    "tStartMs": 225780,
+    "dDurationMs": 3945,
+    "segs": [ {
+      "utf8": "うん。最近新しいバイト始めたんだよね。"
+    } ]
+  }, {
+    "tStartMs": 229725,
+    "dDurationMs": 3167,
+    "segs": [ {
+      "utf8": "あ、そうなんだ！何のバイト？"
+    } ]
+  }, {
+    "tStartMs": 232892,
+    "dDurationMs": 6327,
+    "segs": [ {
+      "utf8": "工場のバイトなんだけどさ、夜の仕事だからすごく疲れる。"
+    } ]
+  }, {
+    "tStartMs": 239219,
+    "dDurationMs": 4216,
+    "segs": [ {
+      "utf8": "そうだね。お疲れさま。工場は大変だよね。"
+    } ]
+  }, {
+    "tStartMs": 243435,
+    "dDurationMs": 1824,
+    "segs": [ {
+      "utf8": "時給はいくらなの？"
+    } ]
+  }, {
+    "tStartMs": 245259,
+    "dDurationMs": 1099,
+    "segs": [ {
+      "utf8": "100円"
+    } ]
+  }, {
+    "tStartMs": 246358,
+    "dDurationMs": 3478,
+    "segs": [ {
+      "utf8": "100円？！時給100円？！？！"
+    } ]
+  }, {
+    "tStartMs": 249836,
+    "dDurationMs": 9655,
+    "segs": [ {
+      "utf8": "やばいよ、その仕事！割に合わないよ！"
+    } ]
+  }, {
+    "tStartMs": 259491,
+    "dDurationMs": 1897,
+    "segs": [ {
+      "utf8": "『割に合わない』"
+    } ]
+  }, {
+    "tStartMs": 261388,
+    "dDurationMs": 6535,
+    "segs": [ {
+      "utf8": "でも、働いてる人が全員かっこいいから…"
+    } ]
+  }, {
+    "tStartMs": 267923,
+    "dDurationMs": 2889,
+    "segs": [ {
+      "utf8": "え？そうなの？"
+    } ]
+  }, {
+    "tStartMs": 270812,
+    "dDurationMs": 8050,
+    "segs": [ {
+      "utf8": "全員かっこいいから、次の彼氏見つけるまで働こうと思ってるの。"
+    } ]
+  }, {
+    "tStartMs": 278862,
+    "dDurationMs": 2418,
+    "segs": [ {
+      "utf8": "わぁ、それはいいね！"
+    } ]
+  }, {
+    "tStartMs": 281280,
+    "dDurationMs": 3975,
+    "segs": [ {
+      "utf8": "時給100円でも割に合う仕事だね。"
+    } ]
+  }, {
+    "tStartMs": 285255,
+    "dDurationMs": 2699,
+    "segs": [ {
+      "utf8": "ちょっと、私もそこで働きたい！"
+    } ]
+  }, {
+    "tStartMs": 287954,
+    "dDurationMs": 2893,
+    "segs": [ {
+      "utf8": "彼氏欲しいから、ちょっと紹介してよ！"
+    } ]
+  }, {
+    "tStartMs": 290847,
+    "dDurationMs": 1969,
+    "segs": [ {
+      "utf8": "明日から働きたい！早く早く！"
+    } ]
+  }, {
+    "tStartMs": 292816,
+    "dDurationMs": 2548,
+    "segs": [ {
+      "utf8": "今日の夜でもいいよ？"
+    } ]
+  }, {
+    "tStartMs": 295364,
+    "dDurationMs": 3384,
+    "segs": [ {
+      "utf8": "『割に合わない』"
+    } ]
+  }, {
+    "tStartMs": 298748,
+    "dDurationMs": 3870,
+    "segs": [ {
+      "utf8": "努力に合った結果ではないという意味です。"
+    } ]
+  }, {
+    "tStartMs": 302618,
+    "dDurationMs": 5617,
+    "segs": [ {
+      "utf8": "自分が使った力やお金に合った価値がもらえない時に使います。"
+    } ]
+  }, {
+    "tStartMs": 308235,
+    "dDurationMs": 5143,
+    "segs": [ {
+      "utf8": "反対に『割に合う』という言い方もできます。"
+    } ]
+  }, {
+    "tStartMs": 313378,
+    "dDurationMs": 2773,
+    "segs": [ {
+      "utf8": "『悪気はない』"
+    } ]
+  }, {
+    "tStartMs": 316737,
+    "dDurationMs": 2900,
+    "segs": [ {
+      "utf8": "昨日、彼氏と喧嘩した。"
+    } ]
+  }, {
+    "tStartMs": 319637,
+    "dDurationMs": 3126,
+    "segs": [ {
+      "utf8": "ええ？いつも仲いいのに、どうしたの？"
+    } ]
+  }, {
+    "tStartMs": 322763,
+    "dDurationMs": 4351,
+    "segs": [ {
+      "utf8": "「最近ぽっちゃりしてきて可愛いね」って言われた。"
+    } ]
+  }, {
+    "tStartMs": 327114,
+    "dDurationMs": 3660,
+    "segs": [ {
+      "utf8": "え？可愛いって言われたんだ、いいじゃん！"
+    } ]
+  }, {
+    "tStartMs": 330774,
+    "dDurationMs": 4696,
+    "segs": [ {
+      "utf8": "違うよ！ぽっちゃりしてきたって言われた！"
+    } ]
+  }, {
+    "tStartMs": 335470,
+    "dDurationMs": 2200,
+    "segs": [ {
+      "utf8": "太ったってこと？"
+    } ]
+  }, {
+    "tStartMs": 337670,
+    "dDurationMs": 1504,
+    "segs": [ {
+      "utf8": "そう！！！"
+    } ]
+  }, {
+    "tStartMs": 339174,
+    "dDurationMs": 1988,
+    "segs": [ {
+      "utf8": "それの何が嫌なの？"
+    } ]
+  }, {
+    "tStartMs": 341162,
+    "dDurationMs": 5145,
+    "segs": [ {
+      "utf8": "嫌に決まってるでしょ？そう言われたくないから！"
+    } ]
+  }, {
+    "tStartMs": 346307,
+    "dDurationMs": 1341,
+    "segs": [ {
+      "utf8": "そっか…。"
+    } ]
+  }, {
+    "tStartMs": 347648,
+    "dDurationMs": 4192,
+    "segs": [ {
+      "utf8": "でも彼も悪気があって言ったわけじゃないと思うよ。"
+    } ]
+  }, {
+    "tStartMs": 351840,
+    "dDurationMs": 9973,
+    "segs": [ {
+      "utf8": "悪気がなかったら何言ってもいいの？悪気がなかったら何言って もいいの悪気がなかったら何言ってもいい"
+    } ]
+  }, {
+    "tStartMs": 361813,
+    "dDurationMs": 1750,
+    "segs": [ {
+      "utf8": "『悪気がない』"
+    } ]
+  }, {
+    "tStartMs": 363563,
+    "dDurationMs": 3145,
+    "segs": [ {
+      "utf8": "信じられない！"
+    } ]
+  }, {
+    "tStartMs": 366708,
+    "dDurationMs": 2606,
+    "segs": [ {
+      "utf8": "ええ？怒りすぎじゃない？"
+    } ]
+  }, {
+    "tStartMs": 369314,
+    "dDurationMs": 4333,
+    "segs": [ {
+      "utf8": "だいたい、太ってきたのは本当のことなんだし！"
+    } ]
+  }, {
+    "tStartMs": 373647,
+    "dDurationMs": 1110,
+    "segs": [ {
+      "utf8": "え？！"
+    } ]
+  }, {
+    "tStartMs": 374757,
+    "dDurationMs": 4607,
+    "segs": [ {
+      "utf8": "そうでしょ？最近、太ってきたんでしょ？"
+    } ]
+  }, {
+    "tStartMs": 379364,
+    "dDurationMs": 3886,
+    "segs": [ {
+      "utf8": "だから、言わないでって言ってるでしょう？"
+    } ]
+  }, {
+    "tStartMs": 383250,
+    "dDurationMs": 4021,
+    "segs": [ {
+      "utf8": "ごめん、悪気があったわけじゃないんだ。"
+    } ]
+  }, {
+    "tStartMs": 387271,
+    "dDurationMs": 6542,
+    "segs": [ {
+      "utf8": "悪気があってもなくても、何でもいいから黙って！"
+    } ]
+  }, {
+    "tStartMs": 393813,
+    "dDurationMs": 2187,
+    "segs": [ {
+      "utf8": "ごめん…。"
+    } ]
+  }, {
+    "tStartMs": 396000,
+    "dDurationMs": 3546,
+    "segs": [ {
+      "utf8": "『悪気はない』"
+    } ]
+  }, {
+    "tStartMs": 399546,
+    "dDurationMs": 4288,
+    "segs": [ {
+      "utf8": "相手を嫌な気持ちにさせようと思ってやったわけではない"
+    } ]
+  }, {
+    "tStartMs": 403834,
+    "dDurationMs": 2897,
+    "segs": [ {
+      "utf8": "と言いたい時に使います。"
+    } ]
+  }, {
+    "tStartMs": 406731,
+    "dDurationMs": 5632,
+    "segs": [ {
+      "utf8": "結果的に相手を傷つけてしまった時の言い訳によく使います。"
+    } ]
+  }, {
+    "tStartMs": 412363,
+    "dDurationMs": 4328,
+    "segs": [ {
+      "utf8": "「ごめん悪気はなかったんだ」と言い訳したり"
+    } ]
+  }, {
+    "tStartMs": 416691,
+    "dDurationMs": 3188,
+    "segs": [ {
+      "utf8": "「あの人も悪気はないんだと思うよ」と"
+    } ]
+  }, {
+    "tStartMs": 419879,
+    "dDurationMs": 3203,
+    "segs": [ {
+      "utf8": "人をかばう時に使います。"
+    } ]
+  }, {
+    "tStartMs": 423082,
+    "dDurationMs": 3103,
+    "segs": [ {
+      "utf8": "『爆睡する』"
+    } ]
+  }, {
+    "tStartMs": 426185,
+    "dDurationMs": 3752,
+    "segs": [ {
+      "utf8": "おはよう！今日テストだね。"
+    } ]
+  }, {
+    "tStartMs": 429937,
+    "dDurationMs": 3523,
+    "segs": [ {
+      "utf8": "そうだね。"
+    } ]
+  }, {
+    "tStartMs": 433460,
+    "dDurationMs": 3055,
+    "segs": [ {
+      "utf8": "また勉強してないんでしょ？"
+    } ]
+  }, {
+    "tStartMs": 436515,
+    "dDurationMs": 11679,
+    "segs": [ {
+      "utf8": "分かった？昨日1日中、爆睡してたんだよね。"
+    } ]
+  }, {
+    "tStartMs": 448194,
+    "dDurationMs": 1886,
+    "segs": [ {
+      "utf8": "『爆睡』"
+    } ]
+  }, {
+    "tStartMs": 450080,
+    "dDurationMs": 4607,
+    "segs": [ {
+      "utf8": "私も昨日勉強してなくてさ…。"
+    } ]
+  }, {
+    "tStartMs": 454687,
+    "dDurationMs": 3207,
+    "segs": [ {
+      "utf8": "はぁ。"
+    } ]
+  }, {
+    "tStartMs": 457894,
+    "dDurationMs": 4917,
+    "segs": [ {
+      "utf8": "よし！テスト終わったら、ケーキ爆食いしに行こう。"
+    } ]
+  }, {
+    "tStartMs": 462811,
+    "dDurationMs": 3192,
+    "segs": [ {
+      "utf8": "あ、いいね！最高！"
+    } ]
+  }, {
+    "tStartMs": 466003,
+    "dDurationMs": 4514,
+    "segs": [ {
+      "utf8": "…っていうか、今から行っちゃう？"
+    } ]
+  }, {
+    "tStartMs": 470517,
+    "dDurationMs": 864,
+    "segs": [ {
+      "utf8": "行っちゃう？"
+    } ]
+  }, {
+    "tStartMs": 471381,
+    "dDurationMs": 4182,
+    "segs": [ {
+      "utf8": "行こう！行こう！早く♪最高！最高！行こ行こ！"
+    } ]
+  }, {
+    "tStartMs": 475563,
+    "dDurationMs": 3237,
+    "segs": [ {
+      "utf8": "こらー！お前たちどこ行くんだよ！"
+    } ]
+  }, {
+    "tStartMs": 478800,
+    "dDurationMs": 1983,
+    "segs": [ {
+      "utf8": "テスト始めるぞ！"
+    } ]
+  }, {
+    "tStartMs": 480783,
+    "dDurationMs": 5351,
+    "segs": [ {
+      "utf8": "はい・・・。"
+    } ]
+  }, {
+    "tStartMs": 486134,
+    "dDurationMs": 3550,
+    "segs": [ {
+      "utf8": "『爆睡する』"
+    } ]
+  }, {
+    "tStartMs": 489684,
+    "dDurationMs": 3861,
+    "segs": [ {
+      "utf8": "ぐっすりよく眠るという意味です。"
+    } ]
+  }, {
+    "tStartMs": 493545,
+    "dDurationMs": 6384,
+    "segs": [ {
+      "utf8": "特に若い人がよく使う言い方で目上の人には あまり使いません。"
+    } ]
+  }, {
+    "tStartMs": 499929,
+    "dDurationMs": 3871,
+    "segs": [ {
+      "utf8": "「爆」は「とても」の意味になります。"
+    } ]
+  }, {
+    "tStartMs": 503800,
+    "dDurationMs": 8239,
+    "segs": [ {
+      "utf8": "他にも「爆笑」「爆買い」「爆食い」のような言い方があります。"
+    } ]
+  } ]
+}

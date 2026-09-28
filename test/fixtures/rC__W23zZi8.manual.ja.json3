@@ -1,0 +1,775 @@
+{
+  "wireMagic": "pb3",
+  "pens": [ {
+  
+  } ],
+  "wsWinStyles": [ {
+  
+  } ],
+  "wpWinPositions": [ {
+  
+  } ],
+  "events": [ {
+    "tStartMs": 560,
+    "dDurationMs": 2723,
+    "segs": [ {
+      "utf8": "皆さんこんにちは、日本語の森のゆかです。"
+    } ]
+  }, {
+    "tStartMs": 3283,
+    "dDurationMs": 3299,
+    "segs": [ {
+      "utf8": "今日も関西弁講座やっていきたいと思います！"
+    } ]
+  }, {
+    "tStartMs": 6582,
+    "dDurationMs": 4074,
+    "segs": [ {
+      "utf8": "今日は文法の練習じゃなくて、"
+    } ]
+  }, {
+    "tStartMs": 10656,
+    "dDurationMs": 3220,
+    "segs": [ {
+      "utf8": "イントネーションの練習したいと思います。"
+    } ]
+  }, {
+    "tStartMs": 13876,
+    "dDurationMs": 3239,
+    "segs": [ {
+      "utf8": "イントネーションというのは、言葉を話す時"
+    } ]
+  }, {
+    "tStartMs": 17115,
+    "dDurationMs": 4892,
+    "segs": [ {
+      "utf8": "文章を話す時の、この音の山ですね。"
+    } ]
+  }, {
+    "tStartMs": 22007,
+    "dDurationMs": 3662,
+    "segs": [ {
+      "utf8": "例えば、イントネーションね。"
+    } ]
+  }, {
+    "tStartMs": 25669,
+    "dDurationMs": 1985,
+    "segs": [ {
+      "utf8": "イントネーションって言う時、"
+    } ]
+  }, {
+    "tStartMs": 27654,
+    "dDurationMs": 5184,
+    "segs": [ {
+      "utf8": "イントネーションってなりますよね。"
+    } ]
+  }, {
+    "tStartMs": 32838,
+    "dDurationMs": 3136,
+    "segs": [ {
+      "utf8": "これです。これのこと、イントネーションって言います。"
+    } ]
+  }, {
+    "tStartMs": 35974,
+    "dDurationMs": 2880,
+    "segs": [ {
+      "utf8": "関西弁、とかね。"
+    } ]
+  }, {
+    "tStartMs": 38854,
+    "dDurationMs": 3052,
+    "segs": [ {
+      "utf8": "高くなるところ、低くなるところがあります。"
+    } ]
+  }, {
+    "tStartMs": 41906,
+    "dDurationMs": 1853,
+    "segs": [ {
+      "utf8": "こういうのを「イントネーション」とか"
+    } ]
+  }, {
+    "tStartMs": 43759,
+    "dDurationMs": 3780,
+    "segs": [ {
+      "utf8": "アクセントと言うんですが、関弁を話す時は"
+    } ]
+  }, {
+    "tStartMs": 47539,
+    "dDurationMs": 2927,
+    "segs": [ {
+      "utf8": "これが本当に大切です。"
+    } ]
+  }, {
+    "tStartMs": 50466,
+    "dDurationMs": 3187,
+    "segs": [ {
+      "utf8": "じゃあ、今日皆さんこれ言えるようになりましょう。"
+    } ]
+  }, {
+    "tStartMs": 53653,
+    "dDurationMs": 2020,
+    "segs": [ {
+      "utf8": "えっと、nihongonomori.com"
+    } ]
+  }, {
+    "tStartMs": 55673,
+    "dDurationMs": 2671,
+    "segs": [ {
+      "utf8": "N1N2N3の勉強ができて"
+    } ]
+  }, {
+    "tStartMs": 58344,
+    "dDurationMs": 1818,
+    "segs": [ {
+      "utf8": "授業の動画も全部見れて"
+    } ]
+  }, {
+    "tStartMs": 60162,
+    "dDurationMs": 2343,
+    "segs": [ {
+      "utf8": "1か月1480円"
+    } ]
+  }, {
+    "tStartMs": 62505,
+    "dDurationMs": 1848,
+    "segs": [ {
+      "utf8": "1480円？！"
+    } ]
+  }, {
+    "tStartMs": 64353,
+    "dDurationMs": 2324,
+    "segs": [ {
+      "utf8": "うそ？"
+    } ]
+  }, {
+    "tStartMs": 66677,
+    "dDurationMs": 2152,
+    "segs": [ {
+      "utf8": "まずは一番よく使う言葉、"
+    } ]
+  }, {
+    "tStartMs": 68829,
+    "dDurationMs": 2770,
+    "segs": [ {
+      "utf8": "挨拶の練習したいと思います。"
+    } ]
+  }, {
+    "tStartMs": 71599,
+    "dDurationMs": 4085,
+    "segs": [ {
+      "utf8": "関東では、おはようございますと言いますね。"
+    } ]
+  }, {
+    "tStartMs": 75684,
+    "dDurationMs": 2903,
+    "segs": [ {
+      "utf8": "おはようございます、おはようございます、"
+    } ]
+  }, {
+    "tStartMs": 78587,
+    "dDurationMs": 4654,
+    "segs": [ {
+      "utf8": "これ関西弁では…言葉は同じです。"
+    } ]
+  }, {
+    "tStartMs": 83241,
+    "dDurationMs": 6844,
+    "segs": [ {
+      "utf8": "でも、おはようございます。になります。"
+    } ]
+  }, {
+    "tStartMs": 90085,
+    "dDurationMs": 1813,
+    "segs": [ {
+      "utf8": "違いわかりますか？"
+    } ]
+  }, {
+    "tStartMs": 91898,
+    "dDurationMs": 4231,
+    "segs": [ {
+      "utf8": "関東では、おはようございます。"
+    } ]
+  }, {
+    "tStartMs": 96129,
+    "dDurationMs": 3428,
+    "segs": [ {
+      "utf8": "「お」だけちょっと低くて、あと上がっていきますよね。"
+    } ]
+  }, {
+    "tStartMs": 99557,
+    "dDurationMs": 5676,
+    "segs": [ {
+      "utf8": "でも関西弁では、おはようございます、です。"
+    } ]
+  }, {
+    "tStartMs": 105233,
+    "dDurationMs": 3346,
+    "segs": [ {
+      "utf8": "「おはよう」まで、ちょっと低いんですよ。"
+    } ]
+  }, {
+    "tStartMs": 108579,
+    "dDurationMs": 1830,
+    "segs": [ {
+      "utf8": "違いわかりますか？"
+    } ]
+  }, {
+    "tStartMs": 110409,
+    "dDurationMs": 1909,
+    "segs": [ {
+      "utf8": "じゃ、ちょっと練習してみましょう。"
+    } ]
+  }, {
+    "tStartMs": 116230,
+    "dDurationMs": 948,
+    "segs": [ {
+      "utf8": "いいですね。"
+    } ]
+  }, {
+    "tStartMs": 121251,
+    "dDurationMs": 4084,
+    "segs": [ {
+      "utf8": "いいですね。皆さん、動画の前で声出してくださいね。"
+    } ]
+  }, {
+    "tStartMs": 125335,
+    "dDurationMs": 3010,
+    "segs": [ {
+      "utf8": "じゃあ次、友達に挨拶する時。"
+    } ]
+  }, {
+    "tStartMs": 128345,
+    "dDurationMs": 2062,
+    "segs": [ {
+      "utf8": "これよく使うと思います。"
+    } ]
+  }, {
+    "tStartMs": 130407,
+    "dDurationMs": 6915,
+    "segs": [ {
+      "utf8": "おはよう！田中君おはよう！って言います。"
+    } ]
+  }, {
+    "tStartMs": 137322,
+    "dDurationMs": 6886,
+    "segs": [ {
+      "utf8": "関西弁では、おはようです。"
+    } ]
+  }, {
+    "tStartMs": 144208,
+    "dDurationMs": 1885,
+    "segs": [ {
+      "utf8": "ちょっと違うの分かりますか？"
+    } ]
+  }, {
+    "tStartMs": 146093,
+    "dDurationMs": 1383,
+    "segs": [ {
+      "utf8": "おはよう、ね。"
+    } ]
+  }, {
+    "tStartMs": 147476,
+    "dDurationMs": 4171,
+    "segs": [ {
+      "utf8": "このオレンジにしてるところがちょっと上がります。"
+    } ]
+  }, {
+    "tStartMs": 151647,
+    "dDurationMs": 3142,
+    "segs": [ {
+      "utf8": "おはよう、ですね。"
+    } ]
+  }, {
+    "tStartMs": 154789,
+    "dDurationMs": 4859,
+    "segs": [ {
+      "utf8": "関東は、おはよう、ですね。こうかな。"
+    } ]
+  }, {
+    "tStartMs": 159648,
+    "dDurationMs": 5719,
+    "segs": [ {
+      "utf8": "おはよう、ね。でも関西は、おはようです。"
+    } ]
+  }, {
+    "tStartMs": 165367,
+    "dDurationMs": 2320,
+    "segs": [ {
+      "utf8": "いいですか？じゃあ練習しましょう。"
+    } ]
+  }, {
+    "tStartMs": 170825,
+    "dDurationMs": 880,
+    "segs": [ {
+      "utf8": "いいですね。"
+    } ]
+  }, {
+    "tStartMs": 175361,
+    "dDurationMs": 1557,
+    "segs": [ {
+      "utf8": "できてますか？みなさん"
+    } ]
+  }, {
+    "tStartMs": 184358,
+    "dDurationMs": 1421,
+    "segs": [ {
+      "utf8": "このイントネーションです。"
+    } ]
+  }, {
+    "tStartMs": 185779,
+    "dDurationMs": 3210,
+    "segs": [ {
+      "utf8": "めちゃくちゃ関西人って感じがします。"
+    } ]
+  }, {
+    "tStartMs": 188989,
+    "dDurationMs": 6165,
+    "segs": [ {
+      "utf8": "はいじゃあ次、こんにちは。よく使いますね。"
+    } ]
+  }, {
+    "tStartMs": 195154,
+    "dDurationMs": 6099,
+    "segs": [ {
+      "utf8": "これは、こんにちはです。"
+    } ]
+  }, {
+    "tStartMs": 201253,
+    "dDurationMs": 3617,
+    "segs": [ {
+      "utf8": "ここがちょっと上がるんですね。"
+    } ]
+  }, {
+    "tStartMs": 204870,
+    "dDurationMs": 6462,
+    "segs": [ {
+      "utf8": "実際上がるんですけど…これぐらいですね。"
+    } ]
+  }, {
+    "tStartMs": 211332,
+    "dDurationMs": 3108,
+    "segs": [ {
+      "utf8": "わかりますか？じゃちょっと練習してみます。"
+    } ]
+  }, {
+    "tStartMs": 217828,
+    "dDurationMs": 809,
+    "segs": [ {
+      "utf8": "いいですね♪"
+    } ]
+  }, {
+    "tStartMs": 222320,
+    "dDurationMs": 4032,
+    "segs": [ {
+      "utf8": "そうですね。このリズム、このイントネーション覚えてください。"
+    } ]
+  }, {
+    "tStartMs": 226352,
+    "dDurationMs": 5163,
+    "segs": [ {
+      "utf8": "こんにちは、こんにちは、違いますね。"
+    } ]
+  }, {
+    "tStartMs": 231515,
+    "dDurationMs": 7638,
+    "segs": [ {
+      "utf8": "じゃあ次、夜です。こんばんは。"
+    } ]
+  }, {
+    "tStartMs": 239153,
+    "dDurationMs": 5084,
+    "segs": [ {
+      "utf8": "関西弁では、こんばんはです。"
+    } ]
+  }, {
+    "tStartMs": 244237,
+    "dDurationMs": 4260,
+    "segs": [ {
+      "utf8": "これもさっきと同じです。こんにちは、と同じ。"
+    } ]
+  }, {
+    "tStartMs": 248497,
+    "dDurationMs": 3892,
+    "segs": [ {
+      "utf8": "こんばんは、これぐらいですね。"
+    } ]
+  }, {
+    "tStartMs": 252389,
+    "dDurationMs": 3640,
+    "segs": [ {
+      "utf8": "こんばんは、になります。じゃあ練習しましょう。"
+    } ]
+  }, {
+    "tStartMs": 259511,
+    "dDurationMs": 1044,
+    "segs": [ {
+      "utf8": "いいですね♪"
+    } ]
+  }, {
+    "tStartMs": 263741,
+    "dDurationMs": 2948,
+    "segs": [ {
+      "utf8": "みなさん、関西人になってきましたね。"
+    } ]
+  }, {
+    "tStartMs": 266689,
+    "dDurationMs": 3029,
+    "segs": [ {
+      "utf8": "じゃあ、感謝を伝えましょう。"
+    } ]
+  }, {
+    "tStartMs": 269718,
+    "dDurationMs": 4783,
+    "segs": [ {
+      "utf8": "ありがとう、よく使いますね。"
+    } ]
+  }, {
+    "tStartMs": 274501,
+    "dDurationMs": 4351,
+    "segs": [ {
+      "utf8": "これ関西弁では？もう分かってきましたか？"
+    } ]
+  }, {
+    "tStartMs": 278852,
+    "dDurationMs": 4781,
+    "segs": [ {
+      "utf8": "後ろ上がります。ありがとうです。"
+    } ]
+  }, {
+    "tStartMs": 283633,
+    "dDurationMs": 5381,
+    "segs": [ {
+      "utf8": "ありがとう、ありがとう、ありがとう"
+    } ]
+  }, {
+    "tStartMs": 289014,
+    "dDurationMs": 1762,
+    "segs": [ {
+      "utf8": "違いが分かりますか？"
+    } ]
+  }, {
+    "tStartMs": 290776,
+    "dDurationMs": 2228,
+    "segs": [ {
+      "utf8": "じゃあちょっと練習してみましょう。"
+    } ]
+  }, {
+    "tStartMs": 300000,
+    "dDurationMs": 3338,
+    "segs": [ {
+      "utf8": "いいですね。ありがとう、ほんまにありがとう！"
+    } ]
+  }, {
+    "tStartMs": 303338,
+    "dDurationMs": 1415,
+    "segs": [ {
+      "utf8": "よく使います。"
+    } ]
+  }, {
+    "tStartMs": 304753,
+    "dDurationMs": 2630,
+    "segs": [ {
+      "utf8": "じゃあ次、あやまりましょう。"
+    } ]
+  }, {
+    "tStartMs": 307383,
+    "dDurationMs": 2412,
+    "segs": [ {
+      "utf8": "これ、すいませんって書いたんですけど"
+    } ]
+  }, {
+    "tStartMs": 309795,
+    "dDurationMs": 5088,
+    "segs": [ {
+      "utf8": "書く時、本当はね、すみませんが正しいですよ。"
+    } ]
+  }, {
+    "tStartMs": 314883,
+    "dDurationMs": 4915,
+    "segs": [ {
+      "utf8": "こっちが正しいんですけど、会話ではすいませんになりますね。"
+    } ]
+  }, {
+    "tStartMs": 319798,
+    "dDurationMs": 2693,
+    "segs": [ {
+      "utf8": "すいません、すいません、すいません"
+    } ]
+  }, {
+    "tStartMs": 322491,
+    "dDurationMs": 3480,
+    "segs": [ {
+      "utf8": "関西弁では、後ろ上がります。"
+    } ]
+  }, {
+    "tStartMs": 325971,
+    "dDurationMs": 3516,
+    "segs": [ {
+      "utf8": "すいません、すいません、いいですか？"
+    } ]
+  }, {
+    "tStartMs": 329487,
+    "dDurationMs": 3636,
+    "segs": [ {
+      "utf8": "すいません、すいません、じゃあやってみましょう。"
+    } ]
+  }, {
+    "tStartMs": 340180,
+    "dDurationMs": 4706,
+    "segs": [ {
+      "utf8": "いいですね。すいません、遅れてほんますいません。"
+    } ]
+  }, {
+    "tStartMs": 344886,
+    "dDurationMs": 1990,
+    "segs": [ {
+      "utf8": "いいですね。"
+    } ]
+  }, {
+    "tStartMs": 346876,
+    "dDurationMs": 3328,
+    "segs": [ {
+      "utf8": "じゃあ、これね。誕生日の日に言いますね。"
+    } ]
+  }, {
+    "tStartMs": 350204,
+    "dDurationMs": 4014,
+    "segs": [ {
+      "utf8": "おめでとう。誕生日おめでとう。"
+    } ]
+  }, {
+    "tStartMs": 354218,
+    "dDurationMs": 4639,
+    "segs": [ {
+      "utf8": "これ関西弁では、後ろです、上がるのは後ろ。"
+    } ]
+  }, {
+    "tStartMs": 358857,
+    "dDurationMs": 3997,
+    "segs": [ {
+      "utf8": "おめでとう、になります。"
+    } ]
+  }, {
+    "tStartMs": 362854,
+    "dDurationMs": 1335,
+    "segs": [ {
+      "utf8": "いいですか？"
+    } ]
+  }, {
+    "tStartMs": 367402,
+    "dDurationMs": 1022,
+    "segs": [ {
+      "utf8": "いいですね♪"
+    } ]
+  }, {
+    "tStartMs": 368424,
+    "dDurationMs": 2599,
+    "segs": [ {
+      "utf8": "誕生日おめでとう、はい！"
+    } ]
+  }, {
+    "tStartMs": 373375,
+    "dDurationMs": 2517,
+    "segs": [ {
+      "utf8": "後ろ上がってください。おめでとう。"
+    } ]
+  }, {
+    "tStartMs": 375892,
+    "dDurationMs": 4821,
+    "segs": [ {
+      "utf8": "おめでとう、おめでとう、全然違いますね。"
+    } ]
+  }, {
+    "tStartMs": 380713,
+    "dDurationMs": 1715,
+    "segs": [ {
+      "utf8": "聞き取れますか？"
+    } ]
+  }, {
+    "tStartMs": 382428,
+    "dDurationMs": 2978,
+    "segs": [ {
+      "utf8": "はい、じゃあ結構練習したので、"
+    } ]
+  }, {
+    "tStartMs": 385406,
+    "dDurationMs": 3185,
+    "segs": [ {
+      "utf8": "最後、長い文章を言ってみたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 388591,
+    "dDurationMs": 2480,
+    "segs": [ {
+      "utf8": "AさんとBさんの会話です。"
+    } ]
+  }, {
+    "tStartMs": 406389,
+    "dDurationMs": 4026,
+    "segs": [ {
+      "utf8": "はい、この文章を関西弁にしてみたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 410415,
+    "dDurationMs": 6635,
+    "segs": [ {
+      "utf8": "まず、関西弁に変える言葉の違い、ここですね。"
+    } ]
+  }, {
+    "tStartMs": 417050,
+    "dDurationMs": 4595,
+    "segs": [ {
+      "utf8": "「ねぇ」は「なぁ」になります。"
+    } ]
+  }, {
+    "tStartMs": 421645,
+    "dDurationMs": 3352,
+    "segs": [ {
+      "utf8": "関西弁では「ねぇ」って使わないです。"
+    } ]
+  }, {
+    "tStartMs": 424997,
+    "dDurationMs": 4146,
+    "segs": [ {
+      "utf8": "「なぁなぁなぁ」って言います。人を呼ぶ時ね。"
+    } ]
+  }, {
+    "tStartMs": 429143,
+    "dDurationMs": 4555,
+    "segs": [ {
+      "utf8": "そして「よ」は「で」になるんでしたね。"
+    } ]
+  }, {
+    "tStartMs": 433698,
+    "dDurationMs": 3146,
+    "segs": [ {
+      "utf8": "これは文法の授業で勉強しました。"
+    } ]
+  }, {
+    "tStartMs": 436844,
+    "dDurationMs": 3774,
+    "segs": [ {
+      "utf8": "ほんと？は本当？なんですけど、"
+    } ]
+  }, {
+    "tStartMs": 440618,
+    "dDurationMs": 4232,
+    "segs": [ {
+      "utf8": "これ関西弁では「ほんま？」になります。"
+    } ]
+  }, {
+    "tStartMs": 444850,
+    "dDurationMs": 2120,
+    "segs": [ {
+      "utf8": "これまだ勉強してないんですけど、"
+    } ]
+  }, {
+    "tStartMs": 446970,
+    "dDurationMs": 3341,
+    "segs": [ {
+      "utf8": "よく使う関西弁なので覚えてください。"
+    } ]
+  }, {
+    "tStartMs": 450311,
+    "dDurationMs": 5066,
+    "segs": [ {
+      "utf8": "本当ですか？と聞く時、ほんま？って言います。"
+    } ]
+  }, {
+    "tStartMs": 455377,
+    "dDurationMs": 3729,
+    "segs": [ {
+      "utf8": "あとは、ここですね。「ね」は「な」になるんですね。"
+    } ]
+  }, {
+    "tStartMs": 459106,
+    "dDurationMs": 3380,
+    "segs": [ {
+      "utf8": "よかったね、は、よかったな、になります。"
+    } ]
+  }, {
+    "tStartMs": 462486,
+    "dDurationMs": 2263,
+    "segs": [ {
+      "utf8": "言葉の違いはこの4つ。"
+    } ]
+  }, {
+    "tStartMs": 464749,
+    "dDurationMs": 5234,
+    "segs": [ {
+      "utf8": "そして、イントネーションが違うのはここですね。"
+    } ]
+  }, {
+    "tStartMs": 469983,
+    "dDurationMs": 3332,
+    "segs": [ {
+      "utf8": "じゃあ、1回読んでみたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 489489,
+    "dDurationMs": 2173,
+    "segs": [ {
+      "utf8": "どうですか、できましたか？"
+    } ]
+  }, {
+    "tStartMs": 491662,
+    "dDurationMs": 5181,
+    "segs": [ {
+      "utf8": "関東の言い方と関西弁、全然違うのわかりますか？"
+    } ]
+  }, {
+    "tStartMs": 518651,
+    "dDurationMs": 3366,
+    "segs": [ {
+      "utf8": "はい、皆さん関西弁と関東の言い方"
+    } ]
+  }, {
+    "tStartMs": 522017,
+    "dDurationMs": 1935,
+    "segs": [ {
+      "utf8": "違い、わかりましたか？"
+    } ]
+  }, {
+    "tStartMs": 523952,
+    "dDurationMs": 5883,
+    "segs": [ {
+      "utf8": "私の話し方、何回も聞いて口に出して練習してみてください。"
+    } ]
+  }, {
+    "tStartMs": 529835,
+    "dDurationMs": 4148,
+    "segs": [ {
+      "utf8": "イントネーションの練習、今回は簡単なものにしたんですけど"
+    } ]
+  }, {
+    "tStartMs": 533983,
+    "dDurationMs": 2501,
+    "segs": [ {
+      "utf8": "もっと練習したいというコメントがあれば"
+    } ]
+  }, {
+    "tStartMs": 536484,
+    "dDurationMs": 1929,
+    "segs": [ {
+      "utf8": "他にも作りたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 538413,
+    "dDurationMs": 2480,
+    "segs": [ {
+      "utf8": "皆さんコメントとかいいね、ぜひしてください。"
+    } ]
+  }, {
+    "tStartMs": 540893,
+    "dDurationMs": 1651,
+    "segs": [ {
+      "utf8": "うれしいので、待ってます！"
+    } ]
+  }, {
+    "tStartMs": 542544,
+    "dDurationMs": 2613,
+    "segs": [ {
+      "utf8": "ではまた次の動画でお会いしましょう。"
+    } ]
+  } ]
+}

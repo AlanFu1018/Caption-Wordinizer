@@ -1,0 +1,1423 @@
+{
+  "wireMagic": "pb3",
+  "pens": [ {
+  
+  } ],
+  "wsWinStyles": [ {
+  
+  } ],
+  "wpWinPositions": [ {
+  
+  } ],
+  "events": [ {
+    "tStartMs": 14108,
+    "dDurationMs": 3194,
+    "segs": [ {
+      "utf8": "みなさんこんにちは！日本語の森のゆかです。"
+    } ]
+  }, {
+    "tStartMs": 17302,
+    "dDurationMs": 3403,
+    "segs": [ {
+      "utf8": "…ということで、今日やるのは！"
+    } ]
+  }, {
+    "tStartMs": 20705,
+    "dDurationMs": 3295,
+    "segs": [ {
+      "utf8": "「関西弁で怒ろう」です。"
+    } ]
+  }, {
+    "tStartMs": 24000,
+    "dDurationMs": 6383,
+    "segs": [ {
+      "utf8": "関西弁の喧嘩をする時のよく聞く言い方なんですけど"
+    } ]
+  }, {
+    "tStartMs": 30383,
+    "dDurationMs": 2359,
+    "segs": [ {
+      "utf8": "実際に言ってる人はあまりいなくて、"
+    } ]
+  }, {
+    "tStartMs": 32742,
+    "dDurationMs": 2684,
+    "segs": [ {
+      "utf8": "すごく有名なフレーズです。"
+    } ]
+  }, {
+    "tStartMs": 35426,
+    "dDurationMs": 1601,
+    "segs": [ {
+      "utf8": "「ケツの穴に指突っ込んで、"
+    } ]
+  }, {
+    "tStartMs": 37027,
+    "dDurationMs": 4224,
+    "segs": [ {
+      "utf8": "奥歯ガタガタ言わしたろか」ですね。"
+    } ]
+  }, {
+    "tStartMs": 41251,
+    "dDurationMs": 2488,
+    "segs": [ {
+      "utf8": "気になる人は調べてみてください。"
+    } ]
+  }, {
+    "tStartMs": 43739,
+    "dDurationMs": 3463,
+    "segs": [ {
+      "utf8": "今日は関西弁講座9回目ですね。"
+    } ]
+  }, {
+    "tStartMs": 47202,
+    "dDurationMs": 2429,
+    "segs": [ {
+      "utf8": "関西弁の怒り方、"
+    } ]
+  }, {
+    "tStartMs": 49631,
+    "dDurationMs": 4038,
+    "segs": [ {
+      "utf8": "喧嘩をする時の関西弁を勉強していきたいと思います。"
+    } ]
+  }, {
+    "tStartMs": 53669,
+    "dDurationMs": 5621,
+    "segs": [ {
+      "utf8": "関西の人は結構、気持ちを表に出す人が多いです。"
+    } ]
+  }, {
+    "tStartMs": 59290,
+    "dDurationMs": 1373,
+    "segs": [ {
+      "utf8": "やった！とかね、"
+    } ]
+  }, {
+    "tStartMs": 60663,
+    "dDurationMs": 2283,
+    "segs": [ {
+      "utf8": "怒る時も「くそ！」って、"
+    } ]
+  }, {
+    "tStartMs": 62946,
+    "dDurationMs": 3446,
+    "segs": [ {
+      "utf8": "すごく感情を表に出す人が多いので、"
+    } ]
+  }, {
+    "tStartMs": 66392,
+    "dDurationMs": 3494,
+    "segs": [ {
+      "utf8": "怒る言い方も色々あります。"
+    } ]
+  }, {
+    "tStartMs": 69886,
+    "dDurationMs": 3348,
+    "segs": [ {
+      "utf8": "今日は何個か用意してきたので、みんなで勉強して"
+    } ]
+  }, {
+    "tStartMs": 73234,
+    "dDurationMs": 3075,
+    "segs": [ {
+      "utf8": "関西人っぽく怒っていきましょう。"
+    } ]
+  }, {
+    "tStartMs": 76309,
+    "dDurationMs": 5484,
+    "segs": [ {
+      "utf8": "じゃあまず1個目、これは前回も勉強しましたね。"
+    } ]
+  }, {
+    "tStartMs": 81793,
+    "dDurationMs": 5267,
+    "segs": [ {
+      "utf8": "「あほか」です。これどういう意味でしたか？"
+    } ]
+  }, {
+    "tStartMs": 87060,
+    "dDurationMs": 4656,
+    "segs": [ {
+      "utf8": "簡単ですね。意味は「ばか」の意味なんですけど"
+    } ]
+  }, {
+    "tStartMs": 91716,
+    "dDurationMs": 3803,
+    "segs": [ {
+      "utf8": "「あほか」って言ってますね。"
+    } ]
+  }, {
+    "tStartMs": 95519,
+    "dDurationMs": 4002,
+    "segs": [ {
+      "utf8": "これは、「か」は聞く言い方なので、"
+    } ]
+  }, {
+    "tStartMs": 99521,
+    "dDurationMs": 2797,
+    "segs": [ {
+      "utf8": "そのまま意味を説明すると"
+    } ]
+  }, {
+    "tStartMs": 102318,
+    "dDurationMs": 3602,
+    "segs": [ {
+      "utf8": "「ばかなんですか？」と聞く言い方です。"
+    } ]
+  }, {
+    "tStartMs": 105920,
+    "dDurationMs": 3164,
+    "segs": [ {
+      "utf8": "でも実際は聞いているんじゃなくて、"
+    } ]
+  }, {
+    "tStartMs": 109084,
+    "dDurationMs": 2497,
+    "segs": [ {
+      "utf8": "「あほか」っていう言い方ですね。"
+    } ]
+  }, {
+    "tStartMs": 111581,
+    "dDurationMs": 2250,
+    "segs": [ {
+      "utf8": "お前ばかだなっていう意味です。"
+    } ]
+  }, {
+    "tStartMs": 113831,
+    "dDurationMs": 2592,
+    "segs": [ {
+      "utf8": "1番よく使う言い方、これですね。"
+    } ]
+  }, {
+    "tStartMs": 116423,
+    "dDurationMs": 4118,
+    "segs": [ {
+      "utf8": "「おまえ、あほか」って言います。"
+    } ]
+  }, {
+    "tStartMs": 120541,
+    "dDurationMs": 3609,
+    "segs": [ {
+      "utf8": "「おまえ、あほなんちゃうけ」とか「あほやなぁ」"
+    } ]
+  }, {
+    "tStartMs": 124150,
+    "dDurationMs": 1870,
+    "segs": [ {
+      "utf8": "いろんな言い方があります。"
+    } ]
+  }, {
+    "tStartMs": 126020,
+    "dDurationMs": 2371,
+    "segs": [ {
+      "utf8": "この「あほか」っていうのは、"
+    } ]
+  }, {
+    "tStartMs": 128391,
+    "dDurationMs": 4209,
+    "segs": [ {
+      "utf8": "友達同士で冗談を言う時にもよく使うし、"
+    } ]
+  }, {
+    "tStartMs": 132600,
+    "dDurationMs": 3259,
+    "segs": [ {
+      "utf8": "本当に怒る時もよく使います。"
+    } ]
+  }, {
+    "tStartMs": 135859,
+    "dDurationMs": 6194,
+    "segs": [ {
+      "utf8": "例えば友達が冗談を言って「おまえ、あほやな」って言うこともあるし"
+    } ]
+  }, {
+    "tStartMs": 142053,
+    "dDurationMs": 5140,
+    "segs": [ {
+      "utf8": "本当に嫌なことをされて「あほか！」って怒ることもあります。"
+    } ]
+  }, {
+    "tStartMs": 147193,
+    "dDurationMs": 3364,
+    "segs": [ {
+      "utf8": "言い方によって違うので注意してください。"
+    } ]
+  }, {
+    "tStartMs": 150557,
+    "dDurationMs": 2732,
+    "segs": [ {
+      "utf8": "これ1個目ですね。簡単ですね。"
+    } ]
+  }, {
+    "tStartMs": 153289,
+    "dDurationMs": 5921,
+    "segs": [ {
+      "utf8": "じゃあ2つ目見てみましょう。「もうええわ」"
+    } ]
+  }, {
+    "tStartMs": 159210,
+    "dDurationMs": 2145,
+    "segs": [ {
+      "utf8": "聞い たことがありますか？"
+    } ]
+  }, {
+    "tStartMs": 161355,
+    "dDurationMs": 5770,
+    "segs": [ {
+      "utf8": "これ日本の漫才をする時によく使うんですけど"
+    } ]
+  }, {
+    "tStartMs": 167125,
+    "dDurationMs": 4323,
+    "segs": [ {
+      "utf8": "漫才っていうのは2人の人が話をして、"
+    } ]
+  }, {
+    "tStartMs": 171448,
+    "dDurationMs": 2614,
+    "segs": [ {
+      "utf8": "面白い話をするものなんですけど、"
+    } ]
+  }, {
+    "tStartMs": 174062,
+    "dDurationMs": 3695,
+    "segs": [ {
+      "utf8": "この話を終わらせる時に、何か言って"
+    } ]
+  }, {
+    "tStartMs": 177757,
+    "dDurationMs": 2955,
+    "segs": [ {
+      "utf8": "「もうええわ」って言います。"
+    } ]
+  }, {
+    "tStartMs": 180712,
+    "dDurationMs": 5133,
+    "segs": [ {
+      "utf8": "「もうええわ」っていうのは「もういいですよ」という意味です。"
+    } ]
+  }, {
+    "tStartMs": 185845,
+    "dDurationMs": 3355,
+    "segs": [ {
+      "utf8": "もういいです、とか、これ以上やらないでください、"
+    } ]
+  }, {
+    "tStartMs": 189200,
+    "dDurationMs": 3782,
+    "segs": [ {
+      "utf8": "やめてくださいって言う時に使う言葉です。"
+    } ]
+  }, {
+    "tStartMs": 192982,
+    "dDurationMs": 6777,
+    "segs": [ {
+      "utf8": "例えば、仕事でね、全然仕事ができない人がいました。"
+    } ]
+  }, {
+    "tStartMs": 199759,
+    "dDurationMs": 3436,
+    "segs": [ {
+      "utf8": "なんか資料持ってきて…ちょっとやり直し！"
+    } ]
+  }, {
+    "tStartMs": 203195,
+    "dDurationMs": 2446,
+    "segs": [ {
+      "utf8": "また持ってきて…あぁもうやり直し！"
+    } ]
+  }, {
+    "tStartMs": 205641,
+    "dDurationMs": 2284,
+    "segs": [ {
+      "utf8": "また持ってきて…あぁもうやり直し！"
+    } ]
+  }, {
+    "tStartMs": 207925,
+    "dDurationMs": 3504,
+    "segs": [ {
+      "utf8": "「おまえ、もうええわ！帰って！」って言います。"
+    } ]
+  }, {
+    "tStartMs": 211429,
+    "dDurationMs": 3042,
+    "segs": [ {
+      "utf8": "もうええわ、もうこれ以上やらないでください、"
+    } ]
+  }, {
+    "tStartMs": 214471,
+    "dDurationMs": 4055,
+    "segs": [ {
+      "utf8": "これ以上もういらないです、帰ってくださいという意味ですね。"
+    } ]
+  }, {
+    "tStartMs": 218526,
+    "dDurationMs": 5080,
+    "segs": [ {
+      "utf8": "この「もうええわ」本当に日常生活でよく使います。"
+    } ]
+  }, {
+    "tStartMs": 223606,
+    "dDurationMs": 3807,
+    "segs": [ {
+      "utf8": "友達と冗談を言う時にもよく使いますね。"
+    } ]
+  }, {
+    "tStartMs": 227413,
+    "dDurationMs": 3909,
+    "segs": [ {
+      "utf8": "友達が「彼氏できたんだ」と言って、"
+    } ]
+  }, {
+    "tStartMs": 231322,
+    "dDurationMs": 4074,
+    "segs": [ {
+      "utf8": "すごく優しくて、何でも買ってくれるし、"
+    } ]
+  }, {
+    "tStartMs": 235396,
+    "dDurationMs": 2284,
+    "segs": [ {
+      "utf8": "すごくかっこいいし♪"
+    } ]
+  }, {
+    "tStartMs": 237680,
+    "dDurationMs": 2065,
+    "segs": [ {
+      "utf8": "好きなところいっぱい言ってきます。"
+    } ]
+  }, {
+    "tStartMs": 239745,
+    "dDurationMs": 2755,
+    "segs": [ {
+      "utf8": "あぁ、もうええわ！もうええ、もうええ！"
+    } ]
+  }, {
+    "tStartMs": 242500,
+    "dDurationMs": 2512,
+    "segs": [ {
+      "utf8": "幸せなんは分かったから、もうええわ！"
+    } ]
+  }, {
+    "tStartMs": 245012,
+    "dDurationMs": 3228,
+    "segs": [ {
+      "utf8": "これ以上いらないですっていう時にも使えるし、"
+    } ]
+  }, {
+    "tStartMs": 248240,
+    "dDurationMs": 4172,
+    "segs": [ {
+      "utf8": "さっきみたいに「もうええわ、ほんまに帰って！」"
+    } ]
+  }, {
+    "tStartMs": 252412,
+    "dDurationMs": 3083,
+    "segs": [ {
+      "utf8": "本当に嫌で怒る時にも使えます。"
+    } ]
+  }, {
+    "tStartMs": 255495,
+    "dDurationMs": 2807,
+    "segs": [ {
+      "utf8": "もうええわ、ですね。"
+    } ]
+  }, {
+    "tStartMs": 258302,
+    "dDurationMs": 5634,
+    "segs": [ {
+      "utf8": "じゃあ次です。「なんでやねん」"
+    } ]
+  }, {
+    "tStartMs": 263936,
+    "dDurationMs": 4216,
+    "segs": [ {
+      "utf8": "1番有名な関西弁かなと思います。"
+    } ]
+  }, {
+    "tStartMs": 268152,
+    "dDurationMs": 3847,
+    "segs": [ {
+      "utf8": "「なんでやねん」というのは、意味は、"
+    } ]
+  }, {
+    "tStartMs": 271999,
+    "dDurationMs": 2112,
+    "segs": [ {
+      "utf8": "「どうしてですか」という意味です。"
+    } ]
+  }, {
+    "tStartMs": 274111,
+    "dDurationMs": 3668,
+    "segs": [ {
+      "utf8": "そのままの意味だと「どうしてですか？」になります。"
+    } ]
+  }, {
+    "tStartMs": 277779,
+    "dDurationMs": 1778,
+    "segs": [ {
+      "utf8": "「なんで」は「どうして」ですね。"
+    } ]
+  }, {
+    "tStartMs": 279557,
+    "dDurationMs": 2122,
+    "segs": [ {
+      "utf8": "「なんでやねん」っていうのは、"
+    } ]
+  }, {
+    "tStartMs": 281679,
+    "dDurationMs": 4092,
+    "segs": [ {
+      "utf8": "「どうしてなんですか」と聞いている意味なんですけど、"
+    } ]
+  }, {
+    "tStartMs": 285771,
+    "dDurationMs": 5464,
+    "segs": [ {
+      "utf8": "本当に「どうしてなの？」と理由を聞きたいわけではないです。"
+    } ]
+  }, {
+    "tStartMs": 291235,
+    "dDurationMs": 2954,
+    "segs": [ {
+      "utf8": "この「なんでやねん」を言う時は、"
+    } ]
+  }, {
+    "tStartMs": 294189,
+    "dDurationMs": 3263,
+    "segs": [ {
+      "utf8": "もう自分が理解できないこととか、"
+    } ]
+  }, {
+    "tStartMs": 297452,
+    "dDurationMs": 4916,
+    "segs": [ {
+      "utf8": "すごく腹が立つこと、むかつくことがあった時に言います。"
+    } ]
+  }, {
+    "tStartMs": 302368,
+    "dDurationMs": 4248,
+    "segs": [ {
+      "utf8": "私、この前友達とご飯を食べに行きました。"
+    } ]
+  }, {
+    "tStartMs": 306616,
+    "dDurationMs": 2083,
+    "segs": [ {
+      "utf8": "私がお店を予約して、"
+    } ]
+  }, {
+    "tStartMs": 308699,
+    "dDurationMs": 4962,
+    "segs": [ {
+      "utf8": "新宿のこのお店に集合しよう、と言ったんですけど、"
+    } ]
+  }, {
+    "tStartMs": 313661,
+    "dDurationMs": 4128,
+    "segs": [ {
+      "utf8": "当日お店に行ったら、なんかお店が全然なくて。"
+    } ]
+  }, {
+    "tStartMs": 317789,
+    "dDurationMs": 3353,
+    "segs": [ {
+      "utf8": "あれ？ここにもない、絶対この辺なのにない！"
+    } ]
+  }, {
+    "tStartMs": 321142,
+    "dDurationMs": 3259,
+    "segs": [ {
+      "utf8": "結局、そのお店調べたら潰れてて、"
+    } ]
+  }, {
+    "tStartMs": 324401,
+    "dDurationMs": 3332,
+    "segs": [ {
+      "utf8": "もうお店閉まってて、なかったんですよ。"
+    } ]
+  }, {
+    "tStartMs": 327733,
+    "dDurationMs": 3185,
+    "segs": [ {
+      "utf8": "なんか、どこに予約したのかわからないですけど…"
+    } ]
+  }, {
+    "tStartMs": 330918,
+    "dDurationMs": 3969,
+    "segs": [ {
+      "utf8": "こういう時に「なんでやねん！」って言います。"
+    } ]
+  }, {
+    "tStartMs": 334887,
+    "dDurationMs": 3673,
+    "segs": [ {
+      "utf8": "自分が納得できないとか、 理解できないという時に"
+    } ]
+  }, {
+    "tStartMs": 338560,
+    "dDurationMs": 2412,
+    "segs": [ {
+      "utf8": "「なんでやねん」って言いますね。"
+    } ]
+  }, {
+    "tStartMs": 340972,
+    "dDurationMs": 5562,
+    "segs": [ {
+      "utf8": "「なんでやねん」っていうのは、これも漫才でよく使います。"
+    } ]
+  }, {
+    "tStartMs": 346534,
+    "dDurationMs": 4951,
+    "segs": [ {
+      "utf8": "2人が面白いことを話す時、1人が変なことを言うんですね。"
+    } ]
+  }, {
+    "tStartMs": 351485,
+    "dDurationMs": 5139,
+    "segs": [ {
+      "utf8": "例えば「私今日会社まで馬乗ってきてん」とかね。"
+    } ]
+  }, {
+    "tStartMs": 356624,
+    "dDurationMs": 2584,
+    "segs": [ {
+      "utf8": "「なんでやねん！」て言いますね。"
+    } ]
+  }, {
+    "tStartMs": 359208,
+    "dDurationMs": 2750,
+    "segs": [ {
+      "utf8": "そんなわけないでしょ？ばかでしょ？っていう時に"
+    } ]
+  }, {
+    "tStartMs": 361958,
+    "dDurationMs": 1834,
+    "segs": [ {
+      "utf8": "「なんでやねん」って言います。"
+    } ]
+  }, {
+    "tStartMs": 363792,
+    "dDurationMs": 3808,
+    "segs": [ {
+      "utf8": "これまあ、1日1回は絶対言う言葉ですね。"
+    } ]
+  }, {
+    "tStartMs": 367600,
+    "dDurationMs": 1750,
+    "segs": [ {
+      "utf8": "なんでやねん！なんでやねん！"
+    } ]
+  }, {
+    "tStartMs": 369350,
+    "dDurationMs": 4131,
+    "segs": [ {
+      "utf8": "本当に理由を知りたいわけではないというのがポイントです。"
+    } ]
+  }, {
+    "tStartMs": 373481,
+    "dDurationMs": 5309,
+    "segs": [ {
+      "utf8": "はい、じゃあ次行きましょう！「なめとん？」"
+    } ]
+  }, {
+    "tStartMs": 378790,
+    "dDurationMs": 7019,
+    "segs": [ {
+      "utf8": "「なめとん？」です。これ意味は「なめてる？」と同じです。"
+    } ]
+  }, {
+    "tStartMs": 385809,
+    "dDurationMs": 3902,
+    "segs": [ {
+      "utf8": "東京の人も言いますね。「え？私のことなめてるの？」"
+    } ]
+  }, {
+    "tStartMs": 389711,
+    "dDurationMs": 3568,
+    "segs": [ {
+      "utf8": "この「なめてる」っていうのは、あの…こうやって"
+    } ]
+  }, {
+    "tStartMs": 393279,
+    "dDurationMs": 4447,
+    "segs": [ {
+      "utf8": "なめることではなくて、「ばかにする」という意味があります。"
+    } ]
+  }, {
+    "tStartMs": 397726,
+    "dDurationMs": 2356,
+    "segs": [ {
+      "utf8": "だから「なめとん？」は、"
+    } ]
+  }, {
+    "tStartMs": 400082,
+    "dDurationMs": 4730,
+    "segs": [ {
+      "utf8": "「私のことをばかにしていますか？」と聞いている言葉です。"
+    } ]
+  }, {
+    "tStartMs": 404812,
+    "dDurationMs": 4148,
+    "segs": [ {
+      "utf8": "この言葉は喧嘩をする時に本当によく使いますね。"
+    } ]
+  }, {
+    "tStartMs": 408960,
+    "dDurationMs": 3637,
+    "segs": [ {
+      "utf8": "例えば何かむかつくことを言われた時、"
+    } ]
+  }, {
+    "tStartMs": 412597,
+    "dDurationMs": 3743,
+    "segs": [ {
+      "utf8": "「は？おまえ、なめとん？」こうやって使います。"
+    } ]
+  }, {
+    "tStartMs": 416340,
+    "dDurationMs": 2966,
+    "segs": [ {
+      "utf8": "私のことバカにしてるの？そんなこと言って！"
+    } ]
+  }, {
+    "tStartMs": 419306,
+    "dDurationMs": 3238,
+    "segs": [ {
+      "utf8": "腹が立った時に「おまえなめとん？」「なめとーやろ！」"
+    } ]
+  }, {
+    "tStartMs": 422544,
+    "dDurationMs": 4035,
+    "segs": [ {
+      "utf8": "こうやって怒ります。「なめとん？」ですね。"
+    } ]
+  }, {
+    "tStartMs": 426579,
+    "dDurationMs": 3171,
+    "segs": [ {
+      "utf8": "「なめ」までは「なめている」だし、"
+    } ]
+  }, {
+    "tStartMs": 429750,
+    "dDurationMs": 2473,
+    "segs": [ {
+      "utf8": "この「〜とん」勉強しましたよね？"
+    } ]
+  }, {
+    "tStartMs": 432223,
+    "dDurationMs": 3930,
+    "segs": [ {
+      "utf8": "「〜している」の文法、勉強したと思うんですけど"
+    } ]
+  }, {
+    "tStartMs": 436153,
+    "dDurationMs": 4971,
+    "segs": [ {
+      "utf8": "「〜しとう」って勉強しましたよね。それとちょっと近いです。"
+    } ]
+  }, {
+    "tStartMs": 441124,
+    "dDurationMs": 3415,
+    "segs": [ {
+      "utf8": "「なめとう」とか「なめとん」を使います。"
+    } ]
+  }, {
+    "tStartMs": 444539,
+    "dDurationMs": 2485,
+    "segs": [ {
+      "utf8": "バカにしてるの？という意味ですね。"
+    } ]
+  }, {
+    "tStartMs": 447024,
+    "dDurationMs": 7111,
+    "segs": [ {
+      "utf8": "OK！じゃあ次行きましょう。「しばいたろか」"
+    } ]
+  }, {
+    "tStartMs": 454135,
+    "dDurationMs": 2429,
+    "segs": [ {
+      "utf8": "これどういう意味か分かりますか？"
+    } ]
+  }, {
+    "tStartMs": 456564,
+    "dDurationMs": 5491,
+    "segs": [ {
+      "utf8": "「しばく」という動詞です。この言葉は、"
+    } ]
+  }, {
+    "tStartMs": 462055,
+    "dDurationMs": 6051,
+    "segs": [ {
+      "utf8": "そのまま意味を説明すると「たたいてやろうか」になります。"
+    } ]
+  }, {
+    "tStartMs": 468106,
+    "dDurationMs": 4996,
+    "segs": [ {
+      "utf8": "この「しばく」っていうのは「叩く」とか、"
+    } ]
+  }, {
+    "tStartMs": 473102,
+    "dDurationMs": 4902,
+    "segs": [ {
+      "utf8": "こうすること…こういう感じ…こういう感じね。"
+    } ]
+  }, {
+    "tStartMs": 478004,
+    "dDurationMs": 1796,
+    "segs": [ {
+      "utf8": "こういう意味があります。"
+    } ]
+  }, {
+    "tStartMs": 479800,
+    "dDurationMs": 5768,
+    "segs": [ {
+      "utf8": "「〜 たろか」は「〜してあげようか」ですね。"
+    } ]
+  }, {
+    "tStartMs": 485568,
+    "dDurationMs": 3758,
+    "segs": [ {
+      "utf8": "あげようか、なんですけど、"
+    } ]
+  }, {
+    "tStartMs": 489326,
+    "dDurationMs": 3451,
+    "segs": [ {
+      "utf8": "「しばいたろか」って言ったら「おまえのこと叩くで」とか"
+    } ]
+  }, {
+    "tStartMs": 492777,
+    "dDurationMs": 4854,
+    "segs": [ {
+      "utf8": "叩いてやろうかって言って、喧嘩が始まる前の言い方です。"
+    } ]
+  }, {
+    "tStartMs": 497631,
+    "dDurationMs": 4417,
+    "segs": [ {
+      "utf8": "「おまえ、しばいたろか」とか、もう1個あって、"
+    } ]
+  }, {
+    "tStartMs": 502048,
+    "dDurationMs": 5030,
+    "segs": [ {
+      "utf8": "「しばき回したろか」という言い方もあります。"
+    } ]
+  }, {
+    "tStartMs": 507078,
+    "dDurationMs": 3416,
+    "segs": [ {
+      "utf8": "「しばいたろか」は、ちょっと怒ったとき。"
+    } ]
+  }, {
+    "tStartMs": 510494,
+    "dDurationMs": 4586,
+    "segs": [ {
+      "utf8": "「しばき回したろか」って言ったら、もっと強い言い方になります。"
+    } ]
+  }, {
+    "tStartMs": 515080,
+    "dDurationMs": 3213,
+    "segs": [ {
+      "utf8": "「しばいたろか」「しばき回したろか」"
+    } ]
+  }, {
+    "tStartMs": 518293,
+    "dDurationMs": 5994,
+    "segs": [ {
+      "utf8": "この2つ、喧嘩をする時によく使う言い方です。"
+    } ]
+  }, {
+    "tStartMs": 524287,
+    "dDurationMs": 2596,
+    "segs": [ {
+      "utf8": "回すってどういうことか分からないんですけど、"
+    } ]
+  }, {
+    "tStartMs": 526883,
+    "dDurationMs": 4337,
+    "segs": [ {
+      "utf8": "「しばき回す」って言ったら、すごくたくさんしばくとか、"
+    } ]
+  }, {
+    "tStartMs": 531220,
+    "dDurationMs": 2875,
+    "segs": [ {
+      "utf8": "とてもしばくという意味になります。"
+    } ]
+  }, {
+    "tStartMs": 534095,
+    "dDurationMs": 3433,
+    "segs": [ {
+      "utf8": "みなさんいいですか？「しばいたろか」ですね。"
+    } ]
+  }, {
+    "tStartMs": 537528,
+    "dDurationMs": 4531,
+    "segs": [ {
+      "utf8": "次です！「どついたろか」"
+    } ]
+  }, {
+    "tStartMs": 542059,
+    "dDurationMs": 4143,
+    "segs": [ {
+      "utf8": "これもさっきの「しばいたろか」とすごく似てます。"
+    } ]
+  }, {
+    "tStartMs": 546202,
+    "dDurationMs": 4406,
+    "segs": [ {
+      "utf8": "でも、ここの動詞「どつく」という動詞ですね。"
+    } ]
+  }, {
+    "tStartMs": 550608,
+    "dDurationMs": 2398,
+    "segs": [ {
+      "utf8": "「どつく」って分かりますか？"
+    } ]
+  }, {
+    "tStartMs": 553006,
+    "dDurationMs": 3535,
+    "segs": [ {
+      "utf8": "音を聞いたら、だいたい分かるかもしれないです。"
+    } ]
+  }, {
+    "tStartMs": 556541,
+    "dDurationMs": 2454,
+    "segs": [ {
+      "utf8": "これです「どつく」だから、"
+    } ]
+  }, {
+    "tStartMs": 558995,
+    "dDurationMs": 4842,
+    "segs": [ {
+      "utf8": "「どついたろか」は「なぐってやろうか」っていう意味です。"
+    } ]
+  }, {
+    "tStartMs": 563837,
+    "dDurationMs": 3143,
+    "segs": [ {
+      "utf8": "「しばく」は「たたく」こういう感じなんですけど、"
+    } ]
+  }, {
+    "tStartMs": 566980,
+    "dDurationMs": 3401,
+    "segs": [ {
+      "utf8": "「どつく」は、こうです！こういう感じ。"
+    } ]
+  }, {
+    "tStartMs": 570381,
+    "dDurationMs": 2380,
+    "segs": [ {
+      "utf8": "だから意味はほとんど似てるんですけど、"
+    } ]
+  }, {
+    "tStartMs": 572761,
+    "dDurationMs": 4015,
+    "segs": [ {
+      "utf8": "「しばいたろか」よりも「どついたろか」の方が"
+    } ]
+  }, {
+    "tStartMs": 576776,
+    "dDurationMs": 3953,
+    "segs": [ {
+      "utf8": "ちょっと怖い感じがするなって、私は思います。"
+    } ]
+  }, {
+    "tStartMs": 580729,
+    "dDurationMs": 4199,
+    "segs": [ {
+      "utf8": "「どついたろか」ですね。これもさっきと同じように、"
+    } ]
+  }, {
+    "tStartMs": 584928,
+    "dDurationMs": 4305,
+    "segs": [ {
+      "utf8": "もっと強く言いたい時、どうなるか分かりますか？"
+    } ]
+  }, {
+    "tStartMs": 589233,
+    "dDurationMs": 2690,
+    "segs": [ {
+      "utf8": "「どついたろか」と…？"
+    } ]
+  }, {
+    "tStartMs": 591923,
+    "dDurationMs": 3527,
+    "segs": [ {
+      "utf8": "「どつき回したろか」っていう言い方もあります。"
+    } ]
+  }, {
+    "tStartMs": 595450,
+    "dDurationMs": 3294,
+    "segs": [ {
+      "utf8": "この「回す」がついたら、ちょっと強くなるんですね。"
+    } ]
+  }, {
+    "tStartMs": 598744,
+    "dDurationMs": 4821,
+    "segs": [ {
+      "utf8": "「どついたろか」「どつき回したろか」こうですねw"
+    } ]
+  }, {
+    "tStartMs": 603565,
+    "dDurationMs": 3211,
+    "segs": [ {
+      "utf8": "ちょっと怒った時、これ本当に怒った時、"
+    } ]
+  }, {
+    "tStartMs": 606776,
+    "dDurationMs": 2234,
+    "segs": [ {
+      "utf8": "「どつき回したろか」って言います。"
+    } ]
+  }, {
+    "tStartMs": 609010,
+    "dDurationMs": 6831,
+    "segs": [ {
+      "utf8": "特にこの「ろ」の時に舌をRrrr…ってやったらもっと怖いです。"
+    } ]
+  }, {
+    "tStartMs": 615841,
+    "dDurationMs": 5541,
+    "segs": [ {
+      "utf8": "「どつき回したろか」じゃなくて「どつき回したろか！」こうです。"
+    } ]
+  }, {
+    "tStartMs": 621382,
+    "dDurationMs": 4090,
+    "segs": [ {
+      "utf8": "舌をちょっと巻くと、もっと怖い感じになります。"
+    } ]
+  }, {
+    "tStartMs": 625472,
+    "dDurationMs": 3296,
+    "segs": [ {
+      "utf8": "あの…練習しない方が…いいかな？"
+    } ]
+  }, {
+    "tStartMs": 628768,
+    "dDurationMs": 1666,
+    "segs": [ {
+      "utf8": "「どついたろか」ですね。"
+    } ]
+  }, {
+    "tStartMs": 630434,
+    "dDurationMs": 5275,
+    "segs": [ {
+      "utf8": "はい、じゃあ次行きましょう！「いらんことすんな」"
+    } ]
+  }, {
+    "tStartMs": 635709,
+    "dDurationMs": 3568,
+    "segs": [ {
+      "utf8": "これ何かわかりますか？「いらんことすんな」"
+    } ]
+  }, {
+    "tStartMs": 639277,
+    "dDurationMs": 1838,
+    "segs": [ {
+      "utf8": "なんか「事」ですよね？"
+    } ]
+  }, {
+    "tStartMs": 641115,
+    "dDurationMs": 3557,
+    "segs": [ {
+      "utf8": "「すんな」は「するな」です。"
+    } ]
+  }, {
+    "tStartMs": 644672,
+    "dDurationMs": 4070,
+    "segs": [ {
+      "utf8": "「いらんこと」って何ですか？"
+    } ]
+  }, {
+    "tStartMs": 648742,
+    "dDurationMs": 2944,
+    "segs": [ {
+      "utf8": "「いらん」これ勉強しましたね。"
+    } ]
+  }, {
+    "tStartMs": 651686,
+    "dDurationMs": 3029,
+    "segs": [ {
+      "utf8": "「ない」は「ん」になるんですよね、関西弁では。"
+    } ]
+  }, {
+    "tStartMs": 654715,
+    "dDurationMs": 3313,
+    "segs": [ {
+      "utf8": "だから「いらん」っていうのは「いらない」です。"
+    } ]
+  }, {
+    "tStartMs": 658028,
+    "dDurationMs": 1891,
+    "segs": [ {
+      "utf8": "「いらんことすんな」っていうのは、"
+    } ]
+  }, {
+    "tStartMs": 659919,
+    "dDurationMs": 3081,
+    "segs": [ {
+      "utf8": "「いらないことをするな」という意味です。"
+    } ]
+  }, {
+    "tStartMs": 663000,
+    "dDurationMs": 5253,
+    "segs": [ {
+      "utf8": "つまり「余計なことをしないで」という時に使う言い方です。"
+    } ]
+  }, {
+    "tStartMs": 668253,
+    "dDurationMs": 2517,
+    "segs": [ {
+      "utf8": "「おまえ、いらんことすんなよ」って言います。"
+    } ]
+  }, {
+    "tStartMs": 670770,
+    "dDurationMs": 5960,
+    "segs": [ {
+      "utf8": "例えば友達に「私、好きな人できたんだ！」って言いました。"
+    } ]
+  }, {
+    "tStartMs": 676730,
+    "dDurationMs": 4868,
+    "segs": [ {
+      "utf8": "「私、彼のこと好きなんだよね」って友達に話したんですね。"
+    } ]
+  }, {
+    "tStartMs": 681598,
+    "dDurationMs": 3002,
+    "segs": [ {
+      "utf8": "「あ、そうなんだ！」と言って"
+    } ]
+  }, {
+    "tStartMs": 684600,
+    "dDurationMs": 5745,
+    "segs": [ {
+      "utf8": "「ゆが君のこと好きらしいよ」ってその好きな人に言っちゃった！"
+    } ]
+  }, {
+    "tStartMs": 690345,
+    "dDurationMs": 2727,
+    "segs": [ {
+      "utf8": "こういうことありますよね？もう言わないでよ！"
+    } ]
+  }, {
+    "tStartMs": 693072,
+    "dDurationMs": 3275,
+    "segs": [ {
+      "utf8": "「おまえ、いらんことすんなよ！」って言えます。"
+    } ]
+  }, {
+    "tStartMs": 696347,
+    "dDurationMs": 2327,
+    "segs": [ {
+      "utf8": "これ、余計なことですよね。"
+    } ]
+  }, {
+    "tStartMs": 698674,
+    "dDurationMs": 3429,
+    "segs": [ {
+      "utf8": "好きなんだって！って言われたら恥ずかしいじゃないですか！"
+    } ]
+  }, {
+    "tStartMs": 702103,
+    "dDurationMs": 1670,
+    "segs": [ {
+      "utf8": "そんな「いらんことすんな」"
+    } ]
+  }, {
+    "tStartMs": 703773,
+    "dDurationMs": 3813,
+    "segs": [ {
+      "utf8": "余計なことしないで！と言う時に使う言葉です。"
+    } ]
+  }, {
+    "tStartMs": 707586,
+    "dDurationMs": 4115,
+    "segs": [ {
+      "utf8": "この「いらんことすんな」っていうの、"
+    } ]
+  }, {
+    "tStartMs": 711701,
+    "dDurationMs": 3925,
+    "segs": [ {
+      "utf8": "「いらんことしぃ」っていう言い方もできます。"
+    } ]
+  }, {
+    "tStartMs": 715626,
+    "dDurationMs": 3456,
+    "segs": [ {
+      "utf8": "これ名詞です。"
+    } ]
+  }, {
+    "tStartMs": 719082,
+    "dDurationMs": 3642,
+    "segs": [ {
+      "utf8": "おまえ、いらんことしぃやなって言ったら"
+    } ]
+  }, {
+    "tStartMs": 722724,
+    "dDurationMs": 3936,
+    "segs": [ {
+      "utf8": "「余計なことをする人」という悪口になります。"
+    } ]
+  }, {
+    "tStartMs": 726660,
+    "dDurationMs": 2366,
+    "segs": [ {
+      "utf8": "「おまえ、ほんまいらんことしぃやな」とか"
+    } ]
+  }, {
+    "tStartMs": 729026,
+    "dDurationMs": 3514,
+    "segs": [ {
+      "utf8": "「いらんことすんなよ」こういう風に使います。"
+    } ]
+  }, {
+    "tStartMs": 732540,
+    "dDurationMs": 4413,
+    "segs": [ {
+      "utf8": "余計なこととか、やって欲しくないことをやってくる人に対して"
+    } ]
+  }, {
+    "tStartMs": 736953,
+    "dDurationMs": 3118,
+    "segs": [ {
+      "utf8": "使う言い方ですね。「いらんことすんなよ」"
+    } ]
+  }, {
+    "tStartMs": 740071,
+    "dDurationMs": 4119,
+    "segs": [ {
+      "utf8": "「いらんことしぃやな」2つの使い方があります。"
+    } ]
+  }, {
+    "tStartMs": 744190,
+    "dDurationMs": 2408,
+    "segs": [ {
+      "utf8": "はい！じゃあ、もう1つ行きましょう。"
+    } ]
+  }, {
+    "tStartMs": 746598,
+    "dDurationMs": 6959,
+    "segs": [ {
+      "utf8": "「ええ加減にせぇ」これどうですか、意味わかりますか？"
+    } ]
+  }, {
+    "tStartMs": 753557,
+    "dDurationMs": 2700,
+    "segs": [ {
+      "utf8": "前々回かな？勉強しましたね。"
+    } ]
+  }, {
+    "tStartMs": 756257,
+    "dDurationMs": 3983,
+    "segs": [ {
+      "utf8": "「えぇ」は何でしたか？「いい」ですよね。"
+    } ]
+  }, {
+    "tStartMs": 760240,
+    "dDurationMs": 3433,
+    "segs": [ {
+      "utf8": "「加減」は勉強したことあるかもしれませんね。"
+    } ]
+  }, {
+    "tStartMs": 763673,
+    "dDurationMs": 3055,
+    "segs": [ {
+      "utf8": "「ええ加減にせぇ」これは、"
+    } ]
+  }, {
+    "tStartMs": 766728,
+    "dDurationMs": 5302,
+    "segs": [ {
+      "utf8": "「いい加減にしなさい」という意味です。"
+    } ]
+  }, {
+    "tStartMs": 772030,
+    "dDurationMs": 6924,
+    "segs": [ {
+      "utf8": "つまり「いい加減にして」「もうやめて」という意味になります。"
+    } ]
+  }, {
+    "tStartMs": 778954,
+    "dDurationMs": 4377,
+    "segs": [ {
+      "utf8": "加減するっていうのは、加えたり減らしたりすることですよね。"
+    } ]
+  }, {
+    "tStartMs": 783331,
+    "dDurationMs": 2938,
+    "segs": [ {
+      "utf8": "部屋の温度を加減するって言ったら、"
+    } ]
+  }, {
+    "tStartMs": 786269,
+    "dDurationMs": 3420,
+    "segs": [ {
+      "utf8": "部屋の温度をあったかくしたり涼しくしたり"
+    } ]
+  }, {
+    "tStartMs": 789689,
+    "dDurationMs": 2305,
+    "segs": [ {
+      "utf8": "調整するという意味なんですけど、"
+    } ]
+  }, {
+    "tStartMs": 791994,
+    "dDurationMs": 2925,
+    "segs": [ {
+      "utf8": "「ええ加減にして」っていうのは、"
+    } ]
+  }, {
+    "tStartMs": 794919,
+    "dDurationMs": 3359,
+    "segs": [ {
+      "utf8": "「もうそれ以上やめてください」の意味になります。"
+    } ]
+  }, {
+    "tStartMs": 798278,
+    "dDurationMs": 3084,
+    "segs": [ {
+      "utf8": "もうそれ以上しないで、の意味になります。"
+    } ]
+  }, {
+    "tStartMs": 801362,
+    "dDurationMs": 3092,
+    "segs": [ {
+      "utf8": "「もうやめて」と同じ意味ですね。"
+    } ]
+  }, {
+    "tStartMs": 804454,
+    "dDurationMs": 2070,
+    "segs": [ {
+      "utf8": "こういう風に使います。"
+    } ]
+  }, {
+    "tStartMs": 806524,
+    "dDurationMs": 2723,
+    "segs": [ {
+      "utf8": "「おまえ、そろそろええ加減にせぇよ」"
+    } ]
+  }, {
+    "tStartMs": 809247,
+    "dDurationMs": 2555,
+    "segs": [ {
+      "utf8": "せぇよ、とよくセットで使います。"
+    } ]
+  }, {
+    "tStartMs": 811802,
+    "dDurationMs": 2569,
+    "segs": [ {
+      "utf8": "これ私の母がよく言ってます。"
+    } ]
+  }, {
+    "tStartMs": 814371,
+    "dDurationMs": 3664,
+    "segs": [ {
+      "utf8": "「あんたらええ加減にしぃや」って言うんですけど"
+    } ]
+  }, {
+    "tStartMs": 818035,
+    "dDurationMs": 5204,
+    "segs": [ {
+      "utf8": "私、兄がいて、兄と昔よく喧嘩をしたんですね。"
+    } ]
+  }, {
+    "tStartMs": 823239,
+    "dDurationMs": 3651,
+    "segs": [ {
+      "utf8": "おもちゃ私の！とか、お菓子ちょうだい！とか言ってね"
+    } ]
+  }, {
+    "tStartMs": 826890,
+    "dDurationMs": 3743,
+    "segs": [ {
+      "utf8": "大きい声で喧嘩をします。うるさいですよね。"
+    } ]
+  }, {
+    "tStartMs": 830633,
+    "dDurationMs": 3962,
+    "segs": [ {
+      "utf8": "その時に母が「あんたらええ加減にしぃや！」"
+    } ]
+  }, {
+    "tStartMs": 834595,
+    "dDurationMs": 3691,
+    "segs": [ {
+      "utf8": "「静かにしぃ！ええ加減にしぃや！」っていつも言ってました。"
+    } ]
+  }, {
+    "tStartMs": 838286,
+    "dDurationMs": 3486,
+    "segs": [ {
+      "utf8": "「もう喧嘩やめなさい」という意味ですね。"
+    } ]
+  }, {
+    "tStartMs": 841772,
+    "dDurationMs": 4316,
+    "segs": [ {
+      "utf8": "はい！みなさん今日は関西弁の怒り方勉強しました。"
+    } ]
+  }, {
+    "tStartMs": 846088,
+    "dDurationMs": 5756,
+    "segs": [ {
+      "utf8": "今日勉強した言葉は、全部日常生活で結構使います。"
+    } ]
+  }, {
+    "tStartMs": 851844,
+    "dDurationMs": 3216,
+    "segs": [ {
+      "utf8": "私も特によく使うものを選んできたので、"
+    } ]
+  }, {
+    "tStartMs": 855060,
+    "dDurationMs": 5093,
+    "segs": [ {
+      "utf8": "もし関西に住むことがあったら毎日聞くことになると思います。"
+    } ]
+  }, {
+    "tStartMs": 860153,
+    "dDurationMs": 2829,
+    "segs": [ {
+      "utf8": "あの、みなさんが使う時は注意してくださいね。"
+    } ]
+  }, {
+    "tStartMs": 862982,
+    "dDurationMs": 2119,
+    "segs": [ {
+      "utf8": "喧嘩になることがあるので、"
+    } ]
+  }, {
+    "tStartMs": 865101,
+    "dDurationMs": 4365,
+    "segs": [ {
+      "utf8": "注意しながら使ってほしいんですが、 よく使う言葉なので、"
+    } ]
+  }, {
+    "tStartMs": 869466,
+    "dDurationMs": 3263,
+    "segs": [ {
+      "utf8": "ぜひ意味が分かるようにしておいてほしいなと思います。"
+    } ]
+  }, {
+    "tStartMs": 872729,
+    "dDurationMs": 2714,
+    "segs": [ {
+      "utf8": "ではみなさん、また次の動画でお会いしましょう！"
+    } ]
+  }, {
+    "tStartMs": 875443,
+    "dDurationMs": 4384,
+    "segs": [ {
+      "utf8": "ほなな〜おおきに〜まいど〜"
+    } ]
+  } ]
+}
