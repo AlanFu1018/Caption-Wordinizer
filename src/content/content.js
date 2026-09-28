@@ -5,9 +5,21 @@ function currentVideoId() {
     return new URLSearchParams(location.search).get("v");
 }
 
+async function injectFonts() {
+    /*YouTube 頁面不一定連得到 Google Fonts，改用擴充功能內附的字型。
+      fonts.css 裡是相對路徑，要換成 chrome-extension:// 的完整網址*/
+    if (document.getElementById("cw-fonts")) return;
+    const base = chrome.runtime.getURL("res/fonts/");
+    const css = await (await fetch(base + "fonts.css")).text();
+    const style = document.createElement("style");
+    style.id = "cw-fonts";
+    style.textContent = css.replace(/url\((?!["']?(?:https?:|chrome-extension:|data:))["']?([^)"']+)["']?\)/g, `url(${base}$1)`);
+    document.head.appendChild(style);
+}
+
 async function main() {
     const load = (path) => import(chrome.runtime.getURL(path));
-    const [{ fetchAllCaptions }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib] =
+    const [{ fetchAllCaptions }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib, { t }] =
         await Promise.all([
             load("src/content/ccFetcher.js"),
             load("src/content/ccTokenizer.js"),
@@ -15,30 +27,57 @@ async function main() {
             load("src/content/ccDisplayer.js"),
             load("src/content/translationScheduler.js"),
             load("src/common/settings.js"),
+            load("src/common/i18n.js"),
         ]);
+    injectFonts().catch(e => console.warn("[Caption Wordinizer] 字型載入失敗", e));
 
     let settings = await settingsLib.loadSettings();
     let loadedVideoId = null;
+    let currentVideo = null;  // 目前字幕所屬的影片 { videoId, title, author }
     let session = 0; // 換影片時用來讓舊的非同步工作作廢
+    const str = (key, vars) => t(settings.uiLang, key, vars);
 
     const displayer = new CcDisplayer({
-        onWordClick: async (token, line, translation) => {
-            displayer.toast(`正在建立單字卡：${token.basicForm}…`);
+        onSeek: (card) => {
+            // 預覽卡的時間連結：只有卡片屬於目前播放中的影片才跳轉，否則顯示提示
+            const playing = currentVideoId();
+            if (card.videoId && card.videoId === playing && card.videoId === loadedVideoId && displayer.video) {
+                displayer.video.currentTime = card.time;
+                return;
+            }
+            displayer.toast(str("toastOtherVideo", { title: card.videoTitle || card.videoId || "?" }), "warning");
+        },
+        onWordClick: async (token, line, translation, tokenEl) => {
+            displayer.hideCard();
+            displayer.toast(str("toastLoading", { word: token.basicForm }), "loading");
+            tokenEl.classList.add("cw-picked");
+            // 在點擊當下記下影片資訊，避免等待回應期間換了影片
+            const video = currentVideo || { videoId: loadedVideoId, title: "", author: "" };
             try {
                 const res = await chrome.runtime.sendMessage({
                     type: "wordcard:add",
                     token,
                     sentence: line.text,
                     translation,
-                    videoId: loadedVideoId,
+                    videoId: video.videoId,
+                    videoTitle: video.title,
+                    channelName: video.author,
                     time: line.start,
                 });
                 if (!res || !res.ok) throw new Error(res?.error || "unknown error");
-                if (res.duplicated) displayer.toast(`「${res.card.word}」已經在單字卡中`);
-                else if (res.warning) displayer.toast(`已加入 ${res.card.word}（未取得字義：${res.warning}）`);
-                else displayer.toast(`已加入單字卡：${res.card.word} — ${res.card.meaning}`);
+                const { card } = res;
+                if (res.duplicated) {
+                    displayer.toast(str("toastDuplicate", { word: card.word }), "duplicate");
+                } else if (res.warning) {
+                    displayer.toast(str("toastWarning", { word: card.word, warning: res.warning }), "warning");
+                } else if (!displayer.showCard(card, tokenEl)) {
+                    // 字幕已換句、找不到點擊的單字時，改用 toast
+                    displayer.toast(str("toastSuccess", { word: card.word, meaning: card.meaning }), "success");
+                }
             } catch (e) {
-                displayer.toast(`加入失敗：${e.message}`);
+                displayer.toast(str("toastAddFailed", { message: e.message }), "error");
+            } finally {
+                tokenEl.classList.remove("cw-picked");
             }
         },
     });
@@ -62,7 +101,7 @@ async function main() {
                 return res.translations;
             },
             onResult: (index, text) => displayer.setTranslation(index, text),
-            onError: (message) => displayer.toast(`翻譯失敗：${message}`),
+            onError: (message) => displayer.toast(str("toastTranslateFailed", { message }), "error"),
         });
         scheduler.start();
     }
@@ -72,6 +111,7 @@ async function main() {
         if (!settings.enabled || !videoId) {
             session++;
             loadedVideoId = null;
+            currentVideo = null;
             currentLines = null;
             startTranslation();
             displayer.unmount();
@@ -81,14 +121,16 @@ async function main() {
 
         const mySession = ++session;
         loadedVideoId = videoId;
+        currentVideo = null;
         currentLines = null;
         startTranslation();
         displayer.unmount();
 
-        const captions = await fetchAllCaptions(videoId);
-        if (mySession !== session || !captions) return;
+        const result = await fetchAllCaptions(videoId);
+        if (mySession !== session || !result) return;
+        currentVideo = result.video;
 
-        const lines = colorizeLines(await tokenizeCaptions(captions));
+        const lines = colorizeLines(await tokenizeCaptions(result.captions));
         if (mySession !== session) return;
 
         displayer.setLines(lines);

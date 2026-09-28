@@ -18,7 +18,9 @@ caption-wordinizer/
 │   │
 │   ├── common/
 │   │   ├── settings.js            # 共用設定（預設值、讀寫、監聽），存在 storage.sync
-│   │   └── secrets.js             # API Key 讀寫，只給 background / popup 用
+│   │   ├── secrets.js             # API Key 讀寫，只給 background / popup 用
+│   │   ├── i18n.js                # 介面文字（zh-TW / en）、時間格式、影片連結
+│   │   └── icons.js               # Lucide 圖示（inline SVG）
 │   │
 │   ├── content/
 │   │   ├── content.js             # content script 進入點，串起所有模組
@@ -52,9 +54,11 @@ caption-wordinizer/
 └── res/
     ├── popup/
     │   ├── popup.html
+    │   ├── popup.css
     │   └── popup.js
     ├── style/
-    │   └── style.css
+    │   └── style.css              # 字幕覆蓋層、提示框、toast、單字卡預覽
+    ├── fonts/                     # Caprasimo / Figtree / Huninn / Zen Maru Gothic (OFL)，fonts.css + woff2 子集
     ├── icons/
     │   └── icon128.png
     └── lib-vendor/
@@ -90,14 +94,23 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 - 輸出 `[{ text, start, end }]`（秒）。自動字幕的時間區段互相重疊時，截到下一句開始為止。
 ### ccTokenizer
 將所有字幕，處理詞性切割
-- 使用 kuromoji（IPADIC），每個 token 為 `{ surface, pos, posDetail, basicForm, reading }`，讀音轉成平假名。
+- 使用 kuromoji（IPADIC），每個 token 為 `{ surface, pos, posDetail, basicForm, reading, basicReading }`，讀音轉成平假名。
+- `reading` 是出現形的讀音（生き → いき）；`basicReading` 是把原形再斷詞一次得到的原形讀音（生きる → いきる），用於提示框與單字卡。
 - kuromoji 內部用 `path.join` 組字典網址，會把 `chrome-extension://` 壓成 `chrome-extension:/`，載入字典時會暫時修正 XHR 網址。
 ### tokenColorizer
-將不同詞性的字幕上色（`POS_COLORS`，popup 也用同一份顏色）
+將不同詞性的字幕上色。顏色以 OKLCH 產生（各詞性共用同一亮度，助詞 / 記号 / フィラー / その他 為中性色），分三組：
+- `POS_COLORS`：深色字幕框上的文字
+- `POS_COLORS_LIGHT`：米色底上的文字（popup 圓點、單字卡詞性圓圈）
+- `POS_TINTS`：填色（選取中的詞性 chip、單字卡詞性圓圈底色）
 ### ccDisplayer
 將所有部分組裝顯示
 - 覆蓋層掛在 `#movie_player` 內，以 `requestAnimationFrame` + 二分搜尋對應目前的句子。
-- 每個 token 上方可顯示詞性名稱（依設定的詞性清單），滑鼠停留會顯示讀音與原形，點擊即加入單字卡。
+- 每個 token 上方可顯示詞性名稱（依設定的詞性清單），點擊即加入單字卡。
+- 提示框（取代原本的 `title`）：原形 + 原形讀音、`詞性・細分類` 與出現形讀音標籤、「點一下加入單字卡」。
+- `toast(message, state)`：state 為 `loading` / `success` / `duplicate` / `warning` / `error`，各有圖示與顏色；loading 會留著直到被取代，其他 2.5 秒後消失。建立期間點擊的單字保持反白。
+- `showCard(card, tokenEl)`：加入成功後在單字上方顯示預覽卡（意思、說明、例句、時間連結），以單字為中心並限制在播放器內；播放器太矮時內容可捲動。按 ✕、點外面或換句子時關閉。
+- 預覽卡的時間連結：卡片的 `videoId` 等於目前播放中的影片時，直接跳到該句（不重新載入頁面）；是不同影片時不跳轉，改顯示提示「這張單字卡來自另一支影片：{影片標題}」。滑鼠停在連結上會顯示影片標題與頻道；Ctrl / Shift / 中鍵點擊仍可開新分頁。
+- 重複、警告、錯誤仍使用 toast；字幕已換句找不到點擊的單字時，成功也改用 toast。
 ### translationScheduler
 依播放位置分段翻譯，解決長影片（20 分鐘以上）要等很久才有翻譯的問題
 - 字幕每 20 句為一段（chunk），只翻「目前位置 ~ 往後 120 秒」涵蓋的段落，沒看到的部分不會翻。
@@ -115,7 +128,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 ### wordcardInfoFactory
 選擇具體用哪一個 llm 的實作生成單字卡資訊（目前只有 `gemini`）
 ### wordcardGenerator
-產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, sentence, sentenceTranslation, videoId, time, createdAt }`。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
+產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, sentence, sentenceTranslation, videoId, videoTitle, channelName, time, createdAt }`。影片資訊（`videoTitle`、`channelName`）在點擊單字當下由 content script 從播放器資料取得；舊的單字卡沒有這兩個欄位時以空字串處理。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
 ### wordcardDB
 保存單字卡（`chrome.storage.local` 的 `wordcards`），以原形去除重複
 ### wordcardExporter
@@ -127,7 +140,16 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 ### background
 MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`。
 ### settings / popup
-一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、顯示翻譯、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。popup 也能瀏覽、刪除、匯出單字卡。
+一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
+popup 分兩個分頁（會記住上次的分頁）：
+- 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip。
+- 單字卡：最新的在最上面，點卡片展開（一次一張），顯示例句、翻譯、影片時間連結與刪除；底部為匯出與全部清除。
+### UI 設計（Organic）
+依 `doc/UI mockups form/design_handoff_caption_wordinizer_organic/README.md` 實作，採用的版本為 1a（字幕 + 提示框）、1c（toast）、1d（單字卡預覽）、2a（設定分頁）、1h（單字卡分頁）。
+- 顏色：米色 `#f5ead8` 底、陶土色 `#c67139` 強調色、鼠尾草綠 `#7a8a5e` 表示成功。
+- 字型：Caprasimo（標題）、Figtree（內文）、Huninn（中文）、Zen Maru Gothic（日文）。全部內附於 `res/fonts/`，popup 直接引用 `fonts.css`；content script 讀取 `fonts.css` 後把相對路徑換成 `chrome-extension://` 網址，再注入 YouTube 頁面。
+- 圖示：Lucide（`src/common/icons.js`）。
+- 和設計稿不同處：模型欄位預設值維持 `gemini-3.1-flash-lite`（設計稿寫 `gemini-2.5-flash`）；預覽卡在播放器太矮時改為可捲動。
 ### secrets（API Key 的保存）
 - Gemini API Key 單獨存在 `chrome.storage.local` 的 `geminiApiKey`，不和一般設定放在一起。
 - background 每次啟動都會呼叫 `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })`，讓 `local`（API Key、單字卡）只有 background 與 popup 讀得到，content script 讀不到。
@@ -150,6 +172,17 @@ MV3 service worker。所有對外網路請求都在這裡（需要 `host_permiss
 ### 2026-09-28 — 長影片分段翻譯
 - 新增 `translationScheduler.js`：原本會從目前位置依序把整支影片翻完（40 句一批、一次一批），長影片要等很久，跳轉後也要排隊。改成只翻目前位置往後 120 秒（20 句一段、同時 2 個請求），跳轉時新位置優先。
 - 用 Node 模擬 30 分鐘（600 句）影片驗證：開頭只翻前 60 句；跳到 20 分鐘時第一個請求就是該位置；看部分片段時總共只翻了 140 句。
+
+### 2026-09-28 — Organic UI 改版
+- 依設計稿改版：字幕框、滑鼠提示框、四種狀態的 toast、單字卡預覽卡、popup 設定 / 單字卡兩個分頁。
+- 補上設計稿有、原本沒有的功能：介面語言切換（`uiLang`）、提示框顯示原形讀音（`basicReading`）、加入後的單字卡預覽與時間跳轉、popup 分頁與卡片展開、單字卡時間連結、記住上次分頁。
+- 詞性顏色改為 OKLCH 三組（`POS_COLORS` / `POS_COLORS_LIGHT` / `POS_TINTS`），新增 `i18n.js`、`icons.js`、`popup.css`，字型內附於 `res/fonts/`。
+- 已用 headless Chrome 截圖檢查 popup（中 / EN、兩個分頁）、提示框、預覽卡與 toast。
+
+### 2026-09-28 — 單字卡保存影片資訊
+- 單字卡新增 `videoTitle`、`channelName` 欄位（`ytBridge` 多回傳 `videoDetails.title / author`，`ccFetcher` 回傳 `{ captions, video }`）。
+- 預覽卡的時間連結只在同一支影片時跳轉；不同影片顯示提示、不跳轉。
+- popup 的時間連結與 Anki 匯出的 Source 欄位改顯示影片標題。
 
 ---
 # English
@@ -180,3 +213,8 @@ See the tree above. On top of the original design, three files were added:
 - The Gemini API key is stored on its own in `storage.local`, which is restricted to `TRUSTED_CONTEXTS`; the key never reaches content scripts. Other settings moved to `storage.sync`. Default model is now `gemini-3.1-flash-lite`.
 ### 2026-09-28 — Chunked translation for long videos
 - Added `translationScheduler.js`. Translation no longer runs through the whole video; it follows playback and seeks, so 20+ minute videos show translations right away.
+### 2026-09-28 — Organic UI redesign
+- Implemented the handoff in `doc/UI mockups form` (picks 1a, 1c, 1d, 2a, 1h): caption box, hover tooltip, toast states, wordcard preview card, and a tabbed popup.
+- New: UI language setting (`uiLang`), dictionary-form readings (`basicReading`), OKLCH POS palettes, `i18n.js`, `icons.js`, bundled fonts in `res/fonts/`.
+### 2026-09-28 — Video info on wordcards
+- Cards now store `videoTitle` and `channelName`. The preview card's timestamp only seeks when the card belongs to the video that is playing; otherwise it shows a notice and does not navigate.

@@ -3,52 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <title>Caption Wordinizer</title>
-    <style>
-        body { width: 340px; margin: 0; padding: 12px 14px; font: 13px/1.5 system-ui, "Microsoft JhengHei", sans-serif; color: #222; }
-        h1 { font-size: 16px; margin: 0 0 8px; }
-        h2 { font-size: 13px; margin: 14px 0 6px; padding-top: 10px; border-top: 1px solid #e3e3e3; }
-        label.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 5px 0; }
-        select, input[type=text], input[type=password] { flex: 1; max-width: 190px; padding: 3px 5px; font: inherit; }
-        .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 6px; }
-        .pos-grid label { display: flex; align-items: center; gap: 4px; }
-        .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; border: 1px solid #0003; }
-        .hint { color: #777; font-size: 12px; }
-        .buttons { display: flex; gap: 6px; margin-top: 6px; }
-        button { flex: 1; padding: 5px; font: inherit; cursor: pointer; }
-        ul.cards { list-style: none; margin: 6px 0 0; padding: 0; max-height: 180px; overflow-y: auto; }
-        ul.cards li { display: flex; justify-content: space-between; gap: 6px; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
-        ul.cards .meaning { color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-        ul.cards button { flex: none; padding: 0 6px; }
-    </style>
+    <link rel="stylesheet" href="../fonts/fonts.css">
+    <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-<h1>Caption Wordinizer</h1>
+<header class="header">
+    <img class="logo" src="../icons/icon128.png" alt="">
+    <span class="brand">Caption Wordinizer</span>
+    <div class="lang-switch" role="group" aria-label="UI language">
+        <button type="button" data-ui-lang="zh-TW">中</button>
+        <button type="button" data-ui-lang="en">EN</button>
+    </div>
+    <label class="switch">
+        <input type="checkbox" id="enabled" data-i18n-label="enable">
+        <span class="track"></span>
+    </label>
+</header>
 
-<label class="row">啟用字幕分詞 <input type="checkbox" id="enabled"></label>
-<label class="row">顯示翻譯 <input type="checkbox" id="showTranslation"></label>
-<label class="row">翻譯語言 <select id="targetLang"></select></label>
-<label class="row">翻譯引擎
-    <select id="translateProvider">
-        <option value="google">Google 翻譯</option>
-        <option value="gemini">Gemini</option>
-    </select>
-</label>
+<nav class="tabs" role="tablist">
+    <button type="button" class="tab" role="tab" data-tab="settings" data-i18n="settingsTab"></button>
+    <button type="button" class="tab" role="tab" data-tab="cards"><span data-i18n="cardsTab"></span> · <span id="cardCount">0</span></button>
+</nav>
 
-<h2>Gemini（單字卡 / Gemini 翻譯）</h2>
-<label class="row">API Key <input type="password" id="geminiApiKey" placeholder="AIza..."></label>
-<label class="row">模型 <input type="text" id="geminiModel"></label>
-<div class="hint">API Key 只儲存在本機瀏覽器中。</div>
+<!-- 2a 設定 -->
+<section class="view" data-view="settings">
+    <div class="rows">
+        <div class="row">
+            <span data-i18n="showTranslation"></span>
+            <label class="switch">
+                <input type="checkbox" id="showTranslation" data-i18n-label="showTranslation">
+                <span class="track"></span>
+            </label>
+        </div>
+        <div class="row">
+            <span data-i18n="targetLang"></span>
+            <div class="seg" id="targetLang"></div>
+        </div>
+        <div class="row">
+            <span data-i18n="engine"></span>
+            <div class="seg" id="translateProvider">
+                <label class="seg-opt"><input type="radio" name="translateProvider" value="google"><span data-i18n="google"></span></label>
+                <label class="seg-opt"><input type="radio" name="translateProvider" value="gemini">Gemini</label>
+            </div>
+        </div>
+    </div>
 
-<h2>顯示詞性名稱</h2>
-<div class="pos-grid" id="posLabels"></div>
+    <div class="section">
+        <h2 data-i18n="geminiHead"></h2>
+        <div class="field">
+            <label for="geminiApiKey">API Key<span data-i18n="keyHint"></span></label>
+            <input class="input" type="password" id="geminiApiKey" placeholder="AIza..." autocomplete="off">
+        </div>
+        <div class="field">
+            <label for="geminiModel" data-i18n="model"></label>
+            <input class="input" type="text" id="geminiModel">
+        </div>
+    </div>
 
-<h2>單字卡（<span id="cardCount">0</span>）</h2>
-<div class="hint">點擊影片字幕中的單字即可加入。</div>
-<ul class="cards" id="cardList"></ul>
-<div class="buttons">
-    <button id="exportBtn">匯出 Anki (.txt)</button>
-    <button id="clearBtn">全部清除</button>
-</div>
+    <div class="section">
+        <h2 data-i18n="posHead"></h2>
+        <div class="pos-grid" id="posLabels"></div>
+    </div>
+</section>
+
+<!-- 1h 單字卡 -->
+<section class="view" data-view="cards">
+    <p class="hint" id="cardsEmpty" data-i18n="cardsHint"></p>
+    <div class="card-list" id="cardList"></div>
+    <div class="footer">
+        <button type="button" class="btn btn-primary" id="exportBtn"><span class="btn-icon" data-icon="download"></span><span data-i18n="export"></span></button>
+        <button type="button" class="btn btn-ghost" id="clearBtn" data-i18n="clear"></button>
+    </div>
+</section>
 
 <script type="module" src="popup.js"></script>
 </body>

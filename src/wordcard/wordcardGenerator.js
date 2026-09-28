@@ -3,19 +3,21 @@
 
 import { createWordcardInfoProvider } from "./wordcardInfoFactory.js";
 
-async function generateWordcard({ token, sentence, translation, videoId, time }, settings) {
+async function generateWordcard({ token, sentence, translation, videoId, videoTitle, channelName, time }, settings) {
     const card = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         word: token.basicForm,
         surface: token.surface,
-        // tokenizer 的讀音是出現形的（例：走っ → はしっ），只有出現形等於原形時才可直接用
-        reading: token.surface === token.basicForm ? (token.reading || "") : "",
+        // 原形的讀音（ccTokenizer 會另外算出 basicReading；token.reading 是出現形的讀音，例：走っ → はしっ）
+        reading: token.basicReading || (token.surface === token.basicForm ? (token.reading || "") : ""),
         pos: token.pos,
         meaning: "",
         explanation: "",
         sentence,
         sentenceTranslation: translation || "",
         videoId: videoId || "",
+        videoTitle: videoTitle || "",
+        channelName: channelName || "",
         time: Math.floor(time || 0),
         createdAt: new Date().toISOString(),
     };

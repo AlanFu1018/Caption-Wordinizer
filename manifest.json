@@ -40,7 +40,9 @@
       "resources": [
         "src/content/*.js",
         "src/common/*.js",
-        "res/lib-vendor/kuromoji/dict/*"
+        "res/lib-vendor/kuromoji/dict/*",
+        "res/fonts/*",
+        "res/fonts/*/*"
       ],
       "matches": ["*://www.youtube.com/*"]
     }

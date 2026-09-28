@@ -1,4 +1,5 @@
-/* Caption Wordinizer - 字幕覆蓋層 */
+/* Caption Wordinizer - 字幕覆蓋層（Organic 設計）
+   字型由 content.js 從 res/fonts/fonts.css 載入 */
 
 /* 啟用時隱藏 YouTube 原生字幕 */
 html.cw-active .ytp-caption-window-container {
@@ -6,6 +7,24 @@ html.cw-active .ytp-caption-window-container {
 }
 
 .cw-overlay {
+    --cw-bg: #f5ead8;
+    --cw-surface: #ebddc5;
+    --cw-text: #201e1d;
+    --cw-accent: #c67139;
+    --cw-accent-100: #fff2eb;
+    --cw-accent-700: #8c491a;
+    --cw-accent-800: #643312;
+    --cw-accent-2: #7a8a5e;
+    --cw-accent-2-700: #56633f;
+    --cw-neutral-100: #f9f4ed;
+    --cw-neutral-300: #dcd3c4;
+    --cw-neutral-600: #82796a;
+    --cw-neutral-700: #645c50;
+    --cw-neutral-800: #474238;
+    --cw-shadow-lg: 0 12px 32px rgba(46, 43, 37, 0.22);
+    --cw-font-body: "Figtree", "Huninn", system-ui, sans-serif;
+    --cw-font-ja: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+
     position: absolute;
     left: 0;
     right: 0;
@@ -15,23 +34,37 @@ html.cw-active .ytp-caption-window-container {
     flex-direction: column;
     align-items: center;
     pointer-events: none;
+    font-family: var(--cw-font-body);
+    text-align: left;
 }
 
 .ytp-autohide .cw-overlay {
     bottom: 24px;
 }
 
-.cw-box {
-    max-width: 90%;
-    padding: 6px 14px 8px;
-    border-radius: 8px;
-    background: rgba(8, 8, 8, 0.78);
-    text-align: center;
-    pointer-events: auto;
+.cw-overlay *,
+.cw-overlay *::before,
+.cw-overlay *::after {
+    box-sizing: border-box;
+}
+
+.cw-overlay svg {
+    display: block;
+    flex: none;
 }
 
 .cw-hidden {
     display: none !important;
+}
+
+/* ── 1a 字幕框 ── */
+.cw-box {
+    max-width: 90%;
+    padding: 8px 20px 12px;
+    border-radius: 16px;
+    background: rgba(46, 43, 37, 0.86);
+    text-align: center;
+    pointer-events: auto;
 }
 
 .cw-line {
@@ -39,50 +72,308 @@ html.cw-active .ytp-caption-window-container {
     flex-wrap: wrap;
     justify-content: center;
     align-items: flex-end;
-    font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
-    font-size: 26px;
+    font-family: var(--cw-font-ja);
+    font-weight: 700;
+    font-size: 28px;
     line-height: 1.25;
 }
 
 .cw-token {
+    position: relative;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 1px;
-    border-radius: 4px;
+    padding: 0 2px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
 .cw-token:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(245, 234, 216, 0.18);
+}
+
+/* 建立單字卡期間，點擊的單字保持反白 */
+.cw-token.cw-picked {
+    background: rgba(245, 234, 216, 0.22);
 }
 
 .cw-pos {
     min-height: 1.1em;
-    font-size: 11px;
-    line-height: 1.1;
+    font: 600 11px/1.1 var(--cw-font-body);
     opacity: 0.85;
     white-space: nowrap;
 }
 
 .cw-translation {
-    margin-top: 4px;
-    color: #f5f5f5;
-    font-size: 18px;
-    line-height: 1.35;
+    margin-top: 6px;
+    color: var(--cw-neutral-100);
+    font: 500 18px/1.35 var(--cw-font-body);
 }
 
+/* ── 1a 滑鼠停留提示框 ── */
+.cw-tip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 14px;
+    border-radius: 16px;
+    background: var(--cw-bg);
+    color: var(--cw-text);
+    box-shadow: var(--cw-shadow-lg);
+    text-align: left;
+    white-space: nowrap;
+    font: 500 13px/1.3 var(--cw-font-body);
+    pointer-events: none;
+}
+
+.cw-token:hover .cw-tip {
+    display: flex;
+}
+
+/* 預覽卡打開時不顯示提示框 */
+.cw-card-open .cw-token:hover .cw-tip {
+    display: none;
+}
+
+.cw-tip-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.cw-tip-word {
+    font: 700 20px var(--cw-font-ja);
+}
+
+.cw-tip-reading {
+    font: 500 13px var(--cw-font-body);
+    color: var(--cw-neutral-700);
+}
+
+.cw-tip-tags {
+    display: flex;
+    gap: 6px;
+}
+
+.cw-tip-hint {
+    font-size: 11px;
+    color: var(--cw-neutral-700);
+}
+
+.cw-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font: 500 11px/1.3 var(--cw-font-body);
+    letter-spacing: 0.02em;
+}
+
+.cw-tag-accent {
+    background: var(--cw-accent-100);
+    color: var(--cw-accent-800);
+}
+
+.cw-tag-neutral {
+    background: var(--cw-neutral-100);
+    color: var(--cw-neutral-800);
+}
+
+/* ── 1c toast ── */
+/* 沒顯示時不佔空間，避免字幕框被往上推 */
 .cw-toast {
-    margin-top: 8px;
-    padding: 4px 12px;
-    border-radius: 6px;
-    background: rgba(30, 30, 30, 0.9);
-    color: #fff;
-    font-size: 14px;
-    opacity: 0;
-    transition: opacity 0.2s;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 6px 16px 6px 6px;
+    border-radius: 999px;
+    background: var(--cw-bg);
+    color: var(--cw-text);
+    font: 500 14px var(--cw-font-body);
+    box-shadow: var(--cw-shadow-lg);
 }
 
 .cw-toast.cw-show {
-    opacity: 1;
+    display: flex;
+    animation: cw-fade-in 0.2s ease-out;
+}
+
+@keyframes cw-fade-in {
+    from { opacity: 0; }
+}
+
+.cw-toast-icon {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.cw-toast[data-state="loading"] .cw-toast-icon {
+    background: var(--cw-accent-100);
+    color: var(--cw-accent-700);
+}
+
+.cw-toast[data-state="loading"] .cw-toast-icon svg {
+    animation: cw-spin 1s linear infinite;
+}
+
+.cw-toast[data-state="success"] .cw-toast-icon {
+    background: var(--cw-accent-2);
+    color: var(--cw-bg);
+}
+
+.cw-toast[data-state="duplicate"] .cw-toast-icon {
+    background: var(--cw-neutral-300);
+    color: var(--cw-neutral-800);
+}
+
+.cw-toast[data-state="warning"] .cw-toast-icon,
+.cw-toast[data-state="error"] .cw-toast-icon {
+    background: var(--cw-accent);
+    color: var(--cw-bg);
+}
+
+@keyframes cw-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── 1d 單字卡預覽 ── */
+.cw-card {
+    position: absolute;
+    width: 300px;
+    border-radius: 28px;
+    background: var(--cw-bg);
+    color: var(--cw-text);
+    box-shadow: var(--cw-shadow-lg);
+    pointer-events: auto;
+}
+
+/* 內容放在可捲動的內層，播放器太矮時由 JS 設定 max-height（箭頭在外層才不會被裁掉） */
+.cw-card-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 18px;
+    border-radius: 28px;
+    background: var(--cw-bg);
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.cw-card-kicker {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.cw-card-kicker-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font: 600 11px var(--cw-font-body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cw-accent-2-700);
+}
+
+.cw-card-close {
+    display: flex;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--cw-neutral-600);
+    cursor: pointer;
+}
+
+.cw-card-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.cw-card-word {
+    font: 700 30px/1 var(--cw-font-ja);
+}
+
+.cw-card-reading {
+    font: 500 15px var(--cw-font-body);
+    color: var(--cw-neutral-700);
+}
+
+.cw-card-pos {
+    margin-left: auto;
+}
+
+.cw-card-meaning {
+    font: 600 16px/1.3 var(--cw-font-body);
+}
+
+.cw-card-explanation {
+    font: 400 13px/1.45 var(--cw-font-body);
+    color: var(--cw-neutral-800);
+}
+
+.cw-card-sentence {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: var(--cw-surface);
+}
+
+.cw-card-jp {
+    font: 500 15px var(--cw-font-ja);
+}
+
+.cw-card-jp b {
+    color: var(--cw-accent-700);
+}
+
+.cw-card-sentence-tr {
+    font: 400 12px var(--cw-font-body);
+    color: var(--cw-neutral-700);
+}
+
+.cw-card-time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    font: 500 12px var(--cw-font-body);
+    color: var(--cw-accent-700);
+    text-decoration: none;
+}
+
+.cw-card-time:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.cw-card-arrow {
+    position: absolute;
+    bottom: -7px;
+    width: 14px;
+    height: 14px;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 3px;
+    background: var(--cw-bg);
+}
+
+.cw-overlay button:focus-visible,
+.cw-overlay a:focus-visible {
+    outline: 2px solid var(--cw-accent);
+    outline-offset: 2px;
 }

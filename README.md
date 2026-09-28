@@ -1,4 +1,5 @@
-> # 語言 / Language
+![image](doc/cover.png)
+> > # 語言 / Language
 > - [中文說明](#日文字幕單字分詞顯示工具)
 > - [English Description](#caption-wordinizer)
 
@@ -34,14 +35,17 @@
 
 ## 使用方式
 - 打開一支有日文字幕（人工或自動產生）的 YouTube 影片，上色後的字幕會取代原本的字幕。
-- 滑鼠停在單字上可看到讀音與原形；**點一下單字**就會加入單字卡。
-- 在擴充功能的設定頁可以：開關功能、切換翻譯語言與引擎、選擇要顯示名稱的詞性。
-- 單字卡匯出：設定頁點「匯出 Anki」取得 `.txt`，在 Anki 選「檔案 → 匯入」即可（欄位：單字、讀音、意思、詞性、說明、例句、例句翻譯、影片連結）。
+- 滑鼠停在單字上會出現提示框（原形、原形讀音、詞性、讀音）；**點一下單字**就會加入單字卡，加入後會在單字上方顯示單字卡預覽，點預覽卡的時間可跳回該句。
+- 擴充功能的「設定」分頁：開關功能、切換介面語言（中 / EN）、翻譯語言與引擎、選擇要顯示名稱的詞性。
+- 「單字卡」分頁：點卡片展開例句、翻譯與影片時間連結，可單張刪除。
+- 單字卡匯出：「單字卡」分頁點「匯出 Anki (.txt)」，在 Anki 選「檔案 → 匯入」即可（欄位：單字、讀音、意思、詞性、說明、例句、例句翻譯、影片連結）。
 
 ## 開發紀錄
 - **2026-09-28 v0.1**：完成 [spec](doc/spec.md) 中所有模組（字幕抓取、斷詞、上色、顯示、翻譯、單字卡、Anki 匯出、設定頁）。詳細內容見 [spec 的完成紀錄](doc/spec.md#完成紀錄)，尚未完成的項目見 [wait-feat](doc/wait-feat.md)。
 - **2026-09-28**：API Key 改為單獨保存，content script 讀不到；預設模型改為 `gemini-3.1-flash-lite`。
 - **2026-09-28**：長影片分段翻譯，只翻目前播放位置往後約 2 分鐘，跳轉時新位置優先，20 分鐘以上的影片也能馬上看到翻譯。
+- **2026-09-28**：依 `doc/UI mockups form` 的 Organic 設計改版字幕、提示框、toast、單字卡預覽與設定頁，新增介面語言切換（中 / EN），字型改為內附。
+- **2026-09-28**：單字卡保存影片標題與頻道；預覽卡的時間連結只在同一支影片時跳轉，不同影片會顯示提示。
 
 ---
 
@@ -68,11 +72,14 @@ It's a chrome extension that can help you learn and understand Japanese.
 
 ## Usage
 - Open a YouTube video with Japanese captions (manual or auto-generated). The colored captions replace the native ones.
-- Hover a word to see its reading and dictionary form; **click it** to add it as a wordcard.
-- In the popup you can toggle the extension, choose the target language and translation engine, and pick which parts of speech show their names.
-- Export: click **匯出 Anki** in the popup to download a `.txt` file, then use **File → Import** in Anki.
+- Hover a word for a tooltip (dictionary form and its reading, part of speech, reading); **click it** to add it as a wordcard. A preview of the new card appears above the word, and its timestamp jumps back to that line.
+- Popup **Settings** tab: toggle the extension, switch the UI language (中 / EN), choose the target language and translation engine, and pick which parts of speech show their names.
+- Popup **Wordcards** tab: click a card to expand its sentence, translation and timestamp link, or delete it.
+- Export: click **Export Anki (.txt)** in the Wordcards tab, then use **File → Import** in Anki.
 
 ## Changelog
 - **2026-09-28 v0.1**: all modules in the [spec](doc/spec.md) implemented. See the spec's changelog for details and [wait-feat](doc/wait-feat.md) for what's left.
 - **2026-09-28**: the API key is stored separately and content scripts can't read it; default model is now `gemini-3.1-flash-lite`.
 - **2026-09-28**: chunked translation for long videos, which only translates ~2 minutes ahead of playback and follows seeks.
+- **2026-09-28**: Organic redesign (from `doc/UI mockups form`) of the caption overlay, tooltip, toasts, wordcard preview and popup; added a UI language switch (中 / EN) and bundled fonts.
+- **2026-09-28**: wordcards store the video title and channel; the preview card's timestamp only seeks within the same video and shows a notice otherwise.

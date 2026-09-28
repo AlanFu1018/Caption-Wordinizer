@@ -37,22 +37,40 @@ function getTokenizer() {
     return tokenizerPromise;
 }
 
-function toToken(t) {
+function readingOf(t) {
+    return t.reading && t.reading !== "*" ? katakanaToHiragana(t.reading) : "";
+}
+
+function basicReadingOf(tokenizer, basicForm, cache) {
+    /*kuromoji 只給出現形的讀音（生き → いき），把原形再斷詞一次取得原形的讀音（生きる → いきる）*/
+    if (!cache.has(basicForm)) {
+        const parts = tokenizer.tokenize(basicForm);
+        cache.set(basicForm, parts.every(p => readingOf(p)) ? parts.map(readingOf).join("") : "");
+    }
+    return cache.get(basicForm);
+}
+
+function toToken(t, tokenizer, cache) {
+    const surface = t.surface_form;
+    const basicForm = t.basic_form && t.basic_form !== "*" ? t.basic_form : surface;
+    const reading = readingOf(t);
     return {
-        surface: t.surface_form,
+        surface,
         pos: t.pos,
         posDetail: t.pos_detail_1 !== "*" ? t.pos_detail_1 : "",
-        basicForm: t.basic_form && t.basic_form !== "*" ? t.basic_form : t.surface_form,
-        reading: t.reading && t.reading !== "*" ? katakanaToHiragana(t.reading) : "",
+        basicForm,
+        reading,
+        basicReading: basicForm === surface ? reading : basicReadingOf(tokenizer, basicForm, cache),
     };
 }
 
 async function tokenizeCaptions(captions) {
     /*captions: [{text, start, end}] → 每句多一個 tokens 陣列*/
     const tokenizer = await getTokenizer();
+    const cache = new Map();
     return captions.map(line => ({
         ...line,
-        tokens: tokenizer.tokenize(line.text).map(toToken),
+        tokens: tokenizer.tokenize(line.text).map(t => toToken(t, tokenizer, cache)),
     }));
 }
 

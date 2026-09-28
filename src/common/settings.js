@@ -15,6 +15,7 @@ const TARGET_LANGUAGES = {
 
 const DEFAULT_SETTINGS = {
     enabled: true,
+    uiLang: "zh-TW",                  // 介面語言 "zh-TW" | "en"，和翻譯語言無關
     targetLang: "zh-TW",
     translateProvider: "google",      // "google" | "gemini"
     wordcardProvider: "gemini",       // "gemini"

@@ -30,7 +30,7 @@ function toAnkiTsv(cards) {
         escapeField(c.explanation),
         highlight(c.sentence, c.surface),
         escapeField(c.sentenceTranslation),
-        c.videoId ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(c.videoId)}&amp;t=${c.time}s">YouTube</a>` : "",
+        c.videoId ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(c.videoId)}&amp;t=${c.time}s">${escapeField(c.videoTitle) || "YouTube"}</a>` : "",
     ].join("\t"));
     return [...header, ...rows].join("\n") + "\n";
 }

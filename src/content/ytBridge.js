@@ -57,6 +57,8 @@
                 type: "player-data",
                 reqId: msg.reqId,
                 videoId: pr?.videoDetails?.videoId || null,
+                title: pr?.videoDetails?.title || "",
+                author: pr?.videoDetails?.author || "",
                 tracks: tracks.map(t => ({
                     baseUrl: t.baseUrl,
                     languageCode: t.languageCode,
