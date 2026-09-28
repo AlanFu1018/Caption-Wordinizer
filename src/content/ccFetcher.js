@@ -128,7 +128,7 @@ function parseJson3(data) {
 }
 
 async function fetchAllCaptions(videoId) {
-    /*async function to fetch all caption at once for a video*/
+    /*一次抓完影片的所有日文字幕，回傳 { captions, title }（title 給 LLM 翻譯當背景資訊），失敗回傳 null*/
 
     // 1. 從頁面拿到 YouTube 的播放器資料
     const playerData = await getPlayerDataFor(videoId);
@@ -168,7 +168,7 @@ async function fetchAllCaptions(videoId) {
     }
 
     const captions = parseJson3(data);
-    return captions.length ? captions : null;
+    return captions.length ? { captions, title: playerData.title || "" } : null;
 }
 
 export { fetchAllCaptions, parseJson3 };

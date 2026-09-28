@@ -200,9 +200,10 @@ IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依�
 - 同時最多 2 個請求，失敗會重試 1 次，仍失敗才顯示一次錯誤提示。
 - 切換翻譯語言、翻譯引擎、LLM 提供者或開關翻譯時，只重新開始翻譯，不重新抓字幕；已翻過的句子由 background 的快取直接回傳。
 ### Translator
-將所有字幕整句翻譯（介面：`translateBatch(texts, targetLang) → string[]`）
-- `GoogleTranslateProvider`：Google 翻譯公開端點，不需 API Key。多句用換行合併成一次請求，句數對不上時改為逐句翻譯。
-- `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`：將一批句子當作上下文一起送給 LLM，要求回傳 `{"translations": [...]}`；解析時也接受直接回傳的陣列。
+將所有字幕整句翻譯（介面：`translateBatch(texts, targetLang, { title }) → string[]`）
+- `GoogleTranslateProvider`：Google 翻譯公開端點，不需 API Key。多句用換行合併成一次請求，句數對不上時改為逐句翻譯。忽略 `title`。
+- `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`：將一批句子當作上下文一起送給 LLM，要求回傳 `{"translations": [...]}`；解析時也接受直接回傳的陣列。prompt 與解析共用 `translate/llmTranslatePrompt.js`。
+- prompt 說明這些是口語或歌詞、要意譯而不是逐字翻，並附上影片標題當背景資訊（由 `ytBridge` 從播放器資料取得，經 `translate` 訊息傳到 background），註明只供參考、不要翻譯或照標題改寫字幕。
 - NVIDIA / Groq 翻譯呼叫時關閉 `strictJson`（見 llmLib）：它們的 JSON 模式要求最外層是物件，模型常照樣回傳陣列，Groq 會直接回 400 `json_validate_failed`。
 ### translatorFactory
 依照設定選擇具體的翻譯實作：`translateProvider` 為 `google` 時用 Google 翻譯；為 `llm` 時依 `llmProvider`（`gemini` / `nvidia` / `groq`）選擇。
@@ -463,9 +464,10 @@ Translates in chunks around playback, so long videos (20+ minutes) don't wait a 
 - At most 2 concurrent requests; a failure is retried once, and an error toast is shown once if it still fails.
 - Changing the translation language, engine, LLM provider, or toggling translation only restarts translation without refetching captions; already translated lines come straight from the background cache.
 ### Translator
-Translates whole caption lines (interface: `translateBatch(texts, targetLang) → string[]`).
-- `GoogleTranslateProvider`: Google Translate public endpoint, no API key. Lines are joined with newlines into one request; if the line count doesn't match, it falls back to line-by-line.
-- `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`: send a batch of lines to the LLM together as context and ask for `{"translations": [...]}` back; a bare array is accepted too.
+Translates whole caption lines (interface: `translateBatch(texts, targetLang, { title }) → string[]`).
+- `GoogleTranslateProvider`: Google Translate public endpoint, no API key. Lines are joined with newlines into one request; if the line count doesn't match, it falls back to line-by-line. Ignores `title`.
+- `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`: send a batch of lines to the LLM together as context and ask for `{"translations": [...]}` back; a bare array is accepted too. The prompt and parsing are shared in `translate/llmTranslatePrompt.js`.
+- The prompt says the lines are speech or lyrics to be translated for meaning, not word for word, and includes the video title as background (read by `ytBridge` from the player data and passed to the background in the `translate` message), marked as reference only: don't translate it or rewrite lines to match it.
 - NVIDIA / Groq translation calls turn off `strictJson` (see llmLib): their JSON mode requires an object at the top level, models often return an array anyway, and Groq rejects that with 400 `json_validate_failed`.
 ### translatorFactory
 Picks the implementation: Google Translate when `translateProvider` is `google`; when it is `llm`, by `llmProvider` (`gemini` / `nvidia` / `groq`).

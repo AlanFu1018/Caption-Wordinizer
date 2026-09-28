@@ -82,6 +82,7 @@ async function main() {
 
     let scheduler = null;
     let currentLines = null;
+    let currentTitle = "";
 
     function startTranslation() {
         /*依播放位置分段翻譯（見 translationScheduler.js）*/
@@ -93,7 +94,7 @@ async function main() {
             lines: currentLines,
             video: displayer.video,
             translate: async (texts) => {
-                const res = await chrome.runtime.sendMessage({ type: "translate", texts });
+                const res = await chrome.runtime.sendMessage({ type: "translate", texts, title: currentTitle });
                 if (!res || !res.ok) throw new Error(res?.error || "unknown error");
                 return res.translations;
             },
@@ -118,11 +119,14 @@ async function main() {
         const mySession = ++session;
         loadedVideoId = videoId;
         currentLines = null;
+        currentTitle = "";
         startTranslation();
         displayer.unmount();
 
-        const raw = await fetchAllCaptions(videoId);
-        if (mySession !== session || !raw) return;
+        const fetched = await fetchAllCaptions(videoId);
+        if (mySession !== session || !fetched) return;
+        const raw = fetched.captions;
+        currentTitle = fetched.title;
         // 重新斷句：有標點依標點；沒標點的自動字幕依詞性 + 停頓；沒標點的人工字幕維持原樣
         let captions = raw;
         if (settings.sentenceSplit) {

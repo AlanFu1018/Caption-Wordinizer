@@ -3,8 +3,7 @@
 
 import { Translator } from "../Translator.js";
 import { GeminiClient } from "../../llmLib/geminiClient.js";
-
-const LANG_NAMES = { "zh-TW": "Traditional Chinese (Taiwan)", "en": "English" };
+import { buildTranslatePrompt, readTranslations } from "../llmTranslatePrompt.js";
 
 class GeminiTranslateProvider extends Translator {
     constructor({ apiKey, model }) {
@@ -12,21 +11,9 @@ class GeminiTranslateProvider extends Translator {
         this.client = new GeminiClient({ apiKey, model });
     }
 
-    async translateBatch(texts, targetLang) {
-        const prompt = [
-            `Translate each Japanese video subtitle line below into ${LANG_NAMES[targetLang] || targetLang}.`,
-            "The lines are consecutive, so use the surrounding lines as context.",
-            `Return a JSON object of the form {"translations": [...]}, containing exactly ${texts.length} strings, one translation per input line, in the same order.`,
-            "",
-            JSON.stringify(texts),
-        ].join("\n");
-
-        const result = await this.client.generate(prompt, { json: true });
-        const arr = Array.isArray(result) ? result : result.translations;
-        if (!Array.isArray(arr) || arr.length !== texts.length) {
-            throw new Error("Gemini 回傳的翻譯句數不符");
-        }
-        return arr.map(s => String(s));
+    async translateBatch(texts, targetLang, context = {}) {
+        const result = await this.client.generate(buildTranslatePrompt(texts, targetLang, context), { json: true });
+        return readTranslations(result, texts.length, "Gemini");
     }
 }
 

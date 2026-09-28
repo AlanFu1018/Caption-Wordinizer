@@ -28,7 +28,7 @@ async function loadSettingsWithSecrets() {
 // 翻譯快取：`${provider}|${lang}|${text}` -> 翻譯
 const translationCache = new Map();
 
-async function handleTranslate({ texts }) {
+async function handleTranslate({ texts, title = "" }) {
     const settings = await loadSettingsWithSecrets();
     const engineKey = settings.translateProvider === "llm" ? `llm-${settings.llmProvider}` : "google";
     const prefix = `${engineKey}|${settings.targetLang}|`;
@@ -37,7 +37,7 @@ async function handleTranslate({ texts }) {
         const translator = createTranslator(settings);
         let results;
         try {
-            results = await translator.translateBatch(missing, settings.targetLang);
+            results = await translator.translateBatch(missing, settings.targetLang, { title });
         } catch (e) {
             // 錯誤訊息標出實際用的引擎，避免「Failed to fetch」這類訊息看不出是誰出錯
             throw new Error(`[${engineKey}] ${e.message}`);

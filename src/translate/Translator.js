@@ -5,9 +5,10 @@ class Translator {
     /**
      * @param {string[]} texts 日文字幕（每句一個）
      * @param {string} targetLang "zh-TW" | "en"
+     * @param {{title?: string}} [context] 影片標題等背景資訊，LLM provider 會放進 prompt，Google 翻譯忽略
      * @returns {Promise<string[]>} 與 texts 一一對應的翻譯
      */
-    async translateBatch(texts, targetLang) {
+    async translateBatch(texts, targetLang, context = {}) {
         throw new Error("translateBatch() not implemented");
     }
 }
