@@ -5,7 +5,7 @@ class WordcardInfoProvider {
     /**
      * @param {{word: string, surface: string, reading: string, pos: string, sentence: string}} input
      * @param {string} targetLang "zh-TW" | "en"
-     * @returns {Promise<{meaning: string, reading?: string, explanation?: string}>}
+     * @returns {Promise<{meaning: string, reading?: string, explanation?: string, examples?: {sentence: string, translation: string}[]}>}
      */
     async getInfo(input, targetLang) {
         throw new Error("getInfo() not implemented");

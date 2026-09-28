@@ -25,6 +25,7 @@ class GeminiWordcardProvider extends WordcardInfoProvider {
             `- "meaning": a concise meaning of the word as used in the sentence, in ${lang}`,
             "- \"reading\": the reading of the dictionary form in hiragana",
             `- "explanation": one or two sentences in ${lang} about usage or nuance (and conjugation, if the surface form is conjugated)`,
+            `- "examples": an array of exactly 2 objects { "sentence", "translation" }: short, natural Japanese example sentences that use the word with the same meaning (different from the context sentence), each with a translation in ${lang}`,
         ].join("\n");
 
         const r = await this.client.generate(prompt, { json: true });
@@ -32,6 +33,10 @@ class GeminiWordcardProvider extends WordcardInfoProvider {
             meaning: String(r.meaning || ""),
             reading: String(r.reading || ""),
             explanation: String(r.explanation || ""),
+            examples: (Array.isArray(r.examples) ? r.examples : [])
+                .map(ex => ({ sentence: String(ex?.sentence || ""), translation: String(ex?.translation || "") }))
+                .filter(ex => ex.sentence)
+                .slice(0, 2),
         };
     }
 }

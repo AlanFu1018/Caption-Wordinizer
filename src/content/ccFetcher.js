@@ -85,13 +85,24 @@ async function tryFetchJson(url) {
     }
 }
 
+// 字幕裡的音效 / 說明標籤，例如 [音楽]、[拍手]、［笑い］（半形與全形方括號）
+const BRACKET_TAG = /\[[^\]]*\]|［[^］]*］/g;
+
+function cleanCaptionText(raw) {
+    return raw
+        .replace(/\n/g, " ")
+        .replace(BRACKET_TAG, "")
+        .replace(/[ 　]{2,}/g, " ")   // 刪掉標籤後留下的多餘空白
+        .trim();
+}
+
 function parseJson3(data) {
     /*把 json3 格式整理成 [{text, start, end}]，時間單位為秒*/
     const events = (data?.events || []).filter(e => e.segs);
     const lines = [];
     for (const e of events) {
-        const text = e.segs.map(s => s.utf8 || "").join("").replace(/\n/g, " ").trim();
-        if (!text) continue;
+        const text = cleanCaptionText(e.segs.map(s => s.utf8 || "").join(""));
+        if (!text) continue;   // 整句只有標籤（例如只有 [音楽]）就整句略過
         const start = (e.tStartMs || 0) / 1000;
         const end = start + (e.dDurationMs || 0) / 1000;
         lines.push({ text, start, end });

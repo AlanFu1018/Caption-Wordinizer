@@ -2,8 +2,9 @@
 // 將上色後的字幕、詞性名稱、翻譯組裝後，蓋在 YouTube 播放器上顯示
 // 也負責：滑鼠停留的提示框、toast、加入單字卡後的預覽卡
 
-import { t, formatTime, videoUrl } from "../common/i18n.js";
+import { t } from "../common/i18n.js";
 import { icon } from "../common/icons.js";
+import { buildWordcardBody } from "../common/wordcardView.js";
 
 const TOAST_ICONS = {
     loading: "loader-circle",
@@ -208,57 +209,13 @@ class CcDisplayer {
         if (!this.root || !tokenEl || !tokenEl.isConnected) return false;
         this.hideCard();
         this.hideToast();
-        const lang = this.uiLang;
-
         const node = el("div", "cw-card");
         node.setAttribute("role", "dialog");
-        const body = el("div", "cw-card-body");
-
-        const kicker = el("div", "cw-card-kicker");
-        const kickerLabel = el("span", "cw-card-kicker-label");
-        kickerLabel.innerHTML = icon("check", 13);
-        kickerLabel.append(t(lang, "cardKicker"));
-        const close = el("button", "cw-card-close");
-        close.type = "button";
-        close.title = t(lang, "close");
-        close.innerHTML = icon("x", 16);
-        close.addEventListener("click", () => this.hideCard());
-        kicker.append(kickerLabel, close);
-
-        const head = el("div", "cw-card-head");
-        head.append(el("span", "cw-card-word", card.word));
-        if (card.reading && card.reading !== card.word) head.append(el("span", "cw-card-reading", card.reading));
-        head.append(el("span", "cw-tag cw-tag-accent cw-card-pos", card.pos));
-
-        body.append(kicker, head);
-        if (card.meaning) body.append(el("div", "cw-card-meaning", card.meaning));
-        if (card.explanation) body.append(el("div", "cw-card-explanation", card.explanation));
-
-        const sentence = el("div", "cw-card-sentence");
-        const jp = el("span", "cw-card-jp");
-        const hit = card.surface ? card.sentence.indexOf(card.surface) : -1;
-        if (hit >= 0) {
-            jp.append(card.sentence.slice(0, hit), el("b", null, card.surface), card.sentence.slice(hit + card.surface.length));
-        } else {
-            jp.textContent = card.sentence;
-        }
-        sentence.append(jp);
-        if (card.sentenceTranslation) sentence.append(el("span", "cw-card-sentence-tr", card.sentenceTranslation));
-        body.append(sentence);
-
-        if (card.videoId) {
-            const link = el("a", "cw-card-time");
-            link.href = videoUrl(card.videoId, card.time);
-            link.innerHTML = icon("play", 13);
-            link.append(formatTime(card.time));
-            link.addEventListener("click", (e) => {
-                // Ctrl / Shift / 中鍵點擊維持瀏覽器預設（開新分頁）
-                if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
-                e.preventDefault();
-                if (this.onSeek) this.onSeek(card);
-            });
-            body.append(link);
-        }
+        const body = buildWordcardBody(card, {
+            lang: this.uiLang,
+            onClose: () => this.hideCard(),
+            onTimeClick: (c) => this.onSeek && this.onSeek(c),
+        });
 
         const arrow = el("span", "cw-card-arrow");
         node.append(body, arrow);

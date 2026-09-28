@@ -1,6 +1,7 @@
 // wordcardExporter.js
 // 將單字卡匯出成 Anki 可匯入的 TSV 純文字檔
-// 欄位：正面(單字) / 讀音 / 意思 / 詞性 / 說明 / 例句 / 例句翻譯 / 影片連結
+// 欄位：正面(單字) / 讀音 / 意思 / 詞性 / 說明 / 例句 / 例句翻譯 / 影片連結 / 補充例句
+// 補充例句放最後，之前匯入過的 Anki 欄位對應不會錯位
 
 function escapeField(value) {
     // Anki 的 HTML 欄位：跳脫 HTML，換行改成 <br>，tab 換成空白
@@ -20,7 +21,7 @@ function toAnkiTsv(cards) {
     const header = [
         "#separator:tab",
         "#html:true",
-        "#columns:Word\tReading\tMeaning\tPartOfSpeech\tExplanation\tSentence\tSentenceTranslation\tSource",
+        "#columns:Word\tReading\tMeaning\tPartOfSpeech\tExplanation\tSentence\tSentenceTranslation\tSource\tExamples",
     ];
     const rows = cards.map(c => [
         escapeField(c.word),
@@ -31,6 +32,7 @@ function toAnkiTsv(cards) {
         highlight(c.sentence, c.surface),
         escapeField(c.sentenceTranslation),
         c.videoId ? `<a href="https://www.youtube.com/watch?v=${encodeURIComponent(c.videoId)}&amp;t=${c.time}s">YouTube</a>` : "",
+        (c.examples || []).map(ex => highlight(ex.sentence, c.word) + (ex.translation ? "<br>" + escapeField(ex.translation) : "")).join("<br><br>"),
     ].join("\t"));
     return [...header, ...rows].join("\n") + "\n";
 }

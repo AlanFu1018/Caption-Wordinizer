@@ -20,7 +20,8 @@ caption-wordinizer/
 │   │   ├── settings.js            # 共用設定（預設值、讀寫、監聽），存在 storage.sync
 │   │   ├── secrets.js             # API Key 讀寫，只給 background / popup 用
 │   │   ├── i18n.js                # 介面文字（zh-TW / en）、時間格式、影片連結
-│   │   └── icons.js               # Lucide 圖示（inline SVG）
+│   │   ├── icons.js               # Lucide 圖示（inline SVG）
+│   │   └── wordcardView.js        # 預覽卡（1d）內容，影片上與 popup 共用
 │   │
 │   ├── content/
 │   │   ├── content.js             # content script 進入點，串起所有模組
@@ -92,6 +93,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 - 優先選人工日文字幕，沒有的話用自動產生（asr）字幕。
 - 先直接下載 `baseUrl&fmt=json3`；失敗就請 `ytBridge` 開啟播放器字幕，攔截請求網址後再下載。
 - 輸出 `[{ text, start, end }]`（秒）。自動字幕的時間區段互相重疊時，截到下一句開始為止。
+- 刪除方括號標籤（`[音楽]`、`[拍手]`、`［笑い］` 等，半形 `[]` 與全形 `［］`），並清掉多餘空白；整句只有標籤時整句略過。方括號裡的內容一律刪除，所以字幕若真的有 `[…]` 文字也會被移除。
 ### ccTokenizer
 將所有字幕，處理詞性切割
 - 使用 kuromoji（IPADIC），每個 token 為 `{ surface, pos, posDetail, basicForm, reading, basicReading }`，讀音轉成平假名。
@@ -124,11 +126,11 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 ### translatorFactory
 依照設定 `translateProvider`（`google` / `gemini`）選擇具體的翻譯實作
 ### WordCardInfoProvider
-將單字卡的資訊生成（介面：`getInfo(input, targetLang) → { meaning, reading, explanation }`）
+將單字卡的資訊生成（介面：`getInfo(input, targetLang) → { meaning, reading, explanation, examples }`，`examples` 為 LLM 補充的 2 句例句 `[{ sentence, translation }]`）
 ### wordcardInfoFactory
 選擇具體用哪一個 llm 的實作生成單字卡資訊（目前只有 `gemini`）
 ### wordcardGenerator
-產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, sentence, sentenceTranslation, videoId, time, createdAt }`。影片只以 `videoId` 辨識，在點擊單字當下記錄（等待回應期間換了影片也不會記錯）。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
+產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt }`。影片只以 `videoId` 辨識，在點擊單字當下記錄（等待回應期間換了影片也不會記錯）。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
 ### wordcardDB
 保存單字卡（`chrome.storage.local` 的 `wordcards`），以原形去除重複
 ### wordcardExporter
@@ -142,8 +144,9 @@ MV3 service worker。所有對外網路請求都在這裡（需要 `host_permiss
 ### settings / popup
 一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
 popup 分兩個分頁（會記住上次的分頁）：
-- 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip；最下方的「單字卡」區塊顯示生成失敗（沒有字義）的單字卡數量，並有「一鍵補生成」按鈕。
-- 單字卡：最新的在最上面，點卡片展開（一次一張），顯示例句、翻譯、影片時間連結與刪除；底部為匯出與全部清除。
+- 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip。
+- 單字卡：頂端顯示生成失敗（沒有字義）的單字卡數量與「一鍵補生成」按鈕；最新的在最上面，每張顯示詞性、單字、讀音、意思。**點卡片會跳出完整預覽卡**（和影片上的 1d 同一個樣式，由 `wordcardView.js` 產生）：單字、讀音、詞性、完整意思、說明、例句、例句翻譯、時間連結（開新分頁）與刪除。還沒取得字義的卡片會提示到設定頁補生成。按 ✕、點背景或 Esc 關閉；補生成更新了這張卡時會即時更新內容。底部為匯出與全部清除。
+- popup 也載入 `res/style/style.css` 取得預覽卡的樣式（`.cw-card` 上有自己的色彩變數，不依賴 `.cw-overlay`）。
 ### UI 設計（Organic）
 依 `doc/UI mockups form/design_handoff_caption_wordinizer_organic/README.md` 實作，採用的版本為 1a（字幕 + 提示框）、1c（toast）、1d（單字卡預覽）、2a（設定分頁）、1h（單字卡分頁）。
 - 顏色：米色 `#f5ead8` 底、陶土色 `#c67139` 強調色、鼠尾草綠 `#7a8a5e` 表示成功。
@@ -183,6 +186,15 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 預覽卡的時間連結用單字卡的 `videoId` 和目前播放中的影片比對：相同才跳轉，不同影片顯示提示、不跳轉。
 - 影片只以 `videoId` 辨識，不另外保存標題或頻道；`videoId` 在點擊單字當下記錄。
 
+### 2026-09-28 — popup 點單字卡跳出完整預覽卡
+- popup「單字卡」分頁改為點卡片就跳出完整預覽卡（取代原本的就地展開），可看到完整意思與說明，也能開影片時間連結或刪除。
+- 預覽卡內容抽成 `src/common/wordcardView.js`，影片上的預覽卡與 popup 共用，兩邊外觀一致。
+- 修正：「一鍵補生成」按鈕的事件原本被寫在 `selectTab()` 裡，每切換一次分頁就多註冊一次，按一下會送出多次請求；已移到最外層。
+
+### 2026-09-28 — 刪除字幕的方括號標籤
+- `ccFetcher.parseJson3()` 會刪除 `[音楽]`、`[拍手]`、`［笑い］` 等標籤，只有標籤的句子整句略過，斷詞、翻譯、單字卡都不會再出現這些標籤。
+- 已用 Node 驗證：只有標籤、標籤在句首 / 句中 / 句尾、標籤被切在兩個片段、全形括號等情況。
+
 ---
 # English
 ## Architecture
@@ -217,3 +229,8 @@ See the tree above. On top of the original design, three files were added:
 - New: UI language setting (`uiLang`), dictionary-form readings (`basicReading`), OKLCH POS palettes, `i18n.js`, `icons.js`, bundled fonts in `res/fonts/`.
 ### 2026-09-28 — Preview timestamp checks the video ID
 - The preview card's timestamp only seeks when the card's `videoId` matches the video that is playing; otherwise it shows a notice and does not navigate. Videos are identified by `videoId` only.
+### 2026-09-28 — Full preview card in the popup
+- Clicking a wordcard in the popup opens the full preview card (same design as 1d, built by the shared `src/common/wordcardView.js`) instead of expanding in place.
+- Fixed the "Regenerate all" click handler being registered inside `selectTab()`, which added a duplicate listener on every tab switch.
+### 2026-09-28 — Strip bracket tags from captions
+- `parseJson3()` removes tags such as `[音楽]`, `[拍手]` and `［笑い］` (half- and full-width brackets); lines that contain only a tag are dropped.

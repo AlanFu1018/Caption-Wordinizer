@@ -3,8 +3,9 @@
 
 import { POS_LIST, TARGET_LANGUAGES, loadSettings, saveSettings } from "../../src/common/settings.js";
 import { getGeminiApiKey, setGeminiApiKey } from "../../src/common/secrets.js";
-import { t, formatTime, videoUrl } from "../../src/common/i18n.js";
+import { t } from "../../src/common/i18n.js";
 import { icon } from "../../src/common/icons.js";
+import { buildWordcardBody } from "../../src/common/wordcardView.js";
 import { POS_COLORS_LIGHT, POS_TINTS, colorOf } from "../../src/content/tokenColorizer.js";
 import { getAllWordcards, removeWordcard, clearWordcards, isFailedWordcard } from "../../src/wordcard/wordcardDB.js";
 import { toAnkiTsv } from "../../src/wordcard/wordcardExporter.js";
@@ -13,7 +14,7 @@ const $ = (id) => document.getElementById(id);
 const TAB_KEY = "popupTab";
 
 let settings = null;
-let openCardId = undefined;   // undefined = 還沒選過，預設展開最新一張
+let openCardId = null;        // 目前跳出預覽卡的單字卡
 let regenerating = false;
 
 function el(tag, className, text) {
@@ -42,28 +43,7 @@ function applyLanguage() {
 
 // ── 分頁 ──
 function selectTab(name) {
-    // 補生成在 background 跑，popup 關掉也會繼續；每補好一張 storage 變動就會更新上面的數字
-$("regenerateBtn").addEventListener("click", async () => {
-    const status = $("regenerateStatus");
-    regenerating = true;
-    $("regenerateBtn").disabled = true;
-    status.hidden = false;
-    status.textContent = str("regenerating");
-    try {
-        const res = await chrome.runtime.sendMessage({ type: "wordcard:regenerate" });
-        if (!res?.ok) throw new Error(res?.error || "unknown error");
-        status.textContent = res.error
-            ? str("regenerateFailed", { fixed: res.fixed, message: res.error })
-            : str("regenerateDone", { fixed: res.fixed });
-    } catch (e) {
-        status.textContent = str("regenerateFailed", { fixed: 0, message: e.message });
-    } finally {
-        regenerating = false;
-        renderCards();
-    }
-});
-
-for (const tab of document.querySelectorAll(".tab")) {
+    for (const tab of document.querySelectorAll(".tab")) {
         tab.setAttribute("aria-selected", String(tab.dataset.tab === name));
     }
     for (const view of document.querySelectorAll(".view")) view.hidden = view.dataset.view !== name;
@@ -140,73 +120,84 @@ async function initSettings() {
 }
 
 // ── 1h 單字卡 ──
-function buildSentence(card) {
-    const node = el("span", "card-sentence");
-    const hit = card.surface ? card.sentence.indexOf(card.surface) : -1;
-    if (hit >= 0) {
-        node.append(card.sentence.slice(0, hit), el("b", null, card.surface), card.sentence.slice(hit + card.surface.length));
-    } else {
-        node.textContent = card.sentence;
-    }
-    return node;
-}
-
 function buildCardItem(card) {
-    const open = card.id === openCardId;
-    const item = el("div", "card-item" + (open ? " open" : ""));
+    const item = el("button", "card-item");
+    item.type = "button";
 
-    const row = el("div", "card-row");
     const posCircle = el("span", "card-pos", (card.pos || "?")[0]);
     posCircle.style.background = colorOf(card.pos, POS_TINTS);
     posCircle.style.color = colorOf(card.pos, POS_COLORS_LIGHT);
-    const main = el("div", "card-main");
+    const main = el("span", "card-main");
     const title = el("span", "card-title");
     title.append(el("span", "card-word", card.word));
     if (card.reading && card.reading !== card.word) title.append(el("span", "card-reading", card.reading));
     main.append(title, el("span", "card-meaning", card.meaning || ""));
-    row.append(posCircle, main);
-    item.append(row);
+    item.append(posCircle, main);
 
-    // 點卡片切換展開；一次只展開一張
-    item.addEventListener("click", () => {
-        openCardId = open ? null : card.id;
-        renderCards();
-    });
-
-    if (open) {
-        const detail = el("div", "card-detail");
-        detail.addEventListener("click", e => e.stopPropagation());
-        detail.append(buildSentence(card));
-        if (card.sentenceTranslation) detail.append(el("span", "card-sentence-tr", card.sentenceTranslation));
-
-        const actions = el("div", "card-actions");
-        if (card.videoId) {
-            const link = el("a", "card-time");
-            link.href = videoUrl(card.videoId, card.time);
-            link.target = "_blank";
-            link.rel = "noopener";            link.innerHTML = icon("play", 12);
-            link.append(formatTime(card.time));
-            actions.append(link);
-        }
-        const del = el("button", "card-delete");
-        del.type = "button";
-        del.innerHTML = icon("trash-2", 13);
-        del.append(str("delete"));
-        del.addEventListener("click", async () => {
-            await removeWordcard(card.id);
-            openCardId = null;
-            renderCards();
-        });
-        actions.append(del);
-        detail.append(actions);
-        item.append(detail);
-    }
+    // 點卡片跳出完整預覽卡
+    item.addEventListener("click", () => openCardModal(card, item));
     return item;
 }
 
+// ── 完整預覽卡 ──
+let modalReturnFocus = null;
+
+function openCardModal(card, returnFocus) {
+    const modal = $("cardModal");
+    modalReturnFocus = returnFocus || null;
+    openCardId = card.id;
+
+    const node = el("div", "cw-card");
+    node.setAttribute("role", "dialog");
+    node.setAttribute("aria-modal", "true");
+    node.setAttribute("aria-label", card.word);
+    node.append(buildWordcardBody(card, {
+        lang: settings.uiLang,
+        onClose: closeCardModal,
+        newTab: true,   // popup 裡的時間連結開新分頁
+        onDelete: async (c) => {
+            await removeWordcard(c.id);
+            closeCardModal();
+            renderCards();
+        },
+    }));
+
+    modal.textContent = "";
+    modal.append(node);
+    modal.hidden = false;
+    // popup 的高度跟著內容走，卡片比清單高時要撐開，否則會被切掉
+    document.body.style.minHeight = `${node.offsetHeight + 32}px`;
+    node.querySelector(".cw-card-close").focus();
+}
+
+function closeCardModal() {
+    const modal = $("cardModal");
+    if (modal.hidden) return;
+    modal.hidden = true;
+    modal.textContent = "";
+    openCardId = null;
+    document.body.style.minHeight = "";
+    if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
+    modalReturnFocus = null;
+}
+
+// 點背景（卡片以外）或按 Esc 關閉
+$("cardModal").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeCardModal();
+});
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeCardModal();
+});
+
 async function renderCards() {
     const cards = (await getAllWordcards()).reverse();   // 最新的在最上面
-    if (openCardId === undefined) openCardId = cards[0]?.id ?? null;
+
+    // 開著的卡片被補生成更新時，重新顯示最新內容；被刪掉就關閉
+    if (openCardId) {
+        const current = cards.find(c => c.id === openCardId);
+        if (!current) closeCardModal();
+        else if (!$("cardModal").hidden) openCardModal(current, modalReturnFocus);
+    }
 
     $("cardCount").textContent = cards.length;
     $("cardsEmpty").hidden = cards.length > 0;
@@ -221,6 +212,27 @@ async function renderCards() {
     list.textContent = "";
     for (const card of cards) list.appendChild(buildCardItem(card));
 }
+
+// 補生成在 background 跑，popup 關掉也會繼續；每補好一張 storage 變動就會更新上面的數字
+$("regenerateBtn").addEventListener("click", async () => {
+    const status = $("regenerateStatus");
+    regenerating = true;
+    $("regenerateBtn").disabled = true;
+    status.hidden = false;
+    status.textContent = str("regenerating");
+    try {
+        const res = await chrome.runtime.sendMessage({ type: "wordcard:regenerate" });
+        if (!res?.ok) throw new Error(res?.error || "unknown error");
+        status.textContent = res.error
+            ? str("regenerateFailed", { fixed: res.fixed, message: res.error })
+            : str("regenerateDone", { fixed: res.fixed });
+    } catch (e) {
+        status.textContent = str("regenerateFailed", { fixed: 0, message: e.message });
+    } finally {
+        regenerating = false;
+        renderCards();
+    }
+});
 
 $("exportBtn").addEventListener("click", async () => {
     const cards = await getAllWordcards();

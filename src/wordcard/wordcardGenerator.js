@@ -13,6 +13,7 @@ async function generateWordcard({ token, sentence, translation, videoId, time },
         pos: token.pos,
         meaning: "",
         explanation: "",
+        examples: [],   // LLM 補充的例句：[{ sentence, translation }]
         sentence,
         sentenceTranslation: translation || "",
         videoId: videoId || "",
@@ -30,7 +31,7 @@ async function generateWordcard({ token, sentence, translation, videoId, time },
     return { card, warning };
 }
 
-// 用 LLM 補上 meaning / explanation / reading（直接改 card），失敗時丟出錯誤
+// 用 LLM 補上 meaning / explanation / examples / reading（直接改 card），失敗時丟出錯誤
 async function fillWordcardInfo(card, settings) {
     const provider = createWordcardInfoProvider(settings);
     const info = await provider.getInfo({
@@ -38,6 +39,7 @@ async function fillWordcardInfo(card, settings) {
     }, settings.targetLang);
     card.meaning = info.meaning;
     card.explanation = info.explanation || "";
+    card.examples = info.examples || [];
     if (info.reading) card.reading = info.reading;
     return card;
 }
