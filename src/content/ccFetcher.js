@@ -29,13 +29,15 @@ function requestPlayerData() {
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-async function waitForTimedtextUrl(videoId, timeoutMs) {
-    /*用輪詢而不是等 timedtext-url 通知：字幕開著的影片一載入播放器就會自己抓字幕，
-      通知可能在我們開始等之前就發出而錯過，但 ytBridge 會記下網址，輪詢一定拿得到*/
+async function waitForTimedtextUrl(videoId, timeoutMs, excludeUrl = null) {
+    /*用輪詢而不是等通知：字幕開著的影片一載入播放器就會自己抓字幕，
+      通知可能在我們開始等之前就發出而錯過，但 ytBridge 會記下網址，輪詢一定拿得到。
+      excludeUrl：已經試過下載失敗的網址，要等播放器發出新的請求*/
     const deadline = Date.now() + timeoutMs;
     do {
         const data = await requestPlayerData();
-        if (data && data.videoId === videoId && data.timedtextUrl) return data.timedtextUrl;
+        const url = data && data.videoId === videoId ? data.timedtextUrl : null;
+        if (url && url !== excludeUrl) return url;
         if (Date.now() >= deadline) break;
         await sleep(500);
     } while (Date.now() < deadline);
@@ -146,18 +148,22 @@ async function fetchAllCaptions(videoId) {
     let data = await tryFetchJson(toJson3Url(track.baseUrl, track));
 
     // 4. 失敗的話（YouTube 需要驗證參數），請播放器自己開啟字幕，攔截它的請求網址再下載
+    let failReason = null;
     if (!data) {
-        // 下載 baseUrl 的期間播放器可能已經自己抓過字幕，先看最新紀錄，沒有再請播放器開字幕
-        let url = await waitForTimedtextUrl(videoId, 0);
-        if (!url) {
+        // 下載 baseUrl 的期間播放器可能已經自己抓過字幕，先用最新紀錄試試
+        const recorded = await waitForTimedtextUrl(videoId, 0);
+        if (recorded) data = await tryFetchJson(toJson3Url(recorded, track));
+        // 沒有紀錄或紀錄的網址不能用：請播放器（重新）開字幕，等它發出新的請求
+        if (!data) {
             window.postMessage({ source: CONTENT, type: "enable-captions", languageCode: track.languageCode, kind: track.kind }, "*");
-            url = await waitForTimedtextUrl(videoId, 15000);
+            const fresh = await waitForTimedtextUrl(videoId, 15000, recorded);
+            if (fresh) data = await tryFetchJson(toJson3Url(fresh, track));
+            if (!data) failReason = fresh ? "播放器的字幕網址下載回來是空的" : "等不到播放器發出字幕請求";
         }
-        if (url) data = await tryFetchJson(toJson3Url(url, track));
     }
 
     if (!data) {
-        console.warn("[Caption Wordinizer] 字幕下載失敗");
+        console.warn(`[Caption Wordinizer] 字幕下載失敗（${failReason}）`);
         return null;
     }
 

@@ -74,7 +74,15 @@
             const player = getPlayer();
             try {
                 player.loadModule && player.loadModule("captions");
-                player.setOption("captions", "track", { languageCode: msg.languageCode, kind: msg.kind || undefined });
+                // 字幕本來就開著同一軌時 setOption 不會重新請求，先關掉再開，強制播放器發出新的請求
+                player.setOption("captions", "track", {});
+                setTimeout(() => {
+                    try {
+                        player.setOption("captions", "track", { languageCode: msg.languageCode, kind: msg.kind || undefined });
+                    } catch (e) {
+                        console.warn("[Caption Wordinizer] enable captions failed", e);
+                    }
+                }, 300);
             } catch (e) {
                 console.warn("[Caption Wordinizer] enable captions failed", e);
             }
