@@ -1,7 +1,5 @@
 console.log("Caption Wordinizer loaded");
 
-const TRANSLATE_CHUNK = 40;
-
 function currentVideoId() {
     if (location.pathname !== "/watch") return null;
     return new URLSearchParams(location.search).get("v");
@@ -9,12 +7,13 @@ function currentVideoId() {
 
 async function main() {
     const load = (path) => import(chrome.runtime.getURL(path));
-    const [{ fetchAllCaptions }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, settingsLib] =
+    const [{ fetchAllCaptions }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib] =
         await Promise.all([
             load("src/content/ccFetcher.js"),
             load("src/content/ccTokenizer.js"),
             load("src/content/tokenColorizer.js"),
             load("src/content/ccDisplayer.js"),
+            load("src/content/translationScheduler.js"),
             load("src/common/settings.js"),
         ]);
 
@@ -45,31 +44,27 @@ async function main() {
     });
     displayer.setOptions(settings);
 
-    async function translateAll(lines, mySession) {
-        /*從目前播放位置附近的區塊開始，分批請 background 翻譯*/
-        const video = document.querySelector("#movie_player video");
-        const now = video ? video.currentTime : 0;
-        let first = lines.findIndex(l => l.end > now);
-        if (first < 0) first = 0;
-        const starts = [];
-        for (let i = 0; i < lines.length; i += TRANSLATE_CHUNK) starts.push(i);
-        const firstChunk = Math.floor(first / TRANSLATE_CHUNK) * TRANSLATE_CHUNK;
-        starts.sort((a, b) => (a < firstChunk) - (b < firstChunk) || a - b);
+    let scheduler = null;
+    let currentLines = null;
 
-        for (const start of starts) {
-            if (mySession !== session || !settings.showTranslation) return;
-            const texts = lines.slice(start, start + TRANSLATE_CHUNK).map(l => l.text);
-            try {
+    function startTranslation() {
+        /*依播放位置分段翻譯（見 translationScheduler.js）*/
+        if (scheduler) scheduler.stop();
+        scheduler = null;
+        displayer.clearTranslations();
+        if (!currentLines || !settings.showTranslation || !displayer.video) return;
+        scheduler = new TranslationScheduler({
+            lines: currentLines,
+            video: displayer.video,
+            translate: async (texts) => {
                 const res = await chrome.runtime.sendMessage({ type: "translate", texts });
-                if (mySession !== session) return;
                 if (!res || !res.ok) throw new Error(res?.error || "unknown error");
-                res.translations.forEach((t, i) => displayer.setTranslation(start + i, t));
-            } catch (e) {
-                console.warn("[Caption Wordinizer] 翻譯失敗", e);
-                displayer.toast(`翻譯失敗：${e.message}`);
-                return;
-            }
-        }
+                return res.translations;
+            },
+            onResult: (index, text) => displayer.setTranslation(index, text),
+            onError: (message) => displayer.toast(`翻譯失敗：${message}`),
+        });
+        scheduler.start();
     }
 
     async function loadVideo() {
@@ -77,6 +72,8 @@ async function main() {
         if (!settings.enabled || !videoId) {
             session++;
             loadedVideoId = null;
+            currentLines = null;
+            startTranslation();
             displayer.unmount();
             return;
         }
@@ -84,6 +81,8 @@ async function main() {
 
         const mySession = ++session;
         loadedVideoId = videoId;
+        currentLines = null;
+        startTranslation();
         displayer.unmount();
 
         const captions = await fetchAllCaptions(videoId);
@@ -98,20 +97,22 @@ async function main() {
             await new Promise(r => setTimeout(r, 500));
             if (mySession !== session) return;
         }
-        translateAll(lines, mySession);
+        currentLines = lines;
+        startTranslation();
     }
 
     settingsLib.onSettingsChanged((next) => {
         const prev = settings;
         settings = next;
         displayer.setOptions(settings);
-        const needReload = prev.enabled !== next.enabled
-            || prev.targetLang !== next.targetLang
-            || prev.translateProvider !== next.translateProvider
-            || (!prev.showTranslation && next.showTranslation);
-        if (needReload) {
+        if (prev.enabled !== next.enabled) {
             loadedVideoId = null;
             loadVideo();
+        } else if (prev.targetLang !== next.targetLang
+            || prev.translateProvider !== next.translateProvider
+            || prev.showTranslation !== next.showTranslation) {
+            // 只影響翻譯，不用重新抓字幕
+            startTranslation();
         }
     });
 

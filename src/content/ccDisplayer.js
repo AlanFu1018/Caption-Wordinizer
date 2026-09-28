@@ -64,6 +64,11 @@ class CcDisplayer {
         this.render();
     }
 
+    clearTranslations() {
+        this.translations = new Array(this.lines.length).fill("");
+        this.renderTranslation();
+    }
+
     setTranslation(index, text) {
         this.translations[index] = text;
         if (index === this.currentIndex) this.renderTranslation();

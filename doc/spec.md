@@ -26,7 +26,8 @@ caption-wordinizer/
 │   │   ├── ccFetcher.js
 │   │   ├── ccTokenizer.js
 │   │   ├── tokenColorizer.js
-│   │   └── ccDisplayer.js
+│   │   ├── ccDisplayer.js
+│   │   └── translationScheduler.js    # 依播放位置分段翻譯
 │   │
 │   ├── translate/
 │   │   ├── Translator.js
@@ -75,7 +76,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 2. `ccFetcher` 透過 `ytBridge` 拿到字幕軌，下載整支影片的日文字幕（json3）。
 3. `ccTokenizer` 用 kuromoji 斷詞，`tokenColorizer` 依詞性上色。
 4. `ccDisplayer` 把字幕蓋在播放器上（原生字幕會被隱藏），並依影片時間切換句子。
-5. 翻譯以每 40 句為一批，從目前播放位置開始送到 background 翻譯。
+5. `translationScheduler` 依播放位置分段翻譯：只翻目前位置往後約 2 分鐘的字幕，跳轉時新位置優先。
 6. 點擊單字 → background 產生單字卡並存進 `chrome.storage.local`。
 
 ## 模組設計
@@ -97,6 +98,12 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 將所有部分組裝顯示
 - 覆蓋層掛在 `#movie_player` 內，以 `requestAnimationFrame` + 二分搜尋對應目前的句子。
 - 每個 token 上方可顯示詞性名稱（依設定的詞性清單），滑鼠停留會顯示讀音與原形，點擊即加入單字卡。
+### translationScheduler
+依播放位置分段翻譯，解決長影片（20 分鐘以上）要等很久才有翻譯的問題
+- 字幕每 20 句為一段（chunk），只翻「目前位置 ~ 往後 120 秒」涵蓋的段落，沒看到的部分不會翻。
+- 監聽影片的 `timeupdate` / `seeking` / `play`，播放前進時自動補下一段；跳轉時從新位置所在的段落開始。
+- 同時最多 2 個請求，失敗會重試 1 次，仍失敗才顯示一次錯誤提示。
+- 切換翻譯語言、翻譯引擎或開關翻譯時，只重新開始翻譯，不重新抓字幕；已翻過的句子由 background 的快取直接回傳。
 ### Translator
 將所有字幕整句翻譯（介面：`translateBatch(texts, targetLang) → string[]`）
 - `GoogleTranslateProvider`：Google 翻譯公開端點，不需 API Key。多句用換行合併成一次請求，句數對不上時改為逐句翻譯。
@@ -140,6 +147,10 @@ MV3 service worker。所有對外網路請求都在這裡（需要 `host_permiss
 - API Key 從 `settings` 拆出，存到 `secrets.js` 管理的 `local.geminiApiKey`，並把 `storage.local` 限制為只有擴充功能頁面能讀取；一般設定改存 `storage.sync`。
 - 預設模型改為 `gemini-3.1-flash-lite`；舊版存下的 `gemini-2.5-flash` 會在搬移時改回預設值。
 
+### 2026-09-28 — 長影片分段翻譯
+- 新增 `translationScheduler.js`：原本會從目前位置依序把整支影片翻完（40 句一批、一次一批），長影片要等很久，跳轉後也要排隊。改成只翻目前位置往後 120 秒（20 句一段、同時 2 個請求），跳轉時新位置優先。
+- 用 Node 模擬 30 分鐘（600 句）影片驗證：開頭只翻前 60 句；跳到 20 分鐘時第一個請求就是該位置；看部分片段時總共只翻了 140 句。
+
 ---
 # English
 ## Architecture
@@ -154,6 +165,7 @@ See the tree above. On top of the original design, three files were added:
 | ccTokenizer | Segments each line with kuromoji (IPADIC); readings converted to hiragana. |
 | tokenColorizer | Assigns a color per part of speech. |
 | ccDisplayer | Overlay on the player: colored tokens, optional POS labels, translation line, click-to-add wordcard. |
+| translationScheduler | Playback-driven translation: only translates ~120 s ahead of the current position in 20-line chunks (2 concurrent requests, 1 retry); seeking reprioritizes the new position. |
 | Translator / translatorFactory | `translateBatch(texts, lang)`; Google Translate (no key) or Gemini. |
 | WordcardInfoProvider / wordcardInfoFactory | LLM-generated meaning, reading and explanation (Gemini). |
 | wordcardGenerator / wordcardDB | Builds and stores cards in `chrome.storage.local`, de-duplicated by dictionary form. |
@@ -166,3 +178,5 @@ See the tree above. On top of the original design, three files were added:
 - Verified in Node: json3 parsing, tokenizing/coloring, Anki export, Google Translate. Not yet tested end-to-end in Chrome.
 ### 2026-09-28 — API key storage
 - The Gemini API key is stored on its own in `storage.local`, which is restricted to `TRUSTED_CONTEXTS`; the key never reaches content scripts. Other settings moved to `storage.sync`. Default model is now `gemini-3.1-flash-lite`.
+### 2026-09-28 — Chunked translation for long videos
+- Added `translationScheduler.js`. Translation no longer runs through the whole video; it follows playback and seeks, so 20+ minute videos show translations right away.
