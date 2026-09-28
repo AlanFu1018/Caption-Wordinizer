@@ -4,8 +4,8 @@
 import { loadSettings } from "../common/settings.js";
 import { restrictLocalStorage, getGeminiApiKey, migrateLegacySettings } from "../common/secrets.js";
 import { createTranslator } from "../translate/translatorFactory.js";
-import { generateWordcard } from "../wordcard/wordcardGenerator.js";
-import { addWordcard, findWordcard } from "../wordcard/wordcardDB.js";
+import { generateWordcard, fillWordcardInfo } from "../wordcard/wordcardGenerator.js";
+import { addWordcard, findWordcard, getAllWordcards, updateWordcard, isFailedWordcard } from "../wordcard/wordcardDB.js";
 
 // 每次 service worker 啟動都先把 local 限制成只有擴充功能頁面能讀（API Key 存在這裡）
 const ready = restrictLocalStorage()
@@ -47,9 +47,34 @@ async function handleAddWordcard(msg) {
     return { card, warning };
 }
 
+// 補生成：一張一張重跑 LLM，每張成功就馬上存；遇到錯誤（多半是 API Key / 額度問題）就停下來
+let regenerating = null;
+
+async function regenerateFailedWordcards() {
+    const settings = await loadSettingsWithSecrets();
+    const failed = (await getAllWordcards()).filter(isFailedWordcard);
+    let fixed = 0;
+    for (const card of failed) {
+        try {
+            await fillWordcardInfo(card, settings);
+        } catch (e) {
+            return { fixed, error: e.message };
+        }
+        if (await updateWordcard(card)) fixed++;
+    }
+    return { fixed };
+}
+
+function handleRegenerateWordcards() {
+    // popup 重複按也只會跑一次
+    regenerating ??= regenerateFailedWordcards().finally(() => { regenerating = null; });
+    return regenerating;
+}
+
 const handlers = {
     "translate": handleTranslate,
     "wordcard:add": handleAddWordcard,
+    "wordcard:regenerate": handleRegenerateWordcards,
 };
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {

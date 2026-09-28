@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Caption Wordinizer</title>
     <link rel="stylesheet" href="../fonts/fonts.css">
+    <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -64,6 +65,15 @@
         <h2 data-i18n="posHead"></h2>
         <div class="pos-grid" id="posLabels"></div>
     </div>
+
+    <div class="section">
+        <h2 data-i18n="cardsTab"></h2>
+        <div class="row">
+            <span><span data-i18n="failedCards"></span><span id="failedCount">0</span></span>
+            <button type="button" class="btn btn-ghost" id="regenerateBtn" data-i18n="regenerate"></button>
+        </div>
+        <p class="hint" id="regenerateStatus" hidden></p>
+    </div>
 </section>
 
 <!-- 1h 單字卡 -->
@@ -75,6 +85,9 @@
         <button type="button" class="btn btn-ghost" id="clearBtn" data-i18n="clear"></button>
     </div>
 </section>
+
+<!-- 點單字卡後跳出的完整預覽卡（和影片上的 1d 同一個樣式） -->
+<div class="card-modal" id="cardModal" hidden></div>
 
 <script type="module" src="popup.js"></script>
 </body>

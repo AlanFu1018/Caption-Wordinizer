@@ -23,17 +23,23 @@ async function generateWordcard({ token, sentence, translation, videoId, time },
     // LLM 失敗（例如沒設定 API Key）時仍然保存基本資料，並回傳警告
     let warning = null;
     try {
-        const provider = createWordcardInfoProvider(settings);
-        const info = await provider.getInfo({
-            word: card.word, surface: card.surface, reading: card.reading, pos: card.pos, sentence,
-        }, settings.targetLang);
-        card.meaning = info.meaning;
-        card.explanation = info.explanation || "";
-        if (info.reading) card.reading = info.reading;
+        await fillWordcardInfo(card, settings);
     } catch (e) {
         warning = e.message;
     }
     return { card, warning };
 }
 
-export { generateWordcard };
+// 用 LLM 補上 meaning / explanation / reading（直接改 card），失敗時丟出錯誤
+async function fillWordcardInfo(card, settings) {
+    const provider = createWordcardInfoProvider(settings);
+    const info = await provider.getInfo({
+        word: card.word, surface: card.surface, reading: card.reading, pos: card.pos, sentence: card.sentence,
+    }, settings.targetLang);
+    card.meaning = info.meaning;
+    card.explanation = info.explanation || "";
+    if (info.reading) card.reading = info.reading;
+    return card;
+}
+
+export { generateWordcard, fillWordcardInfo };

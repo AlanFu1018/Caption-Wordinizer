@@ -138,11 +138,11 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 - `geminiClient`：Gemini `generateContent`，支援 JSON 輸出。
 - `gptClient`：OpenAI Chat Completions（已實作，尚未接上 provider）。
 ### background
-MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`。
+MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`、`wordcard:regenerate`（把沒有 `meaning` 的單字卡逐張重跑 LLM，遇到錯誤就停止，回傳 `{ fixed, error? }`）。
 ### settings / popup
 一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
 popup 分兩個分頁（會記住上次的分頁）：
-- 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip。
+- 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip；最下方的「單字卡」區塊顯示生成失敗（沒有字義）的單字卡數量，並有「一鍵補生成」按鈕。
 - 單字卡：最新的在最上面，點卡片展開（一次一張），顯示例句、翻譯、影片時間連結與刪除；底部為匯出與全部清除。
 ### UI 設計（Organic）
 依 `doc/UI mockups form/design_handoff_caption_wordinizer_organic/README.md` 實作，採用的版本為 1a（字幕 + 提示框）、1c（toast）、1d（單字卡預覽）、2a（設定分頁）、1h（單字卡分頁）。

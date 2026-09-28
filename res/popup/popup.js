@@ -6,7 +6,7 @@ import { getGeminiApiKey, setGeminiApiKey } from "../../src/common/secrets.js";
 import { t, formatTime, videoUrl } from "../../src/common/i18n.js";
 import { icon } from "../../src/common/icons.js";
 import { POS_COLORS_LIGHT, POS_TINTS, colorOf } from "../../src/content/tokenColorizer.js";
-import { getAllWordcards, removeWordcard, clearWordcards } from "../../src/wordcard/wordcardDB.js";
+import { getAllWordcards, removeWordcard, clearWordcards, isFailedWordcard } from "../../src/wordcard/wordcardDB.js";
 import { toAnkiTsv } from "../../src/wordcard/wordcardExporter.js";
 
 const $ = (id) => document.getElementById(id);
@@ -14,6 +14,7 @@ const TAB_KEY = "popupTab";
 
 let settings = null;
 let openCardId = undefined;   // undefined = 還沒選過，預設展開最新一張
+let regenerating = false;
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -41,7 +42,28 @@ function applyLanguage() {
 
 // ── 分頁 ──
 function selectTab(name) {
-    for (const tab of document.querySelectorAll(".tab")) {
+    // 補生成在 background 跑，popup 關掉也會繼續；每補好一張 storage 變動就會更新上面的數字
+$("regenerateBtn").addEventListener("click", async () => {
+    const status = $("regenerateStatus");
+    regenerating = true;
+    $("regenerateBtn").disabled = true;
+    status.hidden = false;
+    status.textContent = str("regenerating");
+    try {
+        const res = await chrome.runtime.sendMessage({ type: "wordcard:regenerate" });
+        if (!res?.ok) throw new Error(res?.error || "unknown error");
+        status.textContent = res.error
+            ? str("regenerateFailed", { fixed: res.fixed, message: res.error })
+            : str("regenerateDone", { fixed: res.fixed });
+    } catch (e) {
+        status.textContent = str("regenerateFailed", { fixed: 0, message: e.message });
+    } finally {
+        regenerating = false;
+        renderCards();
+    }
+});
+
+for (const tab of document.querySelectorAll(".tab")) {
         tab.setAttribute("aria-selected", String(tab.dataset.tab === name));
     }
     for (const view of document.querySelectorAll(".view")) view.hidden = view.dataset.view !== name;
@@ -190,6 +212,10 @@ async function renderCards() {
     $("cardsEmpty").hidden = cards.length > 0;
     $("exportBtn").disabled = cards.length === 0;
     $("clearBtn").disabled = cards.length === 0;
+
+    const failed = cards.filter(isFailedWordcard).length;
+    $("failedCount").textContent = failed;
+    $("regenerateBtn").disabled = regenerating || failed === 0;
 
     const list = $("cardList");
     list.textContent = "";

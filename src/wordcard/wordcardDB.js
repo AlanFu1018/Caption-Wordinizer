@@ -3,6 +3,9 @@
 
 const KEY = "wordcards";
 
+// 沒有字義的卡片就是 LLM 生成失敗的
+const isFailedWordcard = (card) => !card.meaning;
+
 async function getAllWordcards() {
     const stored = await chrome.storage.local.get(KEY);
     return stored[KEY] || [];
@@ -19,6 +22,15 @@ async function addWordcard(card) {
     return card;
 }
 
+async function updateWordcard(card) {
+    const cards = await getAllWordcards();
+    const i = cards.findIndex(c => c.id === card.id);
+    if (i < 0) return null;   // 生成期間被刪掉了
+    cards[i] = card;
+    await chrome.storage.local.set({ [KEY]: cards });
+    return card;
+}
+
 async function removeWordcard(id) {
     const cards = (await getAllWordcards()).filter(c => c.id !== id);
     await chrome.storage.local.set({ [KEY]: cards });
@@ -28,4 +40,4 @@ async function clearWordcards() {
     await chrome.storage.local.set({ [KEY]: [] });
 }
 
-export { getAllWordcards, findWordcard, addWordcard, removeWordcard, clearWordcards };
+export { isFailedWordcard, getAllWordcards, findWordcard, addWordcard, updateWordcard, removeWordcard, clearWordcards };
