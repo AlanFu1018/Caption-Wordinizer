@@ -90,7 +90,7 @@ function renderPosChips() {
 }
 
 async function initSettings() {
-    for (const key of ["enabled", "showTranslation"]) {
+    for (const key of ["enabled", "showTranslation", "sentenceSplit"]) {
         $(key).checked = settings[key];
         $(key).addEventListener("change", () => update({ [key]: $(key).checked }));
     }

@@ -19,9 +19,10 @@ async function injectFonts() {
 
 async function main() {
     const load = (path) => import(chrome.runtime.getURL(path));
-    const [{ fetchAllCaptions }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib, { t }] =
+    const [{ fetchAllCaptions }, { segmentByPunctuation }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib, { t }] =
         await Promise.all([
             load("src/content/ccFetcher.js"),
+            load("src/content/ccSegmenter.js"),
             load("src/content/ccTokenizer.js"),
             load("src/content/tokenColorizer.js"),
             load("src/content/ccDisplayer.js"),
@@ -120,8 +121,10 @@ async function main() {
         startTranslation();
         displayer.unmount();
 
-        const captions = await fetchAllCaptions(videoId);
-        if (mySession !== session || !captions) return;
+        const raw = await fetchAllCaptions(videoId);
+        if (mySession !== session || !raw) return;
+        // 依標點重新斷句（字幕幾乎沒有標點時會維持原樣）
+        const captions = settings.sentenceSplit ? segmentByPunctuation(raw) : raw;
 
         const lines = colorizeLines(await tokenizeCaptions(captions));
         if (mySession !== session) return;
@@ -140,7 +143,8 @@ async function main() {
         const prev = settings;
         settings = next;
         displayer.setOptions(settings);
-        if (prev.enabled !== next.enabled) {
+        if (prev.enabled !== next.enabled || prev.sentenceSplit !== next.sentenceSplit) {
+            // 斷句方式改變要重新處理字幕
             loadedVideoId = null;
             loadVideo();
         } else if (prev.targetLang !== next.targetLang

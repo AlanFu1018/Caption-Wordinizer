@@ -48,6 +48,7 @@
 - **2026-09-28**：預覽卡的時間連結以 videoId 判斷影片，只在同一支影片時跳轉，不同影片會顯示提示。
 - **2026-09-28**：popup 點單字卡會跳出完整預覽卡（和影片上的同一個樣式）。
 - **2026-09-28**：字幕中的 `[音楽]`、`[拍手]` 等方括號標籤會自動刪除。
+- **2026-09-28**：依標點符號重新斷句，一句一行顯示（設定頁「依標點斷句」可關閉）。
 
 ---
 
@@ -87,3 +88,4 @@ It's a chrome extension that can help you learn and understand Japanese.
 - **2026-09-28**: the preview card's timestamp checks the video ID; it only seeks within the same video and shows a notice otherwise.
 - **2026-09-28**: clicking a wordcard in the popup opens the full preview card (same design as on the video).
 - **2026-09-28**: bracket tags such as `[音楽]` and `[拍手]` are removed from captions.
+- **2026-09-28**: captions are re-split at punctuation so each line is one sentence (toggle "Split by punctuation" in Settings).
