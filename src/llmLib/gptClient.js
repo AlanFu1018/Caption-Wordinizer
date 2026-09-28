@@ -1,6 +1,8 @@
 // gptClient.js
 // 呼叫 OpenAI Chat Completions API（目前尚未接到任何 provider，見 doc/wait-feat.md）
 
+import { fetchWithRetry } from "../common/fetchRetry.js";
+
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions";
 
 class GptClient {
@@ -11,7 +13,7 @@ class GptClient {
     }
 
     async generate(prompt, { json = false, temperature = 0.2 } = {}) {
-        const res = await fetch(OPENAI_ENDPOINT, {
+        const res = await fetchWithRetry(OPENAI_ENDPOINT, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

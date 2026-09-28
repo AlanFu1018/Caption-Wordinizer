@@ -1,6 +1,8 @@
 // geminiClient.js
 // 呼叫 Google Gemini API（generateContent）
 
+import { fetchWithRetry } from "../common/fetchRetry.js";
+
 const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
 
 class GeminiClient {
@@ -11,7 +13,7 @@ class GeminiClient {
     }
 
     async generate(prompt, { json = false, temperature = 0.2 } = {}) {
-        const res = await fetch(`${GEMINI_ENDPOINT}/${encodeURIComponent(this.model)}:generateContent`, {
+        const res = await fetchWithRetry(`${GEMINI_ENDPOINT}/${encodeURIComponent(this.model)}:generateContent`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -24,7 +26,7 @@ class GeminiClient {
                     ...(json ? { responseMimeType: "application/json" } : {}),
                 },
             }),
-        });
+        }, { maxRetries: 8 });
         if (!res.ok) {
             const body = await res.text();
             throw new Error(`Gemini API ${res.status}: ${body.slice(0, 200)}`);

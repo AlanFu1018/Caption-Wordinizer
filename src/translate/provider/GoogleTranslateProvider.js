@@ -2,13 +2,14 @@
 // 使用 Google 翻譯的公開端點（不需要 API Key）
 
 import { Translator } from "../Translator.js";
+import { fetchWithRetry } from "../../common/fetchRetry.js";
 
 const ENDPOINT = "https://translate.googleapis.com/translate_a/single";
 
 class GoogleTranslateProvider extends Translator {
     async translateOne(text, targetLang) {
         const params = new URLSearchParams({ client: "gtx", sl: "ja", tl: targetLang, dt: "t" });
-        const res = await fetch(`${ENDPOINT}?${params}`, {
+        const res = await fetchWithRetry(`${ENDPOINT}?${params}`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
             body: new URLSearchParams({ q: text }),
