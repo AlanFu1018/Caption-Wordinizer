@@ -40,6 +40,7 @@ caption-wordinizer/
 │   ├── translate/
 │   │   ├── Translator.js
 │   │   ├── translatorFactory.js
+│   │   ├── llmTranslatePrompt.js      # LLM 翻譯共用的 prompt 與回應解析
 │   │   └── provider/
 │   │       ├── GoogleTranslateProvider.js
 │   │       ├── GeminiTranslateProvider.js
@@ -49,6 +50,7 @@ caption-wordinizer/
 │   ├── wordcard/
 │   │   ├── WordcardInfoProvider.js
 │   │   ├── wordcardInfoFactory.js
+│   │   ├── llmWordcardPrompt.js       # LLM 單字卡 / 文法卡共用的 prompt 與回應整理
 │   │   ├── wordcardGenerator.js
 │   │   ├── wordcardDB.js
 │   │   ├── wordcardExporter.js
@@ -210,7 +212,7 @@ IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依�
 ### WordCardInfoProvider
 將單字卡的資訊生成（介面：`getInfo(input, targetLang) → { meaning, reading, explanation, examples }`，`examples` 為 LLM 補充的 2 句例句 `[{ sentence, translation }]`）。`input.kind` 為 `grammar` 時，`word` 是文法本身（たら、たんだ），`host` 是它接在後面的單字，改生成文法卡的內容（見 wordcardGenerator）。
 ### wordcardInfoFactory
-依設定 `llmProvider`（`gemini` / `nvidia` / `groq`）選擇生成單字卡資訊的實作。單字卡永遠用 LLM，和翻譯引擎選 `llm` 時用的是同一個提供者。三個 provider 的 prompt 相同，只有底層 client 不同。
+依設定 `llmProvider`（`gemini` / `nvidia` / `groq`）選擇生成單字卡資訊的實作。單字卡永遠用 LLM，和翻譯引擎選 `llm` 時用的是同一個提供者。三個 provider 的 prompt 與回應整理共用 `wordcard/llmWordcardPrompt.js`，provider 本身只負責呼叫各自的 client。
 ### wordcardGenerator
 產生完整單字卡：`{ id, type, word(原形), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt, host? }`。
 - `type`：`word` 單字卡、`grammar` 文法卡（點文法單位時建立；`word` 是文法本身，例如「たら」，`host` 是它接在後面的單字）。舊的卡片沒有 `type`，視為單字卡。
@@ -474,7 +476,7 @@ Picks the implementation: Google Translate when `translateProvider` is `google`;
 ### WordcardInfoProvider
 Generates wordcard info (interface: `getInfo(input, targetLang) → { meaning, reading, explanation, examples }`; `examples` are 2 extra LLM sentences `[{ sentence, translation }]`). When `input.kind` is `grammar`, `word` is the grammar itself (たら, たんだ) and `host` is the word it attaches to, and grammar card content is generated instead (see wordcardGenerator).
 ### wordcardInfoFactory
-Picks the wordcard info implementation from `llmProvider` (`gemini` / `nvidia` / `groq`). Wordcards always use an LLM, the same provider translation uses when the engine is `llm`. All three providers share the same prompts; only the client differs.
+Picks the wordcard info implementation from `llmProvider` (`gemini` / `nvidia` / `groq`). Wordcards always use an LLM, the same provider translation uses when the engine is `llm`. All three providers share their prompts and response handling in `wordcard/llmWordcardPrompt.js`; each provider only calls its own client.
 ### wordcardGenerator
 Builds a full wordcard: `{ id, type, word (dictionary form), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt, host? }`.
 - `type`: `word` wordcard, `grammar` grammar card (created when a grammar unit is clicked; `word` is the grammar itself, e.g. 「たら」, and `host` is the word it attaches to). Old cards without `type` are treated as wordcards.
