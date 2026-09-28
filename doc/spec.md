@@ -117,6 +117,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 將所有部分組裝顯示
 - 覆蓋層掛在 `#movie_player` 內，以 `requestAnimationFrame` + 二分搜尋對應目前的句子。
 - 每個 token 上方可顯示詞性名稱（依設定的詞性清單），點擊即加入單字卡。
+- 標點符號不可點擊：詞性為「記号」，或整個 token 都是標點 / 符號 / 空白（Unicode `\p{P}\p{S}\s`，因為半形 `!?`、`%`、`♪` 會被 kuromoji 標成名詞）。這些 token 沒有提示框、滑鼠停留不反白、點了不會建立單字卡。
 - 提示框（取代原本的 `title`）：原形 + 原形讀音、`詞性・細分類` 與出現形讀音標籤、「點一下加入單字卡」。
 - `toast(message, state)`：state 為 `loading` / `success` / `duplicate` / `warning` / `error`，各有圖示與顏色；loading 會留著直到被取代，其他 2.5 秒後消失。建立期間點擊的單字保持反白。
 - `showCard(card, tokenEl)`：加入成功後在單字上方顯示預覽卡（意思、說明、例句、時間連結），以單字為中心並限制在播放器內；播放器太矮時內容可捲動。按 ✕、點外面或換句子時關閉。
@@ -209,6 +210,10 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 設定頁新增「依標點斷句」開關（`sentenceSplit`，預設開啟）；字幕幾乎沒有標點時自動維持原本斷行。
 - 已用 Node 驗證：跨行合併、一行多句拆開、引號、停頓分句、超過字數上限、幾乎沒有標點等情況。
 
+### 2026-09-28 — 標點符號不可點擊
+- 字幕中的標點符號（「」。、！？…♪ 等）不能再被點擊加入單字卡，也不顯示提示框或反白。
+- 已用 kuromoji 驗證：`!?`、`%`、`♪` 雖被標成名詞，也會正確判斷為標點；一般單字（含 `ｗｗｗ`）仍可點擊。
+
 ---
 # English
 ## Architecture
@@ -251,3 +256,5 @@ See the tree above. On top of the original design, three files were added:
 - `parseJson3()` removes tags such as `[音楽]`, `[拍手]` and `［笑い］` (half- and full-width brackets); lines that contain only a tag are dropped.
 ### 2026-09-28 — Split captions by punctuation
 - Added `ccSegmenter.js`: lines are merged or split at sentence-ending punctuation (。！？ etc.) so each caption shows one sentence; timing within a line is split by character count. Toggle: `sentenceSplit` (on by default). Tracks with little punctuation are left as-is.
+### 2026-09-28 — Punctuation is not clickable
+- Punctuation and symbol tokens (POS 記号, or text made only of punctuation / symbols / spaces) have no tooltip, no hover highlight, and can't be added as wordcards.

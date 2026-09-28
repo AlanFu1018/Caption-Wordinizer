@@ -100,6 +100,15 @@ html.cw-active .ytp-caption-window-container {
     background: rgba(245, 234, 216, 0.18);
 }
 
+/* 標點符號：不可點擊、不反白、沒有提示框 */
+.cw-token.cw-token-static {
+    cursor: default;
+}
+
+.cw-token.cw-token-static:hover {
+    background: none;
+}
+
 /* 建立單字卡期間，點擊的單字保持反白 */
 .cw-token.cw-picked {
     background: rgba(245, 234, 216, 0.22);

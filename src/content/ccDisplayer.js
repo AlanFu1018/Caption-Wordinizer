@@ -14,6 +14,14 @@ const TOAST_ICONS = {
     error: "circle-alert",
 };
 
+// 標點符號 / 符號：kuromoji 詞性為「記号」，或整個 token 都是標點、符號、空白
+// （半形的 ! ? 有時會被 kuromoji 標成名詞，所以也看文字本身）
+const PUNCT_ONLY = /^[\p{P}\p{S}\s]+$/u;
+
+function isPunctuation(token) {
+    return token.pos === "記号" || PUNCT_ONLY.test(token.surface);
+}
+
 function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
@@ -60,7 +68,7 @@ class CcDisplayer {
             }
             this.root.querySelector(".cw-line").addEventListener("click", (e) => {
                 const tokenEl = e.target.closest(".cw-token");
-                if (!tokenEl) return;
+                if (!tokenEl || !tokenEl.dataset.idx) return;   // 標點符號不可點擊
                 const line = this.lines[this.currentIndex];
                 if (!line) return;
                 this.onWordClick(line.tokens[Number(tokenEl.dataset.idx)], line,
@@ -150,14 +158,18 @@ class CcDisplayer {
         if (!line) return;
 
         line.tokens.forEach((token, i) => {
-            const span = el("span", "cw-token");
-            span.dataset.idx = String(i);
+            // 標點符號不能加入單字卡：不給 data-idx、不加提示框
+            const clickable = !isPunctuation(token);
+            const span = el("span", clickable ? "cw-token" : "cw-token cw-token-static");
             span.style.color = token.color;
             span.append(
                 el("span", "cw-pos", this.posLabels.has(token.pos) ? token.pos : ""),
                 el("span", "cw-surface", token.surface),
-                this.buildTooltip(token),
             );
+            if (clickable) {
+                span.dataset.idx = String(i);
+                span.append(this.buildTooltip(token));
+            }
             lineEl.appendChild(span);
         });
         this.renderTranslation();
