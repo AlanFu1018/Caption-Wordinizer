@@ -22,6 +22,9 @@ const DEFAULT_SETTINGS = {
     geminiModel: "gemini-3.1-flash-lite",
     showTranslation: true,
     sentenceSplit: true,              // 重新斷句：依標點，沒標點的自動字幕依詞性（關閉則用 YouTube 原本的斷行）
+    captionPosition: "bottom",        // 字幕位置 "bottom" | "top"
+    captionOffset: 0,                 // 距離邊緣（播放器高度的 %），0 ~ 50
+    captionSize: 100,                 // 字幕大小（%），70 ~ 200
     // 要顯示詞性名稱的詞性
     posLabels: ["動詞", "形容詞", "助動詞"],
 };

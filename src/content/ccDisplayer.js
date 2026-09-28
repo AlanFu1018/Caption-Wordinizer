@@ -38,6 +38,7 @@ class CcDisplayer {
         this.posLabels = new Set();
         this.showTranslation = true;
         this.uiLang = "zh-TW";
+        this.layout = { position: "bottom", offset: 0, size: 100 };
         this.currentIndex = -1;
         this.root = null;
         this.video = null;
@@ -75,6 +76,7 @@ class CcDisplayer {
                     this.translations[this.currentIndex] || "", tokenEl);
             });
             player.appendChild(this.root);
+            this.applyLayout();
         }
         document.documentElement.classList.add("cw-active");
         document.addEventListener("mousedown", this.onDocMouseDown, true);
@@ -109,11 +111,26 @@ class CcDisplayer {
         if (index === this.currentIndex) this.renderTranslation();
     }
 
-    setOptions({ posLabels, showTranslation, uiLang }) {
+    setOptions({ posLabels, showTranslation, uiLang, captionPosition, captionOffset, captionSize }) {
         this.posLabels = new Set(posLabels || []);
         this.showTranslation = showTranslation !== false;
         this.uiLang = uiLang || "zh-TW";
+        this.layout = {
+            position: captionPosition === "top" ? "top" : "bottom",
+            offset: Number(captionOffset) || 0,
+            size: Number(captionSize) || 100,
+        };
+        this.applyLayout();
         this.render();
+    }
+
+    applyLayout() {
+        /*字幕位置（上 / 下、距離邊緣 %）與大小（%），對應 style.css 的 --cw-offset / --cw-scale / .cw-at-top*/
+        if (!this.root) return;
+        this.hideCard();   // 預覽卡的位置是依舊版面算的
+        this.root.classList.toggle("cw-at-top", this.layout.position === "top");
+        this.root.style.setProperty("--cw-offset", `${this.layout.offset}%`);
+        this.root.style.setProperty("--cw-scale", String(this.layout.size / 100));
     }
 
     findIndex(time) {
@@ -242,10 +259,16 @@ class CcDisplayer {
         const center = tokenRect.left + tokenRect.width / 2 - rootRect.left;
         const left = Math.min(Math.max(center - width / 2, 8), rootRect.width - width - 8);
         node.style.left = `${left}px`;
-        node.style.bottom = `${rootRect.bottom - tokenRect.top + 12}px`;
         arrow.style.left = `${Math.min(Math.max(center - left, 24), width - 24)}px`;
+        // 上方、下方哪邊空間大就放哪邊（字幕放在上方時通常是下方）
+        const spaceAbove = tokenRect.top - playerRect.top;
+        const spaceBelow = playerRect.bottom - tokenRect.bottom;
+        const below = spaceBelow > spaceAbove;
+        node.classList.toggle("cw-card-below", below);
+        if (below) node.style.top = `${tokenRect.bottom - rootRect.top + 12}px`;
+        else node.style.bottom = `${rootRect.bottom - tokenRect.top + 12}px`;
         // 播放器太矮放不下時，內容改為可捲動
-        body.style.maxHeight = `${Math.max(tokenRect.top - playerRect.top - 12 - 8, 120)}px`;
+        body.style.maxHeight = `${Math.max((below ? spaceBelow : spaceAbove) - 12 - 8, 120)}px`;
 
         this.card = node;
         return true;

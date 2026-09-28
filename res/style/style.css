@@ -28,11 +28,15 @@ html.cw-active .ytp-caption-window-container {
     --cw-font-ja: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
 }
 
+/* 位置與大小由設定決定（ccDisplayer.applyLayout）：
+   --cw-offset 距離邊緣（播放器高度的百分比）、--cw-scale 字幕縮放、.cw-at-top 放在上方 */
 .cw-overlay {
+    --cw-offset: 0%;
+    --cw-scale: 1;
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 70px;
+    bottom: calc(70px + var(--cw-offset));
     z-index: 60;
     display: flex;
     flex-direction: column;
@@ -43,7 +47,18 @@ html.cw-active .ytp-caption-window-container {
 }
 
 .ytp-autohide .cw-overlay {
-    bottom: 24px;
+    bottom: calc(24px + var(--cw-offset));
+}
+
+/* 放在上方：避開播放器上方的標題列（控制列隱藏時可以更靠上） */
+.cw-overlay.cw-at-top {
+    bottom: auto;
+    top: calc(60px + var(--cw-offset));
+}
+
+.ytp-autohide .cw-overlay.cw-at-top {
+    bottom: auto;
+    top: calc(16px + var(--cw-offset));
 }
 
 .cw-overlay *,
@@ -68,7 +83,7 @@ html.cw-active .ytp-caption-window-container {
 /* ── 1a 字幕框 ── */
 .cw-box {
     max-width: 90%;
-    padding: 8px 20px 12px;
+    padding: calc(8px * var(--cw-scale)) calc(20px * var(--cw-scale)) calc(12px * var(--cw-scale));
     border-radius: 16px;
     background: rgba(46, 43, 37, 0.86);
     text-align: center;
@@ -82,7 +97,7 @@ html.cw-active .ytp-caption-window-container {
     align-items: flex-end;
     font-family: var(--cw-font-ja);
     font-weight: 700;
-    font-size: 28px;
+    font-size: calc(28px * var(--cw-scale));
     line-height: 1.25;
 }
 
@@ -116,15 +131,15 @@ html.cw-active .ytp-caption-window-container {
 
 .cw-pos {
     min-height: 1.1em;
-    font: 600 11px/1.1 var(--cw-font-body);
+    font: 600 calc(11px * var(--cw-scale))/1.1 var(--cw-font-body);
     opacity: 0.85;
     white-space: nowrap;
 }
 
 .cw-translation {
-    margin-top: 6px;
+    margin-top: calc(6px * var(--cw-scale));
     color: var(--cw-neutral-100);
-    font: 500 18px/1.35 var(--cw-font-body);
+    font: 500 calc(18px * var(--cw-scale))/1.35 var(--cw-font-body);
 }
 
 /* ── 1a 滑鼠停留提示框 ── */
@@ -149,6 +164,12 @@ html.cw-active .ytp-caption-window-container {
 
 .cw-token:hover .cw-tip {
     display: flex;
+}
+
+/* 字幕在上方時，提示框改到單字下方，避免超出畫面 */
+.cw-at-top .cw-tip {
+    bottom: auto;
+    top: calc(100% + 10px);
 }
 
 /* 預覽卡打開時不顯示提示框 */
@@ -437,6 +458,12 @@ html.cw-active .ytp-caption-window-container {
     transform: translateX(-50%) rotate(45deg);
     border-radius: 3px;
     background: var(--cw-bg);
+}
+
+/* 預覽卡在單字下方時（字幕在上方），箭頭在卡片上緣 */
+.cw-card.cw-card-below .cw-card-arrow {
+    bottom: auto;
+    top: -7px;
 }
 
 .cw-overlay button:focus-visible,

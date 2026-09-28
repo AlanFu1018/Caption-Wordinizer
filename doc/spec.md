@@ -150,6 +150,8 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 - 覆蓋層掛在 `#movie_player` 內，以 `requestAnimationFrame` + 二分搜尋對應目前的句子。
 - 每個 token 上方可顯示詞性名稱（依設定的詞性清單），點擊即加入單字卡。
 - 標點符號不可點擊：詞性為「記号」，或整個 token 都是標點 / 符號 / 空白（Unicode `\p{P}\p{S}\s`，因為半形 `!?`、`%`、`♪` 會被 kuromoji 標成名詞）。這些 token 沒有提示框、滑鼠停留不反白、點了不會建立單字卡。
+- 字幕位置與大小（`applyLayout`）：依設定 `captionPosition`（下方 / 上方）、`captionOffset`（距離邊緣，播放器高度的 0～50%）、`captionSize`（70～200%），設定覆蓋層的 CSS 變數 `--cw-offset`、`--cw-scale` 與 `.cw-at-top`。字幕字體、詞性名稱、翻譯與字幕框內距一起縮放，提示框與預覽卡不縮放。下方時距離底部 70px（控制列隱藏時 24px）＋ offset，上方時距離頂部 60px（控制列隱藏時 16px）＋ offset。設定改變時即時套用。
+- 字幕在上方時，提示框改到單字下方；預覽卡則看單字上下哪邊空間大就放哪邊（`.cw-card-below` 時箭頭在卡片上緣）。
 - 提示框（取代原本的 `title`）：原形 + 原形讀音、`詞性・細分類` 與出現形讀音標籤、「點一下加入單字卡」。
 - `toast(message, state)`：state 為 `loading` / `success` / `duplicate` / `warning` / `error`，各有圖示與顏色；loading 會留著直到被取代，其他 2.5 秒後消失。建立期間點擊的單字保持反白。
 - `showCard(card, tokenEl)`：加入成功後在單字上方顯示預覽卡（意思、說明、例句、時間連結），以單字為中心並限制在播放器內；播放器太矮時內容可捲動。按 ✕、點外面或換句子時關閉。
@@ -184,7 +186,8 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### background
 MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`、`wordcard:regenerate`（把沒有 `meaning` 的單字卡逐張重跑 LLM，遇到錯誤就停止，回傳 `{ fixed, error? }`）。
 ### settings / popup
-一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
+一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、翻譯語言（繁體中文 / English）、翻譯引擎、字幕外觀（位置 `captionPosition`、距離邊緣 `captionOffset`、大小 `captionSize`）、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
+- 字幕外觀的兩個滑桿拖動時只更新數字，放開才儲存：`storage.sync` 每分鐘的寫入次數有上限，拖動時每一格都寫入會超過。
 popup 分兩個分頁（會記住上次的分頁）：
 - 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip。
 - 單字卡：頂端顯示生成失敗（沒有字義）的單字卡數量與「一鍵補生成」按鈕；最新的在最上面，每張顯示詞性、單字、讀音、意思。**點卡片會跳出完整預覽卡**（和影片上的 1d 同一個樣式，由 `wordcardView.js` 產生）：單字、讀音、詞性、完整意思、說明、例句、例句翻譯、時間連結（開新分頁）與刪除。還沒取得字義的卡片會提示到設定頁補生成。按 ✕、點背景或 Esc 關閉；補生成更新了這張卡時會即時更新內容。底部為匯出與全部清除。
@@ -254,6 +257,11 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 設定改名為「重新斷句」（仍是 `sentenceSplit`）。
 - 未達成：計畫的精確率目標是 80%，目前是 69.7%（斷在句尾或逗號的可接受率 75.2%）。
 
+### 2026-09-28 — 字幕位置與大小設定
+- 設定頁新增「字幕外觀」：位置（下方 / 上方）、距離邊緣（0～50%）、大小（70～200%），即時套用到正在播放的影片。
+- 字幕在上方時，提示框改到單字下方；預覽卡改為依上下空間自動選擇位置。
+- 已用 headless Chrome 截圖檢查：設定頁、上方＋提示框、上方＋預覽卡、下方放大 150%、下方縮小 70%＋預覽卡。
+
 ---
 # English
 ## Architecture
@@ -302,3 +310,5 @@ See the tree above. On top of the original design, three files were added:
 - Auto captions keep word-level timing (`words`); punctuation splitting now uses it, so auto-caption line changes are timed to the word.
 - Unpunctuated auto captions are split by POS / conjugation rules plus pauses. On real captions with punctuation removed, F1 rose from 22.7% (YouTube's own lines) to 73.1%; precision is 69.7%, short of the 80% goal. Unpunctuated manual captions are left as-is because POS splitting did not beat their original lines.
 - Added `test/segmenter-eval.mjs` and `test/kuromojiNode.mjs`; the setting is now labeled "Re-split sentences".
+### 2026-09-28 — Caption position and size
+- New "Caption appearance" settings: position (bottom / top), distance from edge (0–50% of player height) and size (70–200%), applied live. With captions at the top, the tooltip opens below the word and the preview card picks whichever side has more room.

@@ -57,6 +57,33 @@
     </div>
 
     <div class="section">
+        <h2 data-i18n="captionHead"></h2>
+        <div class="rows">
+            <div class="row">
+                <span data-i18n="captionPosition"></span>
+                <div class="seg" id="captionPosition">
+                    <label class="seg-opt"><input type="radio" name="captionPosition" value="bottom"><span data-i18n="captionBottom"></span></label>
+                    <label class="seg-opt"><input type="radio" name="captionPosition" value="top"><span data-i18n="captionTop"></span></label>
+                </div>
+            </div>
+            <div class="row">
+                <label for="captionOffset" data-i18n="captionOffset"></label>
+                <div class="range-field">
+                    <input type="range" id="captionOffset" min="0" max="50" step="1">
+                    <output id="captionOffsetValue" for="captionOffset"></output>
+                </div>
+            </div>
+            <div class="row">
+                <label for="captionSize" data-i18n="captionSize"></label>
+                <div class="range-field">
+                    <input type="range" id="captionSize" min="70" max="200" step="10">
+                    <output id="captionSizeValue" for="captionSize"></output>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
         <h2 data-i18n="geminiHead"></h2>
         <div class="field">
             <label for="geminiApiKey">API Key<span data-i18n="keyHint"></span></label>

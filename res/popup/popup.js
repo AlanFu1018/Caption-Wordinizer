@@ -97,9 +97,21 @@ async function initSettings() {
 
     buildSegmented($("targetLang"), "targetLang", Object.entries(TARGET_LANGUAGES), settings.targetLang,
         (value) => update({ targetLang: value }));
-    for (const input of document.querySelectorAll('input[name="translateProvider"]')) {
-        input.checked = input.value === settings.translateProvider;
-        input.addEventListener("change", () => update({ translateProvider: input.value }));
+    for (const name of ["translateProvider", "captionPosition"]) {
+        for (const input of document.querySelectorAll(`input[name="${name}"]`)) {
+            input.checked = input.value === settings[name];
+            input.addEventListener("change", () => update({ [name]: input.value }));
+        }
+    }
+
+    // 字幕距離邊緣 / 大小：拖動時只更新數字，放開才存（storage.sync 每分鐘寫入次數有上限）
+    for (const key of ["captionOffset", "captionSize"]) {
+        const range = $(key);
+        const label = $(`${key}Value`);
+        range.value = settings[key];
+        label.textContent = `${range.value}%`;
+        range.addEventListener("input", () => { label.textContent = `${range.value}%`; });
+        range.addEventListener("change", () => update({ [key]: Number(range.value) }));
     }
 
     $("geminiModel").value = settings.geminiModel;
