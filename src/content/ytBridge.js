@@ -12,10 +12,12 @@
         try {
             const u = new URL(url, location.origin);
             if (!u.pathname.includes("/api/timedtext")) return;
+            // 只記播放器自己帶 pot 驗證參數的請求；頁面上也有不帶 pot 的字幕請求，
+            // 那種網址下載回來是空的，若被記下會蓋掉能用的網址
+            if (!u.searchParams.has("pot")) return;
             const videoId = u.searchParams.get("v");
             if (!videoId) return;
             timedtextUrls[videoId] = u.href;
-            window.postMessage({ source: SOURCE_OUT, type: "timedtext-url", videoId, url: u.href }, "*");
         } catch (e) { /* 忽略無法解析的網址 */ }
     }
 

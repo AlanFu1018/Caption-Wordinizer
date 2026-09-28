@@ -35,7 +35,13 @@ async function handleTranslate({ texts }) {
     const missing = [...new Set(texts.filter(t => !translationCache.has(prefix + t)))];
     if (missing.length) {
         const translator = createTranslator(settings);
-        const results = await translator.translateBatch(missing, settings.targetLang);
+        let results;
+        try {
+            results = await translator.translateBatch(missing, settings.targetLang);
+        } catch (e) {
+            // 錯誤訊息標出實際用的引擎，避免「Failed to fetch」這類訊息看不出是誰出錯
+            throw new Error(`[${engineKey}] ${e.message}`);
+        }
         missing.forEach((t, i) => translationCache.set(prefix + t, results[i]));
     }
     return { translations: texts.map(t => translationCache.get(prefix + t) || "") };

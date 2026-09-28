@@ -27,25 +27,20 @@ function requestPlayerData() {
     });
 }
 
-function waitForTimedtextUrl(videoId, timeoutMs) {
-    return new Promise((resolve) => {
-        const timer = setTimeout(() => {
-            window.removeEventListener("message", onMessage);
-            resolve(null);
-        }, timeoutMs);
-        function onMessage(event) {
-            const msg = event.data;
-            if (event.source !== window || !msg || msg.source !== BRIDGE) return;
-            if (msg.type !== "timedtext-url" || msg.videoId !== videoId) return;
-            clearTimeout(timer);
-            window.removeEventListener("message", onMessage);
-            resolve(msg.url);
-        }
-        window.addEventListener("message", onMessage);
-    });
-}
-
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function waitForTimedtextUrl(videoId, timeoutMs) {
+    /*用輪詢而不是等 timedtext-url 通知：字幕開著的影片一載入播放器就會自己抓字幕，
+      通知可能在我們開始等之前就發出而錯過，但 ytBridge 會記下網址，輪詢一定拿得到*/
+    const deadline = Date.now() + timeoutMs;
+    do {
+        const data = await requestPlayerData();
+        if (data && data.videoId === videoId && data.timedtextUrl) return data.timedtextUrl;
+        if (Date.now() >= deadline) break;
+        await sleep(500);
+    } while (Date.now() < deadline);
+    return null;
+}
 
 async function getPlayerDataFor(videoId) {
     /*SPA 換頁後播放器資料可能還是舊的，等到 videoId 對上為止*/
@@ -152,11 +147,11 @@ async function fetchAllCaptions(videoId) {
 
     // 4. 失敗的話（YouTube 需要驗證參數），請播放器自己開啟字幕，攔截它的請求網址再下載
     if (!data) {
-        let url = playerData.timedtextUrl;
+        // 下載 baseUrl 的期間播放器可能已經自己抓過字幕，先看最新紀錄，沒有再請播放器開字幕
+        let url = await waitForTimedtextUrl(videoId, 0);
         if (!url) {
-            const waiting = waitForTimedtextUrl(videoId, 10000);
             window.postMessage({ source: CONTENT, type: "enable-captions", languageCode: track.languageCode, kind: track.kind }, "*");
-            url = await waiting;
+            url = await waitForTimedtextUrl(videoId, 15000);
         }
         if (url) data = await tryFetchJson(toJson3Url(url, track));
     }

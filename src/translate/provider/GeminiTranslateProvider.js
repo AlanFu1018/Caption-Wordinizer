@@ -16,7 +16,7 @@ class GeminiTranslateProvider extends Translator {
         const prompt = [
             `Translate each Japanese video subtitle line below into ${LANG_NAMES[targetLang] || targetLang}.`,
             "The lines are consecutive, so use the surrounding lines as context.",
-            `Return a JSON array of exactly ${texts.length} strings, one translation per input line, in the same order.`,
+            `Return a JSON object of the form {"translations": [...]}, containing exactly ${texts.length} strings, one translation per input line, in the same order.`,
             "",
             JSON.stringify(texts),
         ].join("\n");

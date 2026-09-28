@@ -37,18 +37,16 @@
             </label>
         </div>
         <div class="row">
-            <span data-i18n="sentenceSplit"></span>
-            <label class="switch">
-                <input type="checkbox" id="sentenceSplit" data-i18n-label="sentenceSplit">
-                <span class="track"></span>
-            </label>
-        </div>
-        <div class="row">
             <span data-i18n="tokenUnit"></span>
-            <div class="seg" id="tokenUnit">
-                <label class="seg-opt"><input type="radio" name="tokenUnit" value="word"><span data-i18n="unitWord"></span></label>
-                <label class="seg-opt"><input type="radio" name="tokenUnit" value="stem"><span data-i18n="unitStem"></span></label>
-                <label class="seg-opt"><input type="radio" name="tokenUnit" value="phrase"><span data-i18n="unitPhrase"></span></label>
+            <div class="row-controls">
+                <div class="seg" id="tokenUnit">
+                    <label class="seg-opt"><input type="radio" name="tokenUnit" value="word"><span data-i18n="unitWord"></span></label>
+                    <label class="seg-opt"><input type="radio" name="tokenUnit" value="stem"><span data-i18n="unitStem"></span></label>
+                    <label class="seg-opt"><input type="radio" name="tokenUnit" value="phrase"><span data-i18n="unitPhrase"></span></label>
+                </div>
+                <button type="button" class="icon-toggle" id="sentenceSplit" data-i18n-label="sentenceSplit" aria-pressed="false">
+                    <span data-icon="refresh-cw"></span>
+                </button>
             </div>
         </div>
         <div class="row">

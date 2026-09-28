@@ -107,10 +107,16 @@ async function refreshLlmFields() {
 }
 
 async function initSettings() {
-    for (const key of ["enabled", "showTranslation", "sentenceSplit"]) {
+    for (const key of ["enabled", "showTranslation"]) {
         $(key).checked = settings[key];
         $(key).addEventListener("change", () => update({ [key]: $(key).checked }));
     }
+
+    $("sentenceSplit").setAttribute("aria-pressed", String(settings.sentenceSplit));
+    $("sentenceSplit").addEventListener("click", async () => {
+        await update({ sentenceSplit: !settings.sentenceSplit });
+        $("sentenceSplit").setAttribute("aria-pressed", String(settings.sentenceSplit));
+    });
 
     buildSegmented($("targetLang"), "targetLang", Object.entries(TARGET_LANGUAGES), settings.targetLang,
         (value) => update({ targetLang: value }));
@@ -299,6 +305,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 (async function init() {
     settings = await loadSettings();
     document.querySelector('[data-icon="download"]').innerHTML = icon("download", 15);
+    document.querySelector('[data-icon="refresh-cw"]').innerHTML = icon("refresh-cw", 15);
     await initSettings();
     applyLanguage();
     let tab = "settings";

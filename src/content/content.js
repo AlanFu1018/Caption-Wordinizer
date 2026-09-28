@@ -154,6 +154,7 @@ async function main() {
             loadVideo();
         } else if (prev.targetLang !== next.targetLang
             || prev.translateProvider !== next.translateProvider
+            || prev.llmProvider !== next.llmProvider
             || prev.showTranslation !== next.showTranslation) {
             // 只影響翻譯，不用重新抓字幕
             startTranslation();
