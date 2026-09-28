@@ -17,7 +17,8 @@ caption-wordinizer/
 │   │   └── background.js          # service worker，處理翻譯與 LLM 請求
 │   │
 │   ├── common/
-│   │   └── settings.js            # 共用設定（預設值、讀寫、監聽）
+│   │   ├── settings.js            # 共用設定（預設值、讀寫、監聽），存在 storage.sync
+│   │   └── secrets.js             # API Key 讀寫，只給 background / popup 用
 │   │
 │   ├── content/
 │   │   ├── content.js             # content script 進入點，串起所有模組
@@ -119,7 +120,13 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 ### background
 MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`。
 ### settings / popup
-設定存在 `chrome.storage.local` 的 `settings`：啟用、顯示翻譯、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini API Key 與模型、要顯示名稱的詞性。popup 也能瀏覽、刪除、匯出單字卡。
+一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、顯示翻譯、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。popup 也能瀏覽、刪除、匯出單字卡。
+### secrets（API Key 的保存）
+- Gemini API Key 單獨存在 `chrome.storage.local` 的 `geminiApiKey`，不和一般設定放在一起。
+- background 每次啟動都會呼叫 `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })`，讓 `local`（API Key、單字卡）只有 background 與 popup 讀得到，content script 讀不到。
+- API Key 只在 background 中和設定合併，用來呼叫 Gemini，不會傳給 content script。
+- 限制：`storage.local` 在磁碟上沒有加密，能讀取 Chrome 設定檔的人仍可取得。建議在 Google Cloud Console 限制這把 Key 只能用 Gemini API，並設定用量上限。
+- v0.1 的舊設定（全部存在 `local` 的 `settings`）會在 background 啟動時自動拆開搬移。
 
 ## 完成紀錄
 ### 2026-09-28 — v0.1 第一版完成
@@ -129,11 +136,15 @@ MV3 service worker。所有對外網路請求都在這裡（需要 `host_permiss
 - 已用 Node 驗證：json3 解析、kuromoji 斷詞與上色、Anki TSV 匯出、Google 翻譯（zh-TW / en）。
 - 尚未在 Chrome 實機測試 YouTube 字幕下載流程與 Gemini API（需要 API Key）。
 
+### 2026-09-28 — API Key 保存方式改善
+- API Key 從 `settings` 拆出，存到 `secrets.js` 管理的 `local.geminiApiKey`，並把 `storage.local` 限制為只有擴充功能頁面能讀取；一般設定改存 `storage.sync`。
+- 預設模型改為 `gemini-3.1-flash-lite`；舊版存下的 `gemini-2.5-flash` 會在搬移時改回預設值。
+
 ---
 # English
 ## Architecture
 See the tree above. On top of the original design, three files were added:
-`src/content/ytBridge.js` (page MAIN world bridge), `src/background/background.js` (service worker for network/LLM calls) and `src/common/settings.js` (shared settings).
+`src/content/ytBridge.js` (page MAIN world bridge), `src/background/background.js` (service worker for network/LLM calls), `src/common/settings.js` (shared settings, in `storage.sync`) and `src/common/secrets.js` (API key in `storage.local`, restricted to trusted extension contexts so content scripts can't read it).
 
 ## Modules
 | Module | Role |
@@ -153,3 +164,5 @@ See the tree above. On top of the original design, three files were added:
 ### 2026-09-28 — v0.1
 - All modules in the spec implemented; popup settings and wordcard management added.
 - Verified in Node: json3 parsing, tokenizing/coloring, Anki export, Google Translate. Not yet tested end-to-end in Chrome.
+### 2026-09-28 — API key storage
+- The Gemini API key is stored on its own in `storage.local`, which is restricted to `TRUSTED_CONTEXTS`; the key never reaches content scripts. Other settings moved to `storage.sync`. Default model is now `gemini-3.1-flash-lite`.

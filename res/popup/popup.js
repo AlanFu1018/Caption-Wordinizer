@@ -2,6 +2,7 @@
 // 設定頁面與單字卡管理
 
 import { POS_LIST, TARGET_LANGUAGES, loadSettings, saveSettings } from "../../src/common/settings.js";
+import { getGeminiApiKey, setGeminiApiKey } from "../../src/common/secrets.js";
 import { POS_COLORS } from "../../src/content/tokenColorizer.js";
 import { getAllWordcards, removeWordcard, clearWordcards } from "../../src/wordcard/wordcardDB.js";
 import { toAnkiTsv } from "../../src/wordcard/wordcardExporter.js";
@@ -20,10 +21,14 @@ async function initSettings() {
         $(key).checked = settings[key];
         $(key).addEventListener("change", () => saveSettings({ [key]: $(key).checked }));
     }
-    for (const key of ["targetLang", "translateProvider", "geminiApiKey", "geminiModel"]) {
+    for (const key of ["targetLang", "translateProvider", "geminiModel"]) {
         $(key).value = settings[key];
         $(key).addEventListener("change", () => saveSettings({ [key]: $(key).value.trim() }));
     }
+
+    // API Key 另外存，不放在會被 content script 讀到的設定裡
+    $("geminiApiKey").value = await getGeminiApiKey();
+    $("geminiApiKey").addEventListener("change", () => setGeminiApiKey($("geminiApiKey").value.trim()));
 
     const grid = $("posLabels");
     for (const pos of POS_LIST) {

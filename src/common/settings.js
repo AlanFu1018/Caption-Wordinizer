@@ -1,5 +1,6 @@
 // settings.js
 // 所有模組（content / background / popup）共用的設定讀寫
+// 一般設定存在 chrome.storage.sync；API Key 不在這裡，見 secrets.js
 
 // kuromoji (IPADIC) 的主要詞性
 const POS_LIST = [
@@ -17,28 +18,27 @@ const DEFAULT_SETTINGS = {
     targetLang: "zh-TW",
     translateProvider: "google",      // "google" | "gemini"
     wordcardProvider: "gemini",       // "gemini"
-    geminiApiKey: "",
-    geminiModel: "gemini-2.5-flash",
+    geminiModel: "gemini-3.1-flash-lite",
     showTranslation: true,
     // 要顯示詞性名稱的詞性
     posLabels: ["動詞", "形容詞", "助動詞"],
 };
 
 async function loadSettings() {
-    const stored = await chrome.storage.local.get("settings");
+    const stored = await chrome.storage.sync.get("settings");
     return { ...DEFAULT_SETTINGS, ...(stored.settings || {}) };
 }
 
 async function saveSettings(patch) {
     const current = await loadSettings();
     const next = { ...current, ...patch };
-    await chrome.storage.local.set({ settings: next });
+    await chrome.storage.sync.set({ settings: next });
     return next;
 }
 
 function onSettingsChanged(callback) {
     chrome.storage.onChanged.addListener((changes, area) => {
-        if (area === "local" && changes.settings) {
+        if (area === "sync" && changes.settings) {
             callback({ ...DEFAULT_SETTINGS, ...(changes.settings.newValue || {}) });
         }
     });
