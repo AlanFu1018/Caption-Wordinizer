@@ -21,6 +21,7 @@ caption-wordinizer/
 │   ├── common/
 │   │   ├── settings.js            # 共用設定（預設值、讀寫、監聽），存在 storage.sync
 │   │   ├── secrets.js             # API Key 讀寫，只給 background / popup 用
+│   │   ├── fetchRetry.js          # fetch 包裝：503 與連線失敗時指數退避重試
 │   │   ├── i18n.js                # 介面文字（zh-TW / en）、時間格式、影片連結
 │   │   ├── icons.js               # Lucide 圖示（inline SVG）
 │   │   └── wordcardView.js        # 預覽卡（1d）內容，影片上與 popup 共用
@@ -41,7 +42,9 @@ caption-wordinizer/
 │   │   ├── translatorFactory.js
 │   │   └── provider/
 │   │       ├── GoogleTranslateProvider.js
-│   │       └── GeminiTranslateProvider.js
+│   │       ├── GeminiTranslateProvider.js
+│   │       ├── NvidiaTranslateProvider.js
+│   │       └── GroqTranslateProvider.js
 │   │
 │   ├── wordcard/
 │   │   ├── WordcardInfoProvider.js
@@ -50,10 +53,14 @@ caption-wordinizer/
 │   │   ├── wordcardDB.js
 │   │   ├── wordcardExporter.js
 │   │   └── provider/
-│   │       └── GeminiWordcardProvider.js
+│   │       ├── GeminiWordcardProvider.js
+│   │       ├── NvidiaWordcardProvider.js
+│   │       └── GroqWordcardProvider.js
 │   │
 │   └── llmLib/
 │       ├── geminiClient.js
+│       ├── nvidiaClient.js
+│       ├── groqClient.js
 │       └── gptClient.js
 │
 ├── res/
@@ -98,10 +105,14 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### ytBridge
 跑在頁面的 MAIN world（`manifest` 的 `"world": "MAIN"`）。content script 拿不到 `window.ytInitialPlayerResponse`，所以由它讀取 `#movie_player.getPlayerResponse()`，再用 `postMessage` 交給 content script。
 它也會攔截播放器自己發出的 `/api/timedtext` 請求網址。YouTube 現在常要求額外的驗證參數（pot），直接用 `baseUrl` 下載可能拿到空白，這時改用播放器的網址下載。
+- 只記錄帶 `pot` 的請求。頁面上也有不帶 `pot` 的字幕請求，下載回來是空的；以前全部都記，後發出的會蓋掉能用的網址，造成字幕時有時無。
+- 收到 `enable-captions` 時先關掉字幕再開啟指定的軌。字幕本來就開著同一軌時，只「開啟」不會讓播放器重新請求。
 ### ccFetcher
 一次性抓取該影片所有字幕
 - 優先選人工日文字幕，沒有的話用自動產生（asr）字幕。
-- 先直接下載 `baseUrl&fmt=json3`；失敗就請 `ytBridge` 開啟播放器字幕，攔截請求網址後再下載。
+- 先直接下載 `baseUrl&fmt=json3`；失敗就用 `ytBridge` 記錄的播放器網址下載；還是失敗就請 `ytBridge` 重新開啟播放器字幕，等它發出新的請求（最多 15 秒）再下載。
+- 取得播放器網址用輪詢（每 0.5 秒問一次 `ytBridge`），不等通知：看過的影片 YouTube 會記住字幕開著，重新整理後播放器一載入就自己抓字幕，通知可能在開始等之前就發出而錯過。
+- 失敗時 console 會印出原因：「等不到播放器發出字幕請求」或「播放器的字幕網址下載回來是空的」。
 - 輸出 `[{ text, start, end, words? }]`（秒）。自動字幕的時間區段互相重疊時，截到下一句開始為止。
 - `words: [{ text, start }]`：自動字幕每個 seg 是一個詞，`tOffsetMs` 是它在這行的第幾毫秒。有逐詞時間、且詞接起來和整理後的文字一致時才附上，給 `ccSegmenter` 精確切時間。
 - 刪除方括號標籤（`[音楽]`、`[拍手]`、`［笑い］` 等，半形 `[]` 與全形 `［］`），並清掉多餘空白；整句只有標籤時整句略過。方括號裡的內容一律刪除，所以字幕若真的有 `[…]` 文字也會被移除。
@@ -187,21 +198,22 @@ IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依�
 - 字幕每 20 句為一段（chunk），只翻「目前位置 ~ 往後 120 秒」涵蓋的段落，沒看到的部分不會翻。
 - 監聽影片的 `timeupdate` / `seeking` / `play`，播放前進時自動補下一段；跳轉時從新位置所在的段落開始。
 - 同時最多 2 個請求，失敗會重試 1 次，仍失敗才顯示一次錯誤提示。
-- 切換翻譯語言、翻譯引擎或開關翻譯時，只重新開始翻譯，不重新抓字幕；已翻過的句子由 background 的快取直接回傳。
+- 切換翻譯語言、翻譯引擎、LLM 提供者或開關翻譯時，只重新開始翻譯，不重新抓字幕；已翻過的句子由 background 的快取直接回傳。
 ### Translator
 將所有字幕整句翻譯（介面：`translateBatch(texts, targetLang) → string[]`）
 - `GoogleTranslateProvider`：Google 翻譯公開端點，不需 API Key。多句用換行合併成一次請求，句數對不上時改為逐句翻譯。
-- `GeminiTranslateProvider`：將一批句子當作上下文一起送給 Gemini，要求回傳 JSON 陣列。
+- `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`：將一批句子當作上下文一起送給 LLM，要求回傳 `{"translations": [...]}`；解析時也接受直接回傳的陣列。
+- NVIDIA / Groq 翻譯呼叫時關閉 `strictJson`（見 llmLib）：它們的 JSON 模式要求最外層是物件，模型常照樣回傳陣列，Groq 會直接回 400 `json_validate_failed`。
 ### translatorFactory
-依照設定 `translateProvider`（`google` / `gemini`）選擇具體的翻譯實作
+依照設定選擇具體的翻譯實作：`translateProvider` 為 `google` 時用 Google 翻譯；為 `llm` 時依 `llmProvider`（`gemini` / `nvidia` / `groq`）選擇。
 ### WordCardInfoProvider
 將單字卡的資訊生成（介面：`getInfo(input, targetLang) → { meaning, reading, explanation, examples }`，`examples` 為 LLM 補充的 2 句例句 `[{ sentence, translation }]`）。`input.kind` 為 `grammar` 時，`word` 是文法本身（たら、たんだ），`host` 是它接在後面的單字，改生成文法卡的內容（見 wordcardGenerator）。
 ### wordcardInfoFactory
-選擇具體用哪一個 llm 的實作生成單字卡資訊（目前只有 `gemini`）
+依設定 `llmProvider`（`gemini` / `nvidia` / `groq`）選擇生成單字卡資訊的實作。單字卡永遠用 LLM，和翻譯引擎選 `llm` 時用的是同一個提供者。三個 provider 的 prompt 相同，只有底層 client 不同。
 ### wordcardGenerator
 產生完整單字卡：`{ id, type, word(原形), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt, host? }`。
 - `type`：`word` 單字卡、`grammar` 文法卡（點文法單位時建立；`word` 是文法本身，例如「たら」，`host` 是它接在後面的單字）。舊的卡片沒有 `type`，視為單字卡。
-- 文法卡由 `GeminiWordcardProvider.getGrammarInfo` 生成：`meaning` 是這個文法在句中的功能，`explanation` 說明接續方式、語感和句中意思（多個部分組成時逐一說明），另附 2 個例句。
+- 文法卡由各 provider 的 `getGrammarInfo` 生成：`meaning` 是這個文法在句中的功能，`explanation` 說明接續方式、語感和句中意思（多個部分組成時逐一說明），另附 2 個例句。
 - 顯示時文法卡前面加「〜」（〜たら），詞性標籤顯示「文法」；popup 清單的圓圈顯示「文」；Anki 匯出的正面也是「〜たら」。
 - 重複檢查依 `type` 分開（`findWordcard(word, type)`）。影片只以 `videoId` 辨識，在點擊單字當下記錄（等待回應期間換了影片也不會記錯）。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
 ### wordcardDB
@@ -213,15 +225,27 @@ IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依�
 - 後面的獨立欄位給想自訂筆記類型的人用：匯入時把欄位對應到自己的筆記類型，不需要的欄位選「無」。
 ### llmLib
 存放llm呼叫的api
-- `geminiClient`：Gemini `generateContent`，支援 JSON 輸出。
+- `geminiClient`：Gemini `generateContent`，支援 JSON 輸出（`responseMimeType`）。重試次數 8 次。
+- `nvidiaClient`：NVIDIA API（`integrate.api.nvidia.com`，OpenAI 相容格式），預設模型 `meta/llama-3.3-70b-instruct`。
+- `groqClient`：Groq API（`api.groq.com/openai/v1`，OpenAI 相容格式），預設模型 `llama-3.3-70b-versatile`。
+- NVIDIA / Groq 的 `generate(prompt, { json, strictJson })`：`strictJson`（預設開）會送 `response_format: json_object`，強制最外層是物件；關掉時不送，改用 `parseJsonLoose` 自己解析（會拆掉 \`\`\`json 圍欄）。
 - `gptClient`：OpenAI Chat Completions（已實作，尚未接上 provider）。
+### fetchRetry
+所有 LLM 與 Google 翻譯的請求都經過 `fetchWithRetry(url, init, retryOptions)`：
+- 回應是 503，或 `fetch()` 本身丟出錯誤時，以指數退避重試：1 秒起、每次加倍、上限 8 秒，並加上隨機抖動；有 `Retry-After` 時照它等。預設最多重試 4 次，Gemini 8 次。
+- 為什麼要重試連線錯誤：擴充功能對同一網址連續收到 503 後，瀏覽器會暫時擋下後續請求（DevTools 顯示 0 byte、1 毫秒、沒有狀態碼），JavaScript 只看到「Failed to fetch」。Gemini 過載時翻譯請求很容易觸發。
+- 其他狀態碼（4xx 等）不重試，把 response 交回呼叫端處理。
 ### background
-MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`、`wordcard:regenerate`（把沒有 `meaning` 的單字卡逐張重跑 LLM，遇到錯誤就停止，回傳 `{ fixed, error? }`）。
+MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`，包含 Google 翻譯、Gemini、NVIDIA、Groq 的網域），並快取翻譯結果。訊息：`translate`、`wordcard:add`、`wordcard:regenerate`（把沒有 `meaning` 的單字卡逐張重跑 LLM，遇到錯誤就停止，回傳 `{ fixed, error? }`）。
+- 翻譯快取的 key 是 `${引擎}|${翻譯語言}|${原文}`，引擎為 `google` 或 `llm-${llmProvider}`，換提供者不會拿到別的提供者翻的結果。
+- 翻譯失敗時錯誤訊息前面會加上實際使用的引擎，例如 `[llm-gemini] Failed to fetch`。
 ### settings / popup
-一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、斷詞單位 `tokenUnit`（詞 / 語幹＋語尾 / 詞組，預設語幹＋語尾）、翻譯語言（繁體中文 / English）、翻譯引擎、字幕外觀（位置 `captionPosition`、距離邊緣 `captionOffset`、大小 `captionSize`）、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
+一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、斷詞單位 `tokenUnit`（詞 / 語幹＋語尾 / 詞組，預設語幹＋語尾）、翻譯語言（繁體中文 / English）、翻譯引擎 `translateProvider`（`google` / `llm`）、LLM 提供者 `llmProvider`（`gemini` / `nvidia` / `groq`，預設 `gemini`）、各提供者的模型 `geminiModel`（預設 `gemini-3.1-flash-lite`）/ `nvidiaModel` / `groqModel`、字幕外觀（位置 `captionPosition`、距離邊緣 `captionOffset`、大小 `captionSize`）、要顯示名稱的詞性。
 - 字幕外觀的兩個滑桿拖動時只更新數字，放開才儲存：`storage.sync` 每分鐘的寫入次數有上限，拖動時每一格都寫入會超過。
 popup 分兩個分頁（會記住上次的分頁）：
-- 設定：header 有介面語言切換（中 / EN）與啟用開關；斷詞單位、翻譯語言、翻譯引擎、字幕位置用分段按鈕；詞性用可點選的 chip。
+- 設定：header 有介面語言切換（中 / EN）與啟用開關；斷詞單位、翻譯語言、翻譯引擎、字幕位置用分段按鈕；詞性用可點選的 chip。區塊標題為粗體。
+- 「重新斷句」是斷詞單位右邊的圓形按鈕（`refresh-cw` 圖示，開啟時為強調色，`aria-pressed` 表示狀態）。
+- 「LLM（翻譯 / 單字卡生成）」區塊：提供者下拉選單，下面的 API Key 與模型欄位只有一組，會顯示目前提供者的值；切換提供者時換成該提供者存的值。下拉選單一改就儲存；文字欄位在失焦或按 Enter 時儲存。
 - 單字卡：頂端顯示生成失敗（沒有字義）的單字卡數量與「一鍵補生成」按鈕；最新的在最上面，每張顯示詞性、單字、讀音、意思。**點卡片會跳出完整預覽卡**（和影片上的 1d 同一個樣式，由 `wordcardView.js` 產生）：單字、讀音、詞性、完整意思、說明、例句、例句翻譯、時間連結（開新分頁）與刪除。還沒取得字義的卡片會提示用「一鍵補生成」補上。按 ✕、點背景或 Esc 關閉；補生成更新了這張卡時會即時更新內容。底部為匯出與全部清除。
 - popup 也載入 `res/style/style.css` 取得預覽卡的樣式（`.cw-card` 上有自己的色彩變數，不依賴 `.cw-overlay`）。
 ### UI 設計（Organic）
@@ -231,9 +255,9 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 圖示：Lucide（`src/common/icons.js`）。
 - 和設計稿不同處：模型欄位預設值維持 `gemini-3.1-flash-lite`（設計稿寫 `gemini-2.5-flash`）；預覽卡在播放器太矮時改為可捲動。
 ### secrets（API Key 的保存）
-- Gemini API Key 單獨存在 `chrome.storage.local` 的 `geminiApiKey`，不和一般設定放在一起。
+- API Key 單獨存在 `chrome.storage.local`，每個提供者一個 key：`geminiApiKey`、`nvidiaApiKey`、`groqApiKey`，不和一般設定放在一起。
 - background 每次啟動都會呼叫 `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })`，讓 `local`（API Key、單字卡）只有 background 與 popup 讀得到，content script 讀不到。
-- API Key 只在 background 中和設定合併，用來呼叫 Gemini，不會傳給 content script。
+- API Key 只在 background 中和設定合併，用來呼叫 LLM，不會傳給 content script。
 - 限制：`storage.local` 在磁碟上沒有加密，能讀取 Chrome 設定檔的人仍可取得。建議在 Google Cloud Console 限制這把 Key 只能用 Gemini API，並設定用量上限。
 - v0.1 的舊設定（全部存在 `local` 的 `settings`）會在 background 啟動時自動拆開搬移。
 
@@ -310,14 +334,22 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 斷詞前正規化夾在平假名中的片假名長音（ぐルーって → ぐるーって），修正「なんか」被斷成「な｜ん｜かぐ」的問題。
 - 已用 Node 測試分組與正規化，並在 headless Chrome 載入實際的 kuromoji 端到端檢查三種模式的顯示與文法提示框。
 
+### 2026-09-29 — 多個 LLM 提供者、503 重試、重新整理後字幕消失
+- **LLM 提供者**：新增 `nvidiaClient`、`groqClient` 與對應的翻譯 / 單字卡 provider。設定改為「翻譯引擎：Google 翻譯 / LLM」＋「LLM 提供者」下拉選單（`llmProvider`），單字卡與翻譯共用同一個提供者，原本的 `wordcardProvider` 設定移除。每個提供者的 API Key 與模型各自保存。
+- **503 重試**：新增 `fetchRetry.js`，503 與連線失敗都以指數退避重試。實測 Gemini 翻譯一直「Failed to fetch」的原因：`gemini-3.1-flash-lite` 頻繁回 503，連續 503 後瀏覽器暫時擋下擴充功能的請求，原本的重試不處理這種錯誤。
+- **Groq 翻譯 400**：翻譯要的是陣列，但 Groq 的 JSON 模式要求最外層是物件，模型回傳陣列就被拒絕（`json_validate_failed`）。prompt 改為要求 `{"translations": [...]}`，NVIDIA / Groq 翻譯並關閉 `strictJson`。
+- **重新整理看過的影片後字幕消失**：原因有三層，都已修正（見 ytBridge、ccFetcher）：錯過播放器抓字幕的通知、記下不帶 `pot` 的網址、字幕已開著時播放器不會重新請求。已在 Edge 對兩支影片重複重新整理確認。
+- **其他**：切換 LLM 提供者時立即重新翻譯（原本只比較 `translateProvider`）；翻譯錯誤訊息標出實際引擎；「重新斷句」改為斷詞單位右邊的圖示按鈕；設定頁標題改為粗體。
+- 已知問題（見 wait-feat）：NVIDIA / Groq 關閉 `strictJson` 後，模型若在 JSON 前後多寫說明文字會解析失敗；「重新斷句」按鈕快速連點可能漏掉一次切換。
+
 ---
 # English
 ## Architecture
 The directory tree is the same as in the [Chinese section](#這個專案的架構) above (its comments are in Chinese). In short:
 - `src/background/` — MV3 service worker for translation and LLM requests.
-- `src/common/` — shared settings (`storage.sync`), API key storage, UI strings (zh-TW / en), Lucide icons, and the wordcard preview card shared by the video overlay and the popup.
+- `src/common/` — shared settings (`storage.sync`), API key storage, the retrying `fetch` wrapper, UI strings (zh-TW / en), Lucide icons, and the wordcard preview card shared by the video overlay and the popup.
 - `src/content/` — content script entry point, the page-world bridge, and the caption pipeline (fetch → re-split → tokenize → group → color → display, plus playback-driven translation).
-- `src/translate/`, `src/wordcard/`, `src/llmLib/` — translation providers, wordcard generation / storage / Anki export, LLM clients.
+- `src/translate/`, `src/wordcard/`, `src/llmLib/` — translation providers (Google / Gemini / NVIDIA / Groq), wordcard generation (Gemini / NVIDIA / Groq) / storage / Anki export, LLM clients.
 - `res/` — popup, overlay stylesheet, bundled fonts (Caprasimo / Figtree / Huninn / Zen Maru Gothic, OFL), icon, and kuromoji.js 0.1.2 + IPADIC dictionary (Apache-2.0).
 - `test/` — sentence-splitting evaluation script, a Node loader for the bundled kuromoji, and json3 caption fixtures.
 
@@ -336,10 +368,14 @@ See the diagram in the Chinese section.
 ### ytBridge
 Runs in the page's MAIN world (`"world": "MAIN"` in the manifest). Content scripts can't read `window.ytInitialPlayerResponse`, so it reads `#movie_player.getPlayerResponse()` and hands it over with `postMessage`.
 It also captures the `/api/timedtext` URL the player requests itself. YouTube now often requires an extra proof-of-origin parameter (pot), so downloading from `baseUrl` directly may return nothing; in that case the player's URL is used.
+- Only requests carrying `pot` are recorded. The page also makes caption requests without `pot`, which return an empty body; recording everything let a later one overwrite the working URL, so captions appeared only sometimes.
+- On `enable-captions` it turns captions off and then on with the requested track. If the same track is already on, just turning it on doesn't make the player request again.
 ### ccFetcher
 Fetches all captions of the video at once.
 - Prefers manual Japanese captions, falls back to auto-generated (ASR).
-- Tries `baseUrl&fmt=json3` first; on failure asks `ytBridge` to turn on the player's captions, captures the request URL and downloads that.
+- Tries `baseUrl&fmt=json3` first; on failure uses the player URL recorded by `ytBridge`; if that fails too, asks `ytBridge` to turn the player's captions back on and waits (up to 15 s) for a new request before downloading.
+- The player URL is polled (asking `ytBridge` every 0.5 s) instead of waiting for a notification: YouTube remembers that captions were on for a watched video, so after a refresh the player fetches captions as soon as it loads, and the notification could fire before we start waiting.
+- On failure the console says why: "no caption request from the player" or "the player's caption URL returned nothing" (logged in Chinese).
 - Output: `[{ text, start, end, words? }]` (seconds). Overlapping ASR segments are cut at the start of the next line.
 - `words: [{ text, start }]`: in auto captions each seg is one word and `tOffsetMs` is its offset in the line. Attached only when word timing exists and the words join back into the cleaned text, so `ccSegmenter` can cut timing precisely.
 - Removes bracket tags (`[音楽]`, `[拍手]`, `［笑い］`, half-width `[]` and full-width `［］`) and extra spaces; lines that contain only a tag are dropped. Anything inside brackets is removed, so real `[…]` text in a caption is removed too.
@@ -425,21 +461,22 @@ Translates in chunks around playback, so long videos (20+ minutes) don't wait a 
 - Captions are grouped into chunks of 20 lines; only chunks covering "current position ~ 120 s ahead" are translated; parts never watched are never translated.
 - Listens to the video's `timeupdate` / `seeking` / `play`: fetches the next chunk as playback advances, and starts from the new position's chunk on seek.
 - At most 2 concurrent requests; a failure is retried once, and an error toast is shown once if it still fails.
-- Changing the translation language, engine, or toggling translation only restarts translation without refetching captions; already translated lines come straight from the background cache.
+- Changing the translation language, engine, LLM provider, or toggling translation only restarts translation without refetching captions; already translated lines come straight from the background cache.
 ### Translator
 Translates whole caption lines (interface: `translateBatch(texts, targetLang) → string[]`).
 - `GoogleTranslateProvider`: Google Translate public endpoint, no API key. Lines are joined with newlines into one request; if the line count doesn't match, it falls back to line-by-line.
-- `GeminiTranslateProvider`: sends a batch of lines to Gemini together as context and asks for a JSON array back.
+- `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`: send a batch of lines to the LLM together as context and ask for `{"translations": [...]}` back; a bare array is accepted too.
+- NVIDIA / Groq translation calls turn off `strictJson` (see llmLib): their JSON mode requires an object at the top level, models often return an array anyway, and Groq rejects that with 400 `json_validate_failed`.
 ### translatorFactory
-Picks the implementation from the `translateProvider` setting (`google` / `gemini`).
+Picks the implementation: Google Translate when `translateProvider` is `google`; when it is `llm`, by `llmProvider` (`gemini` / `nvidia` / `groq`).
 ### WordcardInfoProvider
 Generates wordcard info (interface: `getInfo(input, targetLang) → { meaning, reading, explanation, examples }`; `examples` are 2 extra LLM sentences `[{ sentence, translation }]`). When `input.kind` is `grammar`, `word` is the grammar itself (たら, たんだ) and `host` is the word it attaches to, and grammar card content is generated instead (see wordcardGenerator).
 ### wordcardInfoFactory
-Picks which LLM implementation generates wordcard info (currently only `gemini`).
+Picks the wordcard info implementation from `llmProvider` (`gemini` / `nvidia` / `groq`). Wordcards always use an LLM, the same provider translation uses when the engine is `llm`. All three providers share the same prompts; only the client differs.
 ### wordcardGenerator
 Builds a full wordcard: `{ id, type, word (dictionary form), surface, reading, pos, meaning, explanation, examples, sentence, sentenceTranslation, videoId, time, createdAt, host? }`.
 - `type`: `word` wordcard, `grammar` grammar card (created when a grammar unit is clicked; `word` is the grammar itself, e.g. 「たら」, and `host` is the word it attaches to). Old cards without `type` are treated as wordcards.
-- Grammar cards are generated by `GeminiWordcardProvider.getGrammarInfo`: `meaning` is the grammar's function in the sentence, `explanation` covers how it attaches, its nuance and its meaning in this sentence (each component explained when there are several), plus 2 example sentences.
+- Grammar cards are generated by each provider's `getGrammarInfo`: `meaning` is the grammar's function in the sentence, `explanation` covers how it attaches, its nuance and its meaning in this sentence (each component explained when there are several), plus 2 example sentences.
 - Grammar cards are shown with a leading 「〜」 (〜たら) and a "Grammar" POS tag; the circle in the popup list shows "G" (「文」 in Chinese); the Anki front is also 「〜たら」.
 - Duplicates are checked per `type` (`findWordcard(word, type)`). The video is identified by `videoId` only, recorded at click time (so switching videos while waiting doesn't mislabel it). If the LLM fails (e.g. no API key), the basic data is still saved and a warning is returned.
 ### wordcardDB
@@ -451,16 +488,28 @@ Exports wordcards in an Anki-importable format: UTF-8 TSV with `#separator:tab`,
 - The individual fields after them are for custom note types: map them to your own fields when importing and set unneeded ones to "Nothing".
 ### llmLib
 LLM API clients.
-- `geminiClient`: Gemini `generateContent`, supports JSON output.
+- `geminiClient`: Gemini `generateContent`, supports JSON output (`responseMimeType`). Retries up to 8 times.
+- `nvidiaClient`: NVIDIA API (`integrate.api.nvidia.com`, OpenAI-compatible), default model `meta/llama-3.3-70b-instruct`.
+- `groqClient`: Groq API (`api.groq.com/openai/v1`, OpenAI-compatible), default model `llama-3.3-70b-versatile`.
+- NVIDIA / Groq `generate(prompt, { json, strictJson })`: `strictJson` (on by default) sends `response_format: json_object`, forcing an object at the top level; when off it isn't sent and `parseJsonLoose` parses the reply itself (stripping \`\`\`json fences).
 - `gptClient`: OpenAI Chat Completions (implemented, not yet wired to a provider).
+### fetchRetry
+Every LLM and Google Translate request goes through `fetchWithRetry(url, init, retryOptions)`:
+- A 503 response, or `fetch()` itself throwing, is retried with exponential backoff: starting at 1 s, doubling, capped at 8 s, with random jitter; `Retry-After` is honored when present. Up to 4 retries by default, 8 for Gemini.
+- Why network errors are retried: after an extension gets several 503s from the same URL, the browser temporarily blocks further requests (DevTools shows 0 bytes, 1 ms, no status), and JavaScript only sees "Failed to fetch". Gemini translation hits this easily when the model is overloaded.
+- Other statuses (4xx etc.) are not retried; the response goes back to the caller.
 ### background
-MV3 service worker. All outgoing network requests happen here (they need `host_permissions`), and translations are cached. Messages: `translate`, `wordcard:add`, `wordcard:regenerate` (re-runs the LLM card by card for wordcards without `meaning`, stops at the first error, returns `{ fixed, error? }`).
+MV3 service worker. All outgoing network requests happen here (they need `host_permissions`, which include the Google Translate, Gemini, NVIDIA and Groq domains), and translations are cached. Messages: `translate`, `wordcard:add`, `wordcard:regenerate` (re-runs the LLM card by card for wordcards without `meaning`, stops at the first error, returns `{ fixed, error? }`).
+- The translation cache key is `${engine}|${target language}|${text}`, where the engine is `google` or `llm-${llmProvider}`, so switching providers never returns another provider's translation.
+- Translation errors are prefixed with the engine actually used, e.g. `[llm-gemini] Failed to fetch`.
 ### settings / popup
-General settings are stored as `settings` in `chrome.storage.sync`: enabled, UI language `uiLang` (`zh-TW` / `en`, independent of the translation language), show translation, re-split sentences `sentenceSplit`, segmentation unit `tokenUnit` (word / stem + ending / phrase, default stem + ending), translation language (Traditional Chinese / English), translation engine, caption appearance (position `captionPosition`, distance from edge `captionOffset`, size `captionSize`), Gemini model (default `gemini-3.1-flash-lite`), and which POS show their names.
+General settings are stored as `settings` in `chrome.storage.sync`: enabled, UI language `uiLang` (`zh-TW` / `en`, independent of the translation language), show translation, re-split sentences `sentenceSplit`, segmentation unit `tokenUnit` (word / stem + ending / phrase, default stem + ending), translation language (Traditional Chinese / English), translation engine `translateProvider` (`google` / `llm`), LLM provider `llmProvider` (`gemini` / `nvidia` / `groq`, default `gemini`), a model per provider `geminiModel` (default `gemini-3.1-flash-lite`) / `nvidiaModel` / `groqModel`, caption appearance (position `captionPosition`, distance from edge `captionOffset`, size `captionSize`), and which POS show their names.
 - The two caption-appearance sliders only update the number while dragging and save on release: `storage.sync` limits writes per minute, and saving every step while dragging would exceed it.
 
 The popup has two tabs (the last one is remembered):
-- Settings: the header has the UI language switch (中 / EN) and the enable toggle; segmentation unit, translation language, translation engine and caption position use segmented buttons; POS use clickable chips.
+- Settings: the header has the UI language switch (中 / EN) and the enable toggle; segmentation unit, translation language, translation engine and caption position use segmented buttons; POS use clickable chips. Section headings are bold.
+- "Re-split sentences" is the round button to the right of the segmentation unit (`refresh-cw` icon, accent-colored when on, state in `aria-pressed`).
+- "LLM (translation / wordcard generation)" section: a provider dropdown with a single API key field and a single model field below it, showing the current provider's values; switching providers swaps in that provider's saved values. The dropdown saves immediately; the text fields save on blur or Enter.
 - Wordcards: the top shows how many cards failed to generate (no meaning) and a "Regenerate all" button; newest first, each showing POS, word, reading and meaning. **Clicking a card opens the full preview card** (same design as 1d on the video, built by `wordcardView.js`): word, reading, POS, full meaning, explanation, sentence, sentence translation, timestamp link (new tab) and delete. Cards without a meaning point to "Regenerate all". Closed by ✕, clicking the backdrop, or Esc; if regeneration updates the card, it refreshes live. Export and Clear all are at the bottom.
 - The popup also loads `res/style/style.css` for the preview card styles (`.cw-card` carries its own color variables and doesn't depend on `.cw-overlay`).
 ### UI design (Organic)
@@ -470,9 +519,9 @@ Implemented from `doc/UI mockups form/design_handoff_caption_wordinizer_organic/
 - Icons: Lucide (`src/common/icons.js`).
 - Differences from the mockup: the model field default stays `gemini-3.1-flash-lite` (the mockup says `gemini-2.5-flash`); the preview card scrolls when the player is too short.
 ### secrets (API key storage)
-- The Gemini API key is stored on its own as `geminiApiKey` in `chrome.storage.local`, separate from the general settings.
-- On every start, the background calls `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })`, so `local` (API key, wordcards) is readable only by the background and popup, not content scripts.
-- The API key is merged with settings only inside the background to call Gemini, and is never sent to content scripts.
+- API keys are stored on their own in `chrome.storage.local`, one per provider: `geminiApiKey`, `nvidiaApiKey`, `groqApiKey`, separate from the general settings.
+- On every start, the background calls `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })`, so `local` (API keys, wordcards) is readable only by the background and popup, not content scripts.
+- API keys are merged with settings only inside the background to call the LLM, and are never sent to content scripts.
 - Limitation: `storage.local` is not encrypted on disk; anyone who can read the Chrome profile can get it. Restrict the key to the Gemini API in Google Cloud Console and set a usage quota.
 - Old v0.1 settings (everything in `local.settings`) are split and migrated automatically when the background starts.
 
@@ -548,3 +597,11 @@ Implemented from `doc/UI mockups form/design_handoff_caption_wordinizer_organic/
 - Particles, auxiliaries and endings are now "grammar": clicking one creates a grammar card (`type: "grammar"`), with Gemini explaining its function, how it attaches, its nuance and its meaning in the sentence, plus examples; the card is shown as 「〜たんだ」 with a "Grammar" tag. The tooltip shows the components (た＋ん＋だ).
 - Katakana long vowels inside hiragana words are normalized before tokenizing (ぐルーって → ぐるーって), fixing 「なんか」 being split into 「な｜ん｜かぐ」.
 - Tested grouping and normalization in Node, and checked all three modes and the grammar tooltip end to end in headless Chrome with the real kuromoji.
+
+### 2026-09-29 — Multiple LLM providers, 503 retries, captions missing after refresh
+- **LLM providers**: added `nvidiaClient`, `groqClient` and matching translation / wordcard providers. Settings are now "Translation engine: Google Translate / LLM" plus an "LLM provider" dropdown (`llmProvider`); wordcards and translation share the provider, and the old `wordcardProvider` setting was removed. Each provider keeps its own API key and model.
+- **503 retries**: added `fetchRetry.js`; 503s and network failures are both retried with exponential backoff. Root cause of Gemini translation always failing with "Failed to fetch": `gemini-3.1-flash-lite` returned 503 often, after repeated 503s the browser temporarily blocked the extension's requests, and the old retry didn't handle that error.
+- **Groq translation 400**: translation wants an array, but Groq's JSON mode requires an object at the top level and rejects an array (`json_validate_failed`). The prompt now asks for `{"translations": [...]}`, and NVIDIA / Groq translation turn off `strictJson`.
+- **Captions missing after refreshing a watched video**: three causes, all fixed (see ytBridge, ccFetcher): the player's caption notification was missed, a URL without `pot` was recorded, and the player didn't re-request when captions were already on. Confirmed in Edge by refreshing two videos repeatedly.
+- **Other**: switching the LLM provider re-translates right away (it used to compare only `translateProvider`); translation errors name the engine; "Re-split sentences" is now an icon button next to the segmentation unit; Settings headings are bold.
+- Known issues (see wait-feat): with `strictJson` off, NVIDIA / Groq replies with extra text around the JSON fail to parse; clicking the "Re-split sentences" button twice quickly can lose one toggle.
