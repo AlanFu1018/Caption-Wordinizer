@@ -45,7 +45,7 @@
 - **2026-09-28**：API Key 改為單獨保存，content script 讀不到；預設模型改為 `gemini-3.1-flash-lite`。
 - **2026-09-28**：長影片分段翻譯，只翻目前播放位置往後約 2 分鐘，跳轉時新位置優先，20 分鐘以上的影片也能馬上看到翻譯。
 - **2026-09-28**：依 `doc/UI mockups form` 的 Organic 設計改版字幕、提示框、toast、單字卡預覽與設定頁，新增介面語言切換（中 / EN），字型改為內附。
-- **2026-09-28**：單字卡保存影片標題與頻道；預覽卡的時間連結只在同一支影片時跳轉，不同影片會顯示提示。
+- **2026-09-28**：預覽卡的時間連結以 videoId 判斷影片，只在同一支影片時跳轉，不同影片會顯示提示。
 
 ---
 
@@ -82,4 +82,4 @@ It's a chrome extension that can help you learn and understand Japanese.
 - **2026-09-28**: the API key is stored separately and content scripts can't read it; default model is now `gemini-3.1-flash-lite`.
 - **2026-09-28**: chunked translation for long videos, which only translates ~2 minutes ahead of playback and follows seeks.
 - **2026-09-28**: Organic redesign (from `doc/UI mockups form`) of the caption overlay, tooltip, toasts, wordcard preview and popup; added a UI language switch (中 / EN) and bundled fonts.
-- **2026-09-28**: wordcards store the video title and channel; the preview card's timestamp only seeks within the same video and shows a notice otherwise.
+- **2026-09-28**: the preview card's timestamp checks the video ID; it only seeks within the same video and shows a notice otherwise.

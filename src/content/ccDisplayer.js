@@ -249,7 +249,6 @@ class CcDisplayer {
         if (card.videoId) {
             const link = el("a", "cw-card-time");
             link.href = videoUrl(card.videoId, card.time);
-            if (card.videoTitle) link.title = card.channelName ? `${card.videoTitle}（${card.channelName}）` : card.videoTitle;
             link.innerHTML = icon("play", 13);
             link.append(formatTime(card.time));
             link.addEventListener("click", (e) => {

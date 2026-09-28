@@ -104,8 +104,7 @@ function parseJson3(data) {
 }
 
 async function fetchAllCaptions(videoId) {
-    /*async function to fetch all caption at once for a video
-      回傳 { captions: [{text, start, end}], video: {videoId, title, author} }，沒有字幕時回傳 null*/
+    /*async function to fetch all caption at once for a video*/
 
     // 1. 從頁面拿到 YouTube 的播放器資料
     const playerData = await getPlayerDataFor(videoId);
@@ -141,10 +140,7 @@ async function fetchAllCaptions(videoId) {
     }
 
     const captions = parseJson3(data);
-    if (!captions.length) return null;
-    // 影片資訊會跟著單字卡一起保存
-    const video = { videoId, title: playerData.title || "", author: playerData.author || "" };
-    return { captions, video };
+    return captions.length ? captions : null;
 }
 
 export { fetchAllCaptions, parseJson3 };

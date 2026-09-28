@@ -162,9 +162,7 @@ function buildCardItem(card) {
             const link = el("a", "card-time");
             link.href = videoUrl(card.videoId, card.time);
             link.target = "_blank";
-            link.rel = "noopener";
-            if (card.videoTitle) link.title = card.channelName ? `${card.videoTitle}（${card.channelName}）` : card.videoTitle;
-            link.innerHTML = icon("play", 12);
+            link.rel = "noopener";            link.innerHTML = icon("play", 12);
             link.append(formatTime(card.time));
             actions.append(link);
         }

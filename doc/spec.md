@@ -109,7 +109,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 - 提示框（取代原本的 `title`）：原形 + 原形讀音、`詞性・細分類` 與出現形讀音標籤、「點一下加入單字卡」。
 - `toast(message, state)`：state 為 `loading` / `success` / `duplicate` / `warning` / `error`，各有圖示與顏色；loading 會留著直到被取代，其他 2.5 秒後消失。建立期間點擊的單字保持反白。
 - `showCard(card, tokenEl)`：加入成功後在單字上方顯示預覽卡（意思、說明、例句、時間連結），以單字為中心並限制在播放器內；播放器太矮時內容可捲動。按 ✕、點外面或換句子時關閉。
-- 預覽卡的時間連結：卡片的 `videoId` 等於目前播放中的影片時，直接跳到該句（不重新載入頁面）；是不同影片時不跳轉，改顯示提示「這張單字卡來自另一支影片：{影片標題}」。滑鼠停在連結上會顯示影片標題與頻道；Ctrl / Shift / 中鍵點擊仍可開新分頁。
+- 預覽卡的時間連結：卡片的 `videoId` 等於目前播放中的影片時，直接跳到該句（不重新載入頁面）；是不同影片時不跳轉，改顯示提示「這張單字卡來自另一支影片（{videoId}），無法跳轉」。Ctrl / Shift / 中鍵點擊仍可開新分頁。
 - 重複、警告、錯誤仍使用 toast；字幕已換句找不到點擊的單字時，成功也改用 toast。
 ### translationScheduler
 依播放位置分段翻譯，解決長影片（20 分鐘以上）要等很久才有翻譯的問題
@@ -128,7 +128,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccTokenize
 ### wordcardInfoFactory
 選擇具體用哪一個 llm 的實作生成單字卡資訊（目前只有 `gemini`）
 ### wordcardGenerator
-產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, sentence, sentenceTranslation, videoId, videoTitle, channelName, time, createdAt }`。影片資訊（`videoTitle`、`channelName`）在點擊單字當下由 content script 從播放器資料取得；舊的單字卡沒有這兩個欄位時以空字串處理。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
+產生完整單字卡：`{ id, word(原形), surface, reading, pos, meaning, explanation, sentence, sentenceTranslation, videoId, time, createdAt }`。影片只以 `videoId` 辨識，在點擊單字當下記錄（等待回應期間換了影片也不會記錯）。LLM 失敗（例如沒有 API Key）時仍會保存基本資料，並回傳警告。
 ### wordcardDB
 保存單字卡（`chrome.storage.local` 的 `wordcards`），以原形去除重複
 ### wordcardExporter
@@ -179,10 +179,9 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 詞性顏色改為 OKLCH 三組（`POS_COLORS` / `POS_COLORS_LIGHT` / `POS_TINTS`），新增 `i18n.js`、`icons.js`、`popup.css`，字型內附於 `res/fonts/`。
 - 已用 headless Chrome 截圖檢查 popup（中 / EN、兩個分頁）、提示框、預覽卡與 toast。
 
-### 2026-09-28 — 單字卡保存影片資訊
-- 單字卡新增 `videoTitle`、`channelName` 欄位（`ytBridge` 多回傳 `videoDetails.title / author`，`ccFetcher` 回傳 `{ captions, video }`）。
-- 預覽卡的時間連結只在同一支影片時跳轉；不同影片顯示提示、不跳轉。
-- popup 的時間連結與 Anki 匯出的 Source 欄位改顯示影片標題。
+### 2026-09-28 — 預覽卡時間連結以 videoId 判斷影片
+- 預覽卡的時間連結用單字卡的 `videoId` 和目前播放中的影片比對：相同才跳轉，不同影片顯示提示、不跳轉。
+- 影片只以 `videoId` 辨識，不另外保存標題或頻道；`videoId` 在點擊單字當下記錄。
 
 ---
 # English
@@ -216,5 +215,5 @@ See the tree above. On top of the original design, three files were added:
 ### 2026-09-28 — Organic UI redesign
 - Implemented the handoff in `doc/UI mockups form` (picks 1a, 1c, 1d, 2a, 1h): caption box, hover tooltip, toast states, wordcard preview card, and a tabbed popup.
 - New: UI language setting (`uiLang`), dictionary-form readings (`basicReading`), OKLCH POS palettes, `i18n.js`, `icons.js`, bundled fonts in `res/fonts/`.
-### 2026-09-28 — Video info on wordcards
-- Cards now store `videoTitle` and `channelName`. The preview card's timestamp only seeks when the card belongs to the video that is playing; otherwise it shows a notice and does not navigate.
+### 2026-09-28 — Preview timestamp checks the video ID
+- The preview card's timestamp only seeks when the card's `videoId` matches the video that is playing; otherwise it shows a notice and does not navigate. Videos are identified by `videoId` only.

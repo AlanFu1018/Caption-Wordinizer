@@ -3,7 +3,7 @@
 
 import { createWordcardInfoProvider } from "./wordcardInfoFactory.js";
 
-async function generateWordcard({ token, sentence, translation, videoId, videoTitle, channelName, time }, settings) {
+async function generateWordcard({ token, sentence, translation, videoId, time }, settings) {
     const card = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         word: token.basicForm,
@@ -16,8 +16,6 @@ async function generateWordcard({ token, sentence, translation, videoId, videoTi
         sentence,
         sentenceTranslation: translation || "",
         videoId: videoId || "",
-        videoTitle: videoTitle || "",
-        channelName: channelName || "",
         time: Math.floor(time || 0),
         createdAt: new Date().toISOString(),
     };

@@ -33,35 +33,31 @@ async function main() {
 
     let settings = await settingsLib.loadSettings();
     let loadedVideoId = null;
-    let currentVideo = null;  // 目前字幕所屬的影片 { videoId, title, author }
     let session = 0; // 換影片時用來讓舊的非同步工作作廢
     const str = (key, vars) => t(settings.uiLang, key, vars);
 
     const displayer = new CcDisplayer({
         onSeek: (card) => {
-            // 預覽卡的時間連結：只有卡片屬於目前播放中的影片才跳轉，否則顯示提示
-            const playing = currentVideoId();
-            if (card.videoId && card.videoId === playing && card.videoId === loadedVideoId && displayer.video) {
+            // 預覽卡的時間連結：用 videoId 判斷是否為目前播放中的影片，是才跳轉，否則顯示提示
+            if (card.videoId && card.videoId === currentVideoId() && card.videoId === loadedVideoId && displayer.video) {
                 displayer.video.currentTime = card.time;
                 return;
             }
-            displayer.toast(str("toastOtherVideo", { title: card.videoTitle || card.videoId || "?" }), "warning");
+            displayer.toast(str("toastOtherVideo", { videoId: card.videoId || "?" }), "warning");
         },
         onWordClick: async (token, line, translation, tokenEl) => {
             displayer.hideCard();
             displayer.toast(str("toastLoading", { word: token.basicForm }), "loading");
             tokenEl.classList.add("cw-picked");
-            // 在點擊當下記下影片資訊，避免等待回應期間換了影片
-            const video = currentVideo || { videoId: loadedVideoId, title: "", author: "" };
+            // 在點擊當下記下 videoId，避免等待回應期間換了影片
+            const videoId = loadedVideoId;
             try {
                 const res = await chrome.runtime.sendMessage({
                     type: "wordcard:add",
                     token,
                     sentence: line.text,
                     translation,
-                    videoId: video.videoId,
-                    videoTitle: video.title,
-                    channelName: video.author,
+                    videoId,
                     time: line.start,
                 });
                 if (!res || !res.ok) throw new Error(res?.error || "unknown error");
@@ -111,7 +107,6 @@ async function main() {
         if (!settings.enabled || !videoId) {
             session++;
             loadedVideoId = null;
-            currentVideo = null;
             currentLines = null;
             startTranslation();
             displayer.unmount();
@@ -121,16 +116,14 @@ async function main() {
 
         const mySession = ++session;
         loadedVideoId = videoId;
-        currentVideo = null;
         currentLines = null;
         startTranslation();
         displayer.unmount();
 
-        const result = await fetchAllCaptions(videoId);
-        if (mySession !== session || !result) return;
-        currentVideo = result.video;
+        const captions = await fetchAllCaptions(videoId);
+        if (mySession !== session || !captions) return;
 
-        const lines = colorizeLines(await tokenizeCaptions(result.captions));
+        const lines = colorizeLines(await tokenizeCaptions(captions));
         if (mySession !== session) return;
 
         displayer.setLines(lines);
