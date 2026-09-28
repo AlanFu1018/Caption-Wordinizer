@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>Caption Wordinizer</title>
+    <style>
+        body { width: 340px; margin: 0; padding: 12px 14px; font: 13px/1.5 system-ui, "Microsoft JhengHei", sans-serif; color: #222; }
+        h1 { font-size: 16px; margin: 0 0 8px; }
+        h2 { font-size: 13px; margin: 14px 0 6px; padding-top: 10px; border-top: 1px solid #e3e3e3; }
+        label.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 5px 0; }
+        select, input[type=text], input[type=password] { flex: 1; max-width: 190px; padding: 3px 5px; font: inherit; }
+        .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 6px; }
+        .pos-grid label { display: flex; align-items: center; gap: 4px; }
+        .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; border: 1px solid #0003; }
+        .hint { color: #777; font-size: 12px; }
+        .buttons { display: flex; gap: 6px; margin-top: 6px; }
+        button { flex: 1; padding: 5px; font: inherit; cursor: pointer; }
+        ul.cards { list-style: none; margin: 6px 0 0; padding: 0; max-height: 180px; overflow-y: auto; }
+        ul.cards li { display: flex; justify-content: space-between; gap: 6px; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
+        ul.cards .meaning { color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        ul.cards button { flex: none; padding: 0 6px; }
+    </style>
+</head>
+<body>
+<h1>Caption Wordinizer</h1>
+
+<label class="row">啟用字幕分詞 <input type="checkbox" id="enabled"></label>
+<label class="row">顯示翻譯 <input type="checkbox" id="showTranslation"></label>
+<label class="row">翻譯語言 <select id="targetLang"></select></label>
+<label class="row">翻譯引擎
+    <select id="translateProvider">
+        <option value="google">Google 翻譯</option>
+        <option value="gemini">Gemini</option>
+    </select>
+</label>
+
+<h2>Gemini（單字卡 / Gemini 翻譯）</h2>
+<label class="row">API Key <input type="password" id="geminiApiKey" placeholder="AIza..."></label>
+<label class="row">模型 <input type="text" id="geminiModel"></label>
+<div class="hint">API Key 只儲存在本機瀏覽器中。</div>
+
+<h2>顯示詞性名稱</h2>
+<div class="pos-grid" id="posLabels"></div>
+
+<h2>單字卡（<span id="cardCount">0</span>）</h2>
+<div class="hint">點擊影片字幕中的單字即可加入。</div>
+<ul class="cards" id="cardList"></ul>
+<div class="buttons">
+    <button id="exportBtn">匯出 Anki (.txt)</button>
+    <button id="clearBtn">全部清除</button>
+</div>
+
+<script type="module" src="popup.js"></script>
+</body>
+</html>

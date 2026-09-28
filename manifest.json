@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Caption Wordinizer",
+  "version": "0.1",
+  "description": "為日文YouTube影片字幕，依照詞性上色，並翻譯。收藏你想記得的Anki 單字卡吧!",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://translate.googleapis.com/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["src/content/ytBridge.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["res/lib-vendor/kuromoji/kuromoji.js", "src/content/content.js"],
+      "css": ["res/style/style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "res/popup/popup.html",
+    "default_icon": {
+      "128": "res/icons/icon128.png"
+    }
+  },
+  "icons": {
+    "128": "res/icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/content/*.js",
+        "src/common/*.js",
+        "res/lib-vendor/kuromoji/dict/*"
+      ],
+      "matches": ["*://www.youtube.com/*"]
+    }
+  ]
+}

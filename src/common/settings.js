@@ -1,0 +1,47 @@
+// settings.js
+// 所有模組（content / background / popup）共用的設定讀寫
+
+// kuromoji (IPADIC) 的主要詞性
+const POS_LIST = [
+    "名詞", "動詞", "形容詞", "副詞", "助詞", "助動詞",
+    "連体詞", "接続詞", "感動詞", "接頭詞", "記号", "フィラー", "その他",
+];
+
+const TARGET_LANGUAGES = {
+    "zh-TW": "繁體中文",
+    "en": "English",
+};
+
+const DEFAULT_SETTINGS = {
+    enabled: true,
+    targetLang: "zh-TW",
+    translateProvider: "google",      // "google" | "gemini"
+    wordcardProvider: "gemini",       // "gemini"
+    geminiApiKey: "",
+    geminiModel: "gemini-2.5-flash",
+    showTranslation: true,
+    // 要顯示詞性名稱的詞性
+    posLabels: ["動詞", "形容詞", "助動詞"],
+};
+
+async function loadSettings() {
+    const stored = await chrome.storage.local.get("settings");
+    return { ...DEFAULT_SETTINGS, ...(stored.settings || {}) };
+}
+
+async function saveSettings(patch) {
+    const current = await loadSettings();
+    const next = { ...current, ...patch };
+    await chrome.storage.local.set({ settings: next });
+    return next;
+}
+
+function onSettingsChanged(callback) {
+    chrome.storage.onChanged.addListener((changes, area) => {
+        if (area === "local" && changes.settings) {
+            callback({ ...DEFAULT_SETTINGS, ...(changes.settings.newValue || {}) });
+        }
+    });
+}
+
+export { POS_LIST, TARGET_LANGUAGES, DEFAULT_SETTINGS, loadSettings, saveSettings, onSettingsChanged };
