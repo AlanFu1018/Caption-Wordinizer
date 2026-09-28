@@ -38,7 +38,8 @@
 - 滑鼠停在單字上會出現提示框（原形、原形讀音、詞性、讀音）；**點一下單字**就會加入單字卡，加入後會在單字上方顯示單字卡預覽，點預覽卡的時間可跳回該句。
 - 擴充功能的「設定」分頁：開關功能、切換介面語言（中 / EN）、翻譯語言與引擎、字幕位置與大小、選擇要顯示名稱的詞性。
 - 「單字卡」分頁：點卡片會跳出完整預覽卡（意思、說明、例句、翻譯、影片時間連結），可單張刪除。
-- 單字卡匯出：「單字卡」分頁點「匯出 Anki (.txt)」，在 Anki 選「檔案 → 匯入」即可（欄位：單字、讀音、意思、詞性、說明、例句、例句翻譯、影片連結）。
+- 單字卡匯出：「單字卡」分頁點「匯出 Anki (.txt)」，在 Anki 選「檔案 → 匯入」，筆記類型選「基本型」即可。正面是單字，背面會有讀音、意思、詞性、說明、例句、翻譯和影片連結。
+  - 想用自訂的筆記類型：匯出檔第 3 欄之後是各項目的獨立欄位（單字、讀音、意思、詞性、說明、例句、例句翻譯、影片連結、補充例句），匯入時對應到自己的欄位即可。
 
 ## 開發紀錄
 - **2026-09-28 v0.1**：完成 [spec](doc/spec.md) 中所有模組（字幕抓取、斷詞、上色、顯示、翻譯、單字卡、Anki 匯出、設定頁）。詳細內容見 [spec 的完成紀錄](doc/spec.md#完成紀錄)，尚未完成的項目見 [wait-feat](doc/wait-feat.md)。
@@ -52,6 +53,7 @@
 - **2026-09-28**：字幕中的標點符號不可點擊，不會被加入單字卡。
 - **2026-09-28**：沒有標點的自動字幕改用詞性＋停頓斷句；自動字幕的換句時間精確到詞。設定改名為「重新斷句」。
 - **2026-09-28**：新增字幕位置（下方 / 上方、距離邊緣）與大小設定。
+- **2026-09-28**：Anki 匯出可直接用「基本型」匯入，背面會顯示讀音、意思、詞性、例句等全部內容。
 
 ---
 
@@ -81,7 +83,7 @@ It's a chrome extension that can help you learn and understand Japanese.
 - Hover a word for a tooltip (dictionary form and its reading, part of speech, reading); **click it** to add it as a wordcard. A preview of the new card appears above the word, and its timestamp jumps back to that line.
 - Popup **Settings** tab: toggle the extension, switch the UI language (中 / EN), choose the target language and translation engine, set caption position and size, and pick which parts of speech show their names.
 - Popup **Wordcards** tab: click a card to open its full preview card (meaning, explanation, sentence, translation, timestamp link), or delete it.
-- Export: click **Export Anki (.txt)** in the Wordcards tab, then use **File → Import** in Anki.
+- Export: click **Export Anki (.txt)** in the Wordcards tab, then use **File → Import** in Anki with the **Basic** note type. The front shows the word; the back shows the reading, meaning, part of speech, explanation, sentences, translation and video link. Columns 3 onward hold each field separately if you prefer a custom note type.
 
 ## Changelog
 - **2026-09-28 v0.1**: all modules in the [spec](doc/spec.md) implemented. See the spec's changelog for details and [wait-feat](doc/wait-feat.md) for what's left.
@@ -95,3 +97,4 @@ It's a chrome extension that can help you learn and understand Japanese.
 - **2026-09-28**: punctuation in captions is no longer clickable and can't be added as a wordcard.
 - **2026-09-28**: unpunctuated auto captions are split into sentences by part of speech and pauses; auto-caption timing is now word-accurate. The setting is now "Re-split sentences".
 - **2026-09-28**: added caption position (bottom / top, distance from edge) and size settings.
+- **2026-09-28**: the Anki export can be imported with the Basic note type; the back shows the reading, meaning, part of speech, sentences and more.

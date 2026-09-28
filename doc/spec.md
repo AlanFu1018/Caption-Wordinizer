@@ -179,6 +179,9 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 保存單字卡（`chrome.storage.local` 的 `wordcards`），以原形去除重複
 ### wordcardExporter
 將單字卡依照anki支援的格式匯出：UTF-8 TSV，帶有 `#separator:tab`、`#html:true`、`#columns:` 標頭，例句中的單字會以粗體標示。
+- 欄位順序：`Front`、`Back`、`Word`、`Reading`、`Meaning`、`PartOfSpeech`、`Explanation`、`Sentence`、`SentenceTranslation`、`Source`、`Examples`。
+- Anki 內建的「基本型」只有正面 / 背面兩個欄位，匯入時依順序對應前兩欄，所以前兩欄是組合好的內容：`Front` = 單字；`Back` = 讀音、**意思**（詞性）、說明、例句（單字粗體）＋翻譯、補充例句、YouTube 連結，已排版成 HTML（次要文字用灰色小字）。直接用基本型匯入就能看到全部內容。
+- 後面的獨立欄位給想自訂筆記類型的人用：匯入時把欄位對應到自己的筆記類型，不需要的欄位選「無」。
 ### llmLib
 存放llm呼叫的api
 - `geminiClient`：Gemini `generateContent`，支援 JSON 輸出。
@@ -262,6 +265,11 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 字幕在上方時，提示框改到單字下方；預覽卡改為依上下空間自動選擇位置。
 - 已用 headless Chrome 截圖檢查：設定頁、上方＋提示框、上方＋預覽卡、下方放大 150%、下方縮小 70%＋預覽卡。
 
+### 2026-09-28 — Anki 匯出支援基本型
+- 問題：用 Anki 內建的「基本型」匯入時，正面 / 背面只能各對應一欄，看不到讀音、意思、詞性、例句等其他內容。
+- 匯出檔前兩欄改為組合好的 `Front`（單字）與 `Back`（讀音、意思、詞性、說明、例句、翻譯、補充例句、連結），直接用基本型匯入即可；原本的獨立欄位移到後面。
+- 注意：欄位順序改變，之前用自訂筆記類型匯入過的人，要重新設定一次欄位對應。
+
 ---
 # English
 ## Architecture
@@ -281,7 +289,7 @@ See the tree above. On top of the original design, three files were added:
 | Translator / translatorFactory | `translateBatch(texts, lang)`; Google Translate (no key) or Gemini. |
 | WordcardInfoProvider / wordcardInfoFactory | LLM-generated meaning, reading and explanation (Gemini). |
 | wordcardGenerator / wordcardDB | Builds and stores cards in `chrome.storage.local`, de-duplicated by dictionary form. |
-| wordcardExporter | Anki-importable TSV with `#separator`, `#html`, `#columns` headers. |
+| wordcardExporter | Anki-importable TSV with `#separator`, `#html`, `#columns` headers. The first two columns are a ready-made Front (word) and Back (reading, meaning, POS, explanation, sentences, link) for Anki's built-in Basic note type; the individual fields follow for custom note types. |
 | llmLib | Gemini and OpenAI clients. |
 
 ## Changelog
@@ -312,3 +320,5 @@ See the tree above. On top of the original design, three files were added:
 - Added `test/segmenter-eval.mjs` and `test/kuromojiNode.mjs`; the setting is now labeled "Re-split sentences".
 ### 2026-09-28 — Caption position and size
 - New "Caption appearance" settings: position (bottom / top), distance from edge (0–50% of player height) and size (70–200%), applied live. With captions at the top, the tooltip opens below the word and the preview card picks whichever side has more room.
+### 2026-09-28 — Anki export works with the Basic note type
+- The export now starts with ready-made Front and Back columns, so importing with Anki's built-in Basic note type shows the reading, meaning, part of speech, explanation and sentences. The individual fields moved after them; custom note-type mappings need to be set again.
