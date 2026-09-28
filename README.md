@@ -1,5 +1,5 @@
 ![image](doc/cover.png)
-> > # 語言 / Language
+> # 語言 / Language
 > - [中文說明](#日文字幕單字分詞顯示工具)
 > - [English Description](#caption-wordinizer)
 
