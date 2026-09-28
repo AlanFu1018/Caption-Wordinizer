@@ -17,9 +17,11 @@ const DEFAULT_SETTINGS = {
     enabled: true,
     uiLang: "zh-TW",                  // 介面語言 "zh-TW" | "en"，和翻譯語言無關
     targetLang: "zh-TW",
-    translateProvider: "google",      // "google" | "gemini"
+    translateProvider: "google",      // "google" | "gemini" | "nvidia" | "groq"
     wordcardProvider: "gemini",       // "gemini"
     geminiModel: "gemini-3.1-flash-lite",
+    nvidiaModel: "meta/llama-3.3-70b-instruct",
+    groqModel: "llama-3.3-70b-versatile",
     showTranslation: true,
     sentenceSplit: true,              // 重新斷句：依標點，沒標點的自動字幕依詞性（關閉則用 YouTube 原本的斷行）
     tokenUnit: "stem",                // 斷詞單位 "word" 詞 | "stem" 語幹＋語尾 | "phrase" 詞組（見 tokenGrouper）

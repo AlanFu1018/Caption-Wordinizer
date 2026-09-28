@@ -2,7 +2,7 @@
 // Service worker：負責所有對外的網路請求（翻譯、LLM），content script 透過 message 呼叫
 
 import { loadSettings } from "../common/settings.js";
-import { restrictLocalStorage, getGeminiApiKey, migrateLegacySettings } from "../common/secrets.js";
+import { restrictLocalStorage, getGeminiApiKey, getNvidiaApiKey, getGroqApiKey, migrateLegacySettings } from "../common/secrets.js";
 import { createTranslator } from "../translate/translatorFactory.js";
 import { generateWordcard, fillWordcardInfo } from "../wordcard/wordcardGenerator.js";
 import { addWordcard, findWordcard, getAllWordcards, updateWordcard, isFailedWordcard } from "../wordcard/wordcardDB.js";
@@ -19,8 +19,10 @@ chrome.runtime.onInstalled.addListener(() => {});
 async function loadSettingsWithSecrets() {
     /*API Key 只在 background 裡跟設定合併，不會回傳給 content script*/
     await ready;
-    const [settings, geminiApiKey] = await Promise.all([loadSettings(), getGeminiApiKey()]);
-    return { ...settings, geminiApiKey };
+    const [settings, geminiApiKey, nvidiaApiKey, groqApiKey] = await Promise.all([
+        loadSettings(), getGeminiApiKey(), getNvidiaApiKey(), getGroqApiKey(),
+    ]);
+    return { ...settings, geminiApiKey, nvidiaApiKey, groqApiKey };
 }
 
 // 翻譯快取：`${provider}|${lang}|${text}` -> 翻譯

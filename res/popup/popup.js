@@ -2,7 +2,11 @@
 // 設定頁面與單字卡管理（2a 設定 / 1h 單字卡）
 
 import { POS_LIST, TARGET_LANGUAGES, loadSettings, saveSettings } from "../../src/common/settings.js";
-import { getGeminiApiKey, setGeminiApiKey } from "../../src/common/secrets.js";
+import {
+    getGeminiApiKey, setGeminiApiKey,
+    getNvidiaApiKey, setNvidiaApiKey,
+    getGroqApiKey, setGroqApiKey,
+} from "../../src/common/secrets.js";
 import { t } from "../../src/common/i18n.js";
 import { icon } from "../../src/common/icons.js";
 import { buildWordcardBody, displayWord } from "../../src/common/wordcardView.js";
@@ -120,6 +124,18 @@ async function initSettings() {
     // API Key 另外存，不放在會被 content script 讀到的設定裡
     $("geminiApiKey").value = await getGeminiApiKey();
     $("geminiApiKey").addEventListener("change", () => setGeminiApiKey($("geminiApiKey").value.trim()));
+
+    $("nvidiaModel").value = settings.nvidiaModel;
+    $("nvidiaModel").addEventListener("change", () => update({ nvidiaModel: $("nvidiaModel").value.trim() }));
+
+    $("nvidiaApiKey").value = await getNvidiaApiKey();
+    $("nvidiaApiKey").addEventListener("change", () => setNvidiaApiKey($("nvidiaApiKey").value.trim()));
+
+    $("groqModel").value = settings.groqModel;
+    $("groqModel").addEventListener("change", () => update({ groqModel: $("groqModel").value.trim() }));
+
+    $("groqApiKey").value = await getGroqApiKey();
+    $("groqApiKey").addEventListener("change", () => setGroqApiKey($("groqApiKey").value.trim()));
 
     for (const btn of document.querySelectorAll("[data-ui-lang]")) {
         btn.addEventListener("click", async () => {

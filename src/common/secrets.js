@@ -4,6 +4,8 @@
 // 只能在 background 與 popup 使用，content script 不要 import 這支檔案。
 
 const GEMINI_KEY = "geminiApiKey";
+const NVIDIA_KEY = "nvidiaApiKey";
+const GROQ_KEY = "groqApiKey";
 
 async function restrictLocalStorage() {
     await chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" });
@@ -19,6 +21,26 @@ async function setGeminiApiKey(value) {
     else await chrome.storage.local.remove(GEMINI_KEY);
 }
 
+async function getNvidiaApiKey() {
+    const stored = await chrome.storage.local.get(NVIDIA_KEY);
+    return stored[NVIDIA_KEY] || "";
+}
+
+async function setNvidiaApiKey(value) {
+    if (value) await chrome.storage.local.set({ [NVIDIA_KEY]: value });
+    else await chrome.storage.local.remove(NVIDIA_KEY);
+}
+
+async function getGroqApiKey() {
+    const stored = await chrome.storage.local.get(GROQ_KEY);
+    return stored[GROQ_KEY] || "";
+}
+
+async function setGroqApiKey(value) {
+    if (value) await chrome.storage.local.set({ [GROQ_KEY]: value });
+    else await chrome.storage.local.remove(GROQ_KEY);
+}
+
 async function migrateLegacySettings() {
     /*v0.1 把所有設定（含 API Key）一起存在 local 的 settings，拆開搬到新位置*/
     const { settings: legacy } = await chrome.storage.local.get("settings");
@@ -32,4 +54,10 @@ async function migrateLegacySettings() {
     await chrome.storage.local.remove("settings");
 }
 
-export { restrictLocalStorage, getGeminiApiKey, setGeminiApiKey, migrateLegacySettings };
+export {
+    restrictLocalStorage,
+    getGeminiApiKey, setGeminiApiKey,
+    getNvidiaApiKey, setNvidiaApiKey,
+    getGroqApiKey, setGroqApiKey,
+    migrateLegacySettings,
+};

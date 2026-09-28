@@ -60,6 +60,8 @@
             <div class="seg" id="translateProvider">
                 <label class="seg-opt"><input type="radio" name="translateProvider" value="google"><span data-i18n="google"></span></label>
                 <label class="seg-opt"><input type="radio" name="translateProvider" value="gemini">Gemini</label>
+                <label class="seg-opt"><input type="radio" name="translateProvider" value="nvidia">NVIDIA</label>
+                <label class="seg-opt"><input type="radio" name="translateProvider" value="groq">Groq</label>
             </div>
         </div>
     </div>
@@ -100,6 +102,30 @@
         <div class="field">
             <label for="geminiModel" data-i18n="model"></label>
             <input class="input" type="text" id="geminiModel">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 data-i18n="nvidiaHead"></h2>
+        <div class="field">
+            <label for="nvidiaApiKey">API Key<span data-i18n="keyHint"></span></label>
+            <input class="input" type="password" id="nvidiaApiKey" placeholder="nvapi-..." autocomplete="off">
+        </div>
+        <div class="field">
+            <label for="nvidiaModel" data-i18n="model"></label>
+            <input class="input" type="text" id="nvidiaModel">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 data-i18n="groqHead"></h2>
+        <div class="field">
+            <label for="groqApiKey">API Key<span data-i18n="keyHint"></span></label>
+            <input class="input" type="password" id="groqApiKey" placeholder="gsk_..." autocomplete="off">
+        </div>
+        <div class="field">
+            <label for="groqModel" data-i18n="model"></label>
+            <input class="input" type="text" id="groqModel">
         </div>
     </div>
 
