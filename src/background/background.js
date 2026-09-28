@@ -30,7 +30,8 @@ const translationCache = new Map();
 
 async function handleTranslate({ texts }) {
     const settings = await loadSettingsWithSecrets();
-    const prefix = `${settings.translateProvider}|${settings.targetLang}|`;
+    const engineKey = settings.translateProvider === "llm" ? `llm-${settings.llmProvider}` : "google";
+    const prefix = `${engineKey}|${settings.targetLang}|`;
     const missing = [...new Set(texts.filter(t => !translationCache.has(prefix + t)))];
     if (missing.length) {
         const translator = createTranslator(settings);

@@ -17,8 +17,8 @@ const DEFAULT_SETTINGS = {
     enabled: true,
     uiLang: "zh-TW",                  // 介面語言 "zh-TW" | "en"，和翻譯語言無關
     targetLang: "zh-TW",
-    translateProvider: "google",      // "google" | "gemini" | "nvidia" | "groq"
-    wordcardProvider: "gemini",       // "gemini"
+    translateProvider: "google",      // "google" | "llm"
+    llmProvider: "gemini",            // "gemini" | "nvidia" | "groq"：翻譯（llm 時）和單字卡生成共用
     geminiModel: "gemini-3.1-flash-lite",
     nvidiaModel: "meta/llama-3.3-70b-instruct",
     groqModel: "llama-3.3-70b-versatile",

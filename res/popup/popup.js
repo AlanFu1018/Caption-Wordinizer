@@ -17,6 +17,12 @@ import { toAnkiTsv } from "../../src/wordcard/wordcardExporter.js";
 const $ = (id) => document.getElementById(id);
 const TAB_KEY = "popupTab";
 
+// LLM provider（翻譯 provider="llm" 時，和單字卡生成共用同一個選擇）對應的欄位
+const LLM_MODEL_KEY = { gemini: "geminiModel", nvidia: "nvidiaModel", groq: "groqModel" };
+const LLM_API_KEY_GETTERS = { gemini: getGeminiApiKey, nvidia: getNvidiaApiKey, groq: getGroqApiKey };
+const LLM_API_KEY_SETTERS = { gemini: setGeminiApiKey, nvidia: setNvidiaApiKey, groq: setGroqApiKey };
+const LLM_API_KEY_PLACEHOLDERS = { gemini: "AIza...", nvidia: "nvapi-...", groq: "gsk_..." };
+
 let settings = null;
 let openCardId = null;        // 目前跳出預覽卡的單字卡
 let regenerating = false;
@@ -93,6 +99,13 @@ function renderPosChips() {
     }
 }
 
+async function refreshLlmFields() {
+    const provider = settings.llmProvider;
+    $("llmModel").value = settings[LLM_MODEL_KEY[provider]];
+    $("llmApiKey").placeholder = LLM_API_KEY_PLACEHOLDERS[provider];
+    $("llmApiKey").value = await LLM_API_KEY_GETTERS[provider]();
+}
+
 async function initSettings() {
     for (const key of ["enabled", "showTranslation", "sentenceSplit"]) {
         $(key).checked = settings[key];
@@ -118,24 +131,19 @@ async function initSettings() {
         range.addEventListener("change", () => update({ [key]: Number(range.value) }));
     }
 
-    $("geminiModel").value = settings.geminiModel;
-    $("geminiModel").addEventListener("change", () => update({ geminiModel: $("geminiModel").value.trim() }));
+    // LLM provider：下拉選單切換時，下面的 API Key / 模型欄位要跟著換成該 provider 的值
+    $("llmProvider").value = settings.llmProvider;
+    $("llmProvider").addEventListener("change", async () => {
+        await update({ llmProvider: $("llmProvider").value });
+        await refreshLlmFields();
+    });
 
     // API Key 另外存，不放在會被 content script 讀到的設定裡
-    $("geminiApiKey").value = await getGeminiApiKey();
-    $("geminiApiKey").addEventListener("change", () => setGeminiApiKey($("geminiApiKey").value.trim()));
-
-    $("nvidiaModel").value = settings.nvidiaModel;
-    $("nvidiaModel").addEventListener("change", () => update({ nvidiaModel: $("nvidiaModel").value.trim() }));
-
-    $("nvidiaApiKey").value = await getNvidiaApiKey();
-    $("nvidiaApiKey").addEventListener("change", () => setNvidiaApiKey($("nvidiaApiKey").value.trim()));
-
-    $("groqModel").value = settings.groqModel;
-    $("groqModel").addEventListener("change", () => update({ groqModel: $("groqModel").value.trim() }));
-
-    $("groqApiKey").value = await getGroqApiKey();
-    $("groqApiKey").addEventListener("change", () => setGroqApiKey($("groqApiKey").value.trim()));
+    $("llmModel").addEventListener("change", () =>
+        update({ [LLM_MODEL_KEY[settings.llmProvider]]: $("llmModel").value.trim() }));
+    $("llmApiKey").addEventListener("change", () =>
+        LLM_API_KEY_SETTERS[settings.llmProvider]($("llmApiKey").value.trim()));
+    await refreshLlmFields();
 
     for (const btn of document.querySelectorAll("[data-ui-lang]")) {
         btn.addEventListener("click", async () => {

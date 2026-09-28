@@ -7,16 +7,16 @@ import { NvidiaTranslateProvider } from "./provider/NvidiaTranslateProvider.js";
 import { GroqTranslateProvider } from "./provider/GroqTranslateProvider.js";
 
 function createTranslator(settings) {
-    switch (settings.translateProvider) {
-        case "gemini":
-            return new GeminiTranslateProvider({ apiKey: settings.geminiApiKey, model: settings.geminiModel });
+    if (settings.translateProvider !== "llm") return new GoogleTranslateProvider();
+    // "llm" 時實際用哪個 provider 由 settings.llmProvider 決定，跟單字卡生成共用同一個選擇
+    switch (settings.llmProvider) {
         case "nvidia":
             return new NvidiaTranslateProvider({ apiKey: settings.nvidiaApiKey, model: settings.nvidiaModel });
         case "groq":
             return new GroqTranslateProvider({ apiKey: settings.groqApiKey, model: settings.groqModel });
-        case "google":
+        case "gemini":
         default:
-            return new GoogleTranslateProvider();
+            return new GeminiTranslateProvider({ apiKey: settings.geminiApiKey, model: settings.geminiModel });
     }
 }
 
