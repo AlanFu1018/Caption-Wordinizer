@@ -249,7 +249,7 @@ $("regenerateBtn").addEventListener("click", async () => {
 $("exportBtn").addEventListener("click", async () => {
     const cards = await getAllWordcards();
     if (!cards.length) return;
-    const blob = new Blob([toAnkiTsv(cards)], { type: "text/plain;charset=utf-8" });
+    const blob = new Blob([toAnkiTsv(cards, settings.uiLang)], { type: "text/plain;charset=utf-8" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `caption-wordinizer-${new Date().toISOString().slice(0, 10)}.txt`;

@@ -180,7 +180,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### wordcardExporter
 將單字卡依照anki支援的格式匯出：UTF-8 TSV，帶有 `#separator:tab`、`#html:true`、`#columns:` 標頭，例句中的單字會以粗體標示。
 - 欄位順序：`Front`、`Back`、`Word`、`Reading`、`Meaning`、`PartOfSpeech`、`Explanation`、`Sentence`、`SentenceTranslation`、`Source`、`Examples`。
-- Anki 內建的「基本型」只有正面 / 背面兩個欄位，匯入時依順序對應前兩欄，所以前兩欄是組合好的內容：`Front` = 單字；`Back` = 讀音、**意思**（詞性）、說明、例句（單字粗體）＋翻譯、補充例句、YouTube 連結，已排版成 HTML（次要文字用灰色小字）。直接用基本型匯入就能看到全部內容。
+- Anki 內建的「基本型」只有正面 / 背面兩個欄位，匯入時依順序對應前兩欄，所以前兩欄是組合好的內容：`Front` = 單字（大字）；`Back` 分成有標題的三段：**讀音**、**解釋**（意思＋詞性、說明）、**例句**（影片原句＋補充例句，單字粗體，各附翻譯），最後是 YouTube 連結。字級固定、主次分明（讀音 24px > 意思 19px > 例句 17px > 說明 / 翻譯 14px > 標題 / 連結 12–13px），次要文字用透明度變淡，深色 / 淺色模式都適用。段落標題依介面語言（中 / EN）。直接用基本型匯入就能看到全部內容。
 - 後面的獨立欄位給想自訂筆記類型的人用：匯入時把欄位對應到自己的筆記類型，不需要的欄位選「無」。
 ### llmLib
 存放llm呼叫的api
@@ -270,6 +270,10 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 匯出檔前兩欄改為組合好的 `Front`（單字）與 `Back`（讀音、意思、詞性、說明、例句、翻譯、補充例句、連結），直接用基本型匯入即可；原本的獨立欄位移到後面。
 - 注意：欄位順序改變，之前用自訂筆記類型匯入過的人，要重新設定一次欄位對應。
 
+### 2026-09-28 — Anki 背面重新排版
+- 問題：背面沒有標示哪段是讀音 / 解釋 / 例句，而且意思、說明、例句字級都差不多，閱讀時分不出主次。
+- 背面分成「讀音 / 解釋 / 例句」三段並加上小標題，段落間用細線分隔；字級改成固定大小並拉開層級，正面單字放大。
+
 ---
 # English
 ## Architecture
@@ -289,7 +293,7 @@ See the tree above. On top of the original design, three files were added:
 | Translator / translatorFactory | `translateBatch(texts, lang)`; Google Translate (no key) or Gemini. |
 | WordcardInfoProvider / wordcardInfoFactory | LLM-generated meaning, reading and explanation (Gemini). |
 | wordcardGenerator / wordcardDB | Builds and stores cards in `chrome.storage.local`, de-duplicated by dictionary form. |
-| wordcardExporter | Anki-importable TSV with `#separator`, `#html`, `#columns` headers. The first two columns are a ready-made Front (word) and Back (reading, meaning, POS, explanation, sentences, link) for Anki's built-in Basic note type; the individual fields follow for custom note types. |
+| wordcardExporter | Anki-importable TSV with `#separator`, `#html`, `#columns` headers. The first two columns are a ready-made Front (word) and Back (labeled Reading / Meaning / Examples sections with a clear type hierarchy, plus the link) for Anki's built-in Basic note type; the individual fields follow for custom note types. |
 | llmLib | Gemini and OpenAI clients. |
 
 ## Changelog
@@ -322,3 +326,5 @@ See the tree above. On top of the original design, three files were added:
 - New "Caption appearance" settings: position (bottom / top), distance from edge (0–50% of player height) and size (70–200%), applied live. With captions at the top, the tooltip opens below the word and the preview card picks whichever side has more room.
 ### 2026-09-28 — Anki export works with the Basic note type
 - The export now starts with ready-made Front and Back columns, so importing with Anki's built-in Basic note type shows the reading, meaning, part of speech, explanation and sentences. The individual fields moved after them; custom note-type mappings need to be set again.
+### 2026-09-28 — Anki card back redesign
+- The back is split into labeled Reading / Meaning / Examples sections with dividers, fixed font sizes with a clear hierarchy, and a larger word on the front. Labels follow the UI language.

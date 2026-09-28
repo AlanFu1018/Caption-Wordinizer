@@ -54,6 +54,7 @@
 - **2026-09-28**：沒有標點的自動字幕改用詞性＋停頓斷句；自動字幕的換句時間精確到詞。設定改名為「重新斷句」。
 - **2026-09-28**：新增字幕位置（下方 / 上方、距離邊緣）與大小設定。
 - **2026-09-28**：Anki 匯出可直接用「基本型」匯入，背面會顯示讀音、意思、詞性、例句等全部內容。
+- **2026-09-28**：Anki 背面重新排版：分成「讀音 / 解釋 / 例句」三段並加上標題，字級主次分明。
 
 ---
 
@@ -98,3 +99,4 @@ It's a chrome extension that can help you learn and understand Japanese.
 - **2026-09-28**: unpunctuated auto captions are split into sentences by part of speech and pauses; auto-caption timing is now word-accurate. The setting is now "Re-split sentences".
 - **2026-09-28**: added caption position (bottom / top, distance from edge) and size settings.
 - **2026-09-28**: the Anki export can be imported with the Basic note type; the back shows the reading, meaning, part of speech, sentences and more.
+- **2026-09-28**: redesigned the Anki card back: labeled Reading / Meaning / Examples sections with a clear font-size hierarchy.
