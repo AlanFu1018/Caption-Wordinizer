@@ -19,7 +19,7 @@ async function injectFonts() {
 
 async function main() {
     const load = (path) => import(chrome.runtime.getURL(path));
-    const [{ fetchAllCaptions }, { segmentByPunctuation }, { tokenizeCaptions }, { colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib, { t }] =
+    const [{ fetchAllCaptions }, { segmentCaptions }, { tokenizeCaptions, getTokenizer },{ colorizeLines }, { CcDisplayer }, { TranslationScheduler }, settingsLib, { t }] =
         await Promise.all([
             load("src/content/ccFetcher.js"),
             load("src/content/ccSegmenter.js"),
@@ -123,8 +123,13 @@ async function main() {
 
         const raw = await fetchAllCaptions(videoId);
         if (mySession !== session || !raw) return;
-        // 依標點重新斷句（字幕幾乎沒有標點時會維持原樣）
-        const captions = settings.sentenceSplit ? segmentByPunctuation(raw) : raw;
+        // 重新斷句：有標點依標點；沒標點的自動字幕依詞性 + 停頓；沒標點的人工字幕維持原樣
+        let captions = raw;
+        if (settings.sentenceSplit) {
+            const tokenizer = await getTokenizer();
+            if (mySession !== session) return;
+            captions = segmentCaptions(raw, { tokenize: (text) => tokenizer.tokenize(text) });
+        }
 
         const lines = colorizeLines(await tokenizeCaptions(captions));
         if (mySession !== session) return;

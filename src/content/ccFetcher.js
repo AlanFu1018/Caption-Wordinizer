@@ -96,8 +96,21 @@ function cleanCaptionText(raw) {
         .trim();
 }
 
+function wordsOf(e, text) {
+    /*自動字幕的每個 seg 是一個詞，tOffsetMs 是它在這行的第幾毫秒（第一個詞省略，代表 0）。
+      有逐詞時間、且詞接起來和整理後的文字一致時才回傳 [{text, start}]，否則回傳 null*/
+    const segs = e.segs.filter(s => s.utf8 && s.utf8 !== "\n");
+    if (segs.length < 2 || !segs.slice(1).every(s => "tOffsetMs" in s)) return null;
+    const words = segs.map(s => ({
+        text: s.utf8,
+        start: ((e.tStartMs || 0) + (s.tOffsetMs || 0)) / 1000,
+    }));
+    return words.map(w => w.text).join("") === text ? words : null;
+}
+
 function parseJson3(data) {
-    /*把 json3 格式整理成 [{text, start, end}]，時間單位為秒*/
+    /*把 json3 格式整理成 [{text, start, end, words?}]，時間單位為秒
+      words 只有自動字幕才有：[{text, start}]，給 ccSegmenter 精確切時間用*/
     const events = (data?.events || []).filter(e => e.segs);
     const lines = [];
     for (const e of events) {
@@ -105,7 +118,10 @@ function parseJson3(data) {
         if (!text) continue;   // 整句只有標籤（例如只有 [音楽]）就整句略過
         const start = (e.tStartMs || 0) / 1000;
         const end = start + (e.dDurationMs || 0) / 1000;
-        lines.push({ text, start, end });
+        const line = { text, start, end };
+        const words = wordsOf(e, text);
+        if (words) line.words = words;
+        lines.push(line);
     }
     // 自動字幕的時間區段會互相重疊，截到下一句開始為止
     for (let i = 0; i < lines.length - 1; i++) {

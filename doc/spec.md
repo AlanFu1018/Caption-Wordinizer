@@ -27,7 +27,7 @@ caption-wordinizer/
 │   │   ├── content.js             # content script 進入點，串起所有模組
 │   │   ├── ytBridge.js            # 跑在頁面 MAIN world，轉交播放器資料
 │   │   ├── ccFetcher.js
-│   │   ├── ccSegmenter.js         # 依標點符號重新斷句
+│   │   ├── ccSegmenter.js         # 重新斷句（標點 / 詞性＋停頓）
 │   │   ├── ccTokenizer.js
 │   │   ├── tokenColorizer.js
 │   │   ├── ccDisplayer.js
@@ -80,7 +80,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 
 1. `content.js` 在 `/watch` 頁面（包含 YouTube 單頁應用的換頁事件 `yt-navigate-finish`）取得 videoId。
 2. `ccFetcher` 透過 `ytBridge` 拿到字幕軌，下載整支影片的日文字幕（json3）。
-3. `ccSegmenter` 依標點符號重新斷句（設定 `sentenceSplit`，可關閉）。
+3. `ccSegmenter` 重新斷句：有標點依標點，沒標點的自動字幕依詞性＋停頓（設定 `sentenceSplit`，可關閉）。
 4. `ccTokenizer` 用 kuromoji 斷詞，`tokenColorizer` 依詞性上色。
 5. `ccDisplayer` 把字幕蓋在播放器上（原生字幕會被隱藏），並依影片時間切換句子。
 6. `translationScheduler` 依播放位置分段翻譯：只翻目前位置往後約 2 分鐘的字幕，跳轉時新位置優先。
@@ -94,15 +94,47 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 一次性抓取該影片所有字幕
 - 優先選人工日文字幕，沒有的話用自動產生（asr）字幕。
 - 先直接下載 `baseUrl&fmt=json3`；失敗就請 `ytBridge` 開啟播放器字幕，攔截請求網址後再下載。
-- 輸出 `[{ text, start, end }]`（秒）。自動字幕的時間區段互相重疊時，截到下一句開始為止。
+- 輸出 `[{ text, start, end, words? }]`（秒）。自動字幕的時間區段互相重疊時，截到下一句開始為止。
+- `words: [{ text, start }]`：自動字幕每個 seg 是一個詞，`tOffsetMs` 是它在這行的第幾毫秒。有逐詞時間、且詞接起來和整理後的文字一致時才附上，給 `ccSegmenter` 精確切時間。
 - 刪除方括號標籤（`[音楽]`、`[拍手]`、`［笑い］` 等，半形 `[]` 與全形 `［］`），並清掉多餘空白；整句只有標籤時整句略過。方括號裡的內容一律刪除，所以字幕若真的有 `[…]` 文字也會被移除。
 ### ccSegmenter
-依標點符號重新斷句（`segmentByPunctuation(lines)`）。YouTube 的字幕行常把一句切成好幾行，或一行塞好幾句。
-- 以「。．！？!?…」為句尾（後面可接 」』）等關閉符號），先把每行在句尾後拆開，再把沒有句尾的片段和下一段合併，直到遇到句尾。
-- YouTube 沒有行內每個字的時間，拆開時依字數比例分配時間。
-- 合併上限：最多 42 字、最長 8 秒；兩行之間停頓超過 1.5 秒視為不同句。超過上限時在原本的字幕行交界斷開。「、」不當作斷句點。
-- 有句尾標點的字幕行少於 20%（例如沒有標點的自動字幕）時不處理，維持 YouTube 原本的斷行。
-- 設定 `sentenceSplit`（預設開啟）可關閉；切換時會重新處理字幕。
+重新斷句，讓一句一行顯示。YouTube 的字幕行常把一句切成好幾行，或一行塞好幾句。入口 `segmentCaptions(lines, { tokenize })` 依字幕選擇方式：
+
+| 字幕 | 方式 |
+|---|---|
+| 有句尾標點的行 ≥ 20% | 標點斷句 `segmentByPunctuation` |
+| 沒有標點、有逐詞時間（自動字幕） | 詞性斷句 `segmentByPos` |
+| 沒有標點的人工字幕 | 維持原樣（評估時詞性斷句沒有比原本的斷行好） |
+
+共用做法：先把所有字幕行接成一條「字元串流」（`buildStream`），記錄每個字元的開始 / 結束時間，以及詞與詞、行與行之間的停頓。有逐詞時間時，字元時間平均分配在「這個詞開始 ~ 下個詞開始」之間；沒有時依字數比例分配。斷句就是在串流上選斷點（`selectCuts`），所以兩種方式都能用逐詞時間。
+
+**標點斷句**
+- 「。．！？!?…」（後面可接 」』）等關閉符號）之後一定斷；「、」不當作斷句點。
+- 一句最多 42 字、最長 8 秒，超過時在字幕行交界斷開。
+
+**詞性斷句**（用 kuromoji 的詞性、`pos_detail_1`、`conjugated_form`）
+- 不能斷的位置：下一個是助詞 / 助動詞 / 接尾 / 非自立語 / 記號；前一個是接頭詞、格助詞 / 係助詞 / 副助詞 / 並立助詞 / 「の」 / 接續助詞，或活用到一半（連用形、未然形…）。
+- 加分：終助詞、句尾助動詞（ます / です / た / だ / う / ん / じゃん…）、命令形、感動詞 +3；其他助動詞、動詞 / 形容詞基本形 +1。下一個是接續詞或句首的「では / じゃあ」+2，是連體詞 +2（前面要有加分），是感動詞 / フィラー +1。
+- 停頓：> 0.8 秒 +3、> 0.4 秒 +1.5、> 1.5 秒一定斷。停頓 = 下個詞開始 − 這個詞開始 − 估計發音時間（每字 0.13 秒）。
+- 分數 ≥ 3 且這句 ≥ 4 字就斷；超過 42 字 / 8 秒時斷在這段裡分數最高的位置。
+- kuromoji 會把句首的「では」拆成助動詞「で」＋「は」，特別處理成可斷開。
+
+**評估**（`test/segmenter-eval.mjs`）
+- 把有標點的真實字幕拿掉「。！？」和「、」，看斷句能不能找回原本句尾的位置（±1 字）。文字完全相同，可以逐字比對。
+- 測試資料是 YouTube 的 json3 字幕（`test/fixtures/`，不提交，下載方式見腳本開頭），kuromoji 直接用 `res/lib-vendor` 內附的版本（`test/kuromojiNode.mjs`），不需要安裝套件。
+- 2026-09-28 的結果（2 支自動字幕、6 支人工字幕）：
+
+| | 精確率 | 召回率 | F1 | 可接受（斷在句尾或逗號） |
+|---|---|---|---|---|
+| 自動字幕：原本的斷行 | 19.7% | 27.1% | 22.7% | 23.2% |
+| 自動字幕：只看停頓 | 50.1% | 42.9% | 45.8% | 56.9% |
+| **自動字幕：詞性＋停頓** | **69.7%** | **77.6%** | **73.1%** | **75.2%** |
+| 人工字幕：原本的斷行 | 65.7% | 56.5% | 60.4% | 73.3% |
+| 人工字幕：詞性＋停頓 | 63.2% | 56.7% | 59.2% | 72.8% |
+
+- 已知限制：兩句都以形容詞 / 動詞基本形結尾且中間沒有停頓時（例：「頭が痛い｜天気が悪くて頭が痛い」），因為基本形也可能是修飾名詞的連體形，不會斷開。
+
+設定 `sentenceSplit`（「重新斷句」，預設開啟）可關閉，切換時會重新處理字幕。
 ### ccTokenizer
 將所有字幕，處理詞性切割
 - 使用 kuromoji（IPADIC），每個 token 為 `{ surface, pos, posDetail, basicForm, reading, basicReading }`，讀音轉成平假名。
@@ -152,7 +184,7 @@ ytBridge ──播放器資料/字幕網址──▶ ccFetcher ─▶ ccSegmente
 ### background
 MV3 service worker。所有對外網路請求都在這裡（需要 `host_permissions`），並快取翻譯結果。訊息：`translate`、`wordcard:add`、`wordcard:regenerate`（把沒有 `meaning` 的單字卡逐張重跑 LLM，遇到錯誤就停止，回傳 `{ fixed, error? }`）。
 ### settings / popup
-一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、依標點斷句 `sentenceSplit`、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
+一般設定存在 `chrome.storage.sync` 的 `settings`：啟用、介面語言 `uiLang`（`zh-TW` / `en`，和翻譯語言無關）、顯示翻譯、重新斷句 `sentenceSplit`、翻譯語言（繁體中文 / English）、翻譯引擎、Gemini 模型（預設 `gemini-3.1-flash-lite`）、要顯示名稱的詞性。
 popup 分兩個分頁（會記住上次的分頁）：
 - 設定：header 有介面語言切換（中 / EN）與啟用開關；翻譯語言、翻譯引擎用分段按鈕；詞性用可點選的 chip。
 - 單字卡：頂端顯示生成失敗（沒有字義）的單字卡數量與「一鍵補生成」按鈕；最新的在最上面，每張顯示詞性、單字、讀音、意思。**點卡片會跳出完整預覽卡**（和影片上的 1d 同一個樣式，由 `wordcardView.js` 產生）：單字、讀音、詞性、完整意思、說明、例句、例句翻譯、時間連結（開新分頁）與刪除。還沒取得字義的卡片會提示到設定頁補生成。按 ✕、點背景或 Esc 關閉；補生成更新了這張卡時會即時更新內容。底部為匯出與全部清除。
@@ -214,6 +246,14 @@ popup 分兩個分頁（會記住上次的分頁）：
 - 字幕中的標點符號（「」。、！？…♪ 等）不能再被點擊加入單字卡，也不顯示提示框或反白。
 - 已用 kuromoji 驗證：`!?`、`%`、`♪` 雖被標成名詞，也會正確判斷為標點；一般單字（含 `ｗｗｗ`）仍可點擊。
 
+### 2026-09-28 — 詞性斷句
+- 先確認真實資料：用 yt-dlp 下載 6 支影片的字幕（2 支同時有人工與自動字幕）。發現現在的日文自動字幕**大多已經有標點**，且每個詞都有 `tOffsetMs`。
+- `ccFetcher` 保留自動字幕的逐詞時間（`words`）；`ccSegmenter` 改寫成「字元串流 + 選斷點」的架構，標點斷句也改用逐詞時間，自動字幕的換句時間從「依字數比例」變成精確到詞。
+- 新增詞性斷句（規則見 ccSegmenter 一節），用於沒有標點的自動字幕；沒有標點的人工字幕維持原樣。
+- 新增評估腳本 `test/segmenter-eval.mjs` 與 `test/kuromojiNode.mjs`，依評估結果調整規則與參數（門檻 3、最少 4 字、行交界 +2）。自動字幕 F1 從 22.7%（原本的斷行）提升到 73.1%。
+- 設定改名為「重新斷句」（仍是 `sentenceSplit`）。
+- 未達成：計畫的精確率目標是 80%，目前是 69.7%（斷在句尾或逗號的可接受率 75.2%）。
+
 ---
 # English
 ## Architecture
@@ -225,7 +265,7 @@ See the tree above. On top of the original design, three files were added:
 |---|---|
 | ytBridge | Reads the player response in the page world and captures the player's own `/api/timedtext` URL (it carries YouTube's proof-of-origin token). |
 | ccFetcher | Downloads all Japanese captions of a video at once (manual track preferred, ASR fallback) as `[{text, start, end}]`. |
-| ccSegmenter | Re-splits caption lines at sentence-ending punctuation so each caption is one sentence (optional, `sentenceSplit`). |
+| ccSegmenter | Re-splits captions so each line is one sentence (optional, `sentenceSplit`): at punctuation when present; for unpunctuated auto captions, by kuromoji POS / conjugation rules plus speech pauses; unpunctuated manual captions are left as-is. Evaluated with `test/segmenter-eval.mjs`. |
 | ccTokenizer | Segments each line with kuromoji (IPADIC); readings converted to hiragana. |
 | tokenColorizer | Assigns a color per part of speech. |
 | ccDisplayer | Overlay on the player: colored tokens, optional POS labels, translation line, click-to-add wordcard. |
@@ -258,3 +298,7 @@ See the tree above. On top of the original design, three files were added:
 - Added `ccSegmenter.js`: lines are merged or split at sentence-ending punctuation (。！？ etc.) so each caption shows one sentence; timing within a line is split by character count. Toggle: `sentenceSplit` (on by default). Tracks with little punctuation are left as-is.
 ### 2026-09-28 — Punctuation is not clickable
 - Punctuation and symbol tokens (POS 記号, or text made only of punctuation / symbols / spaces) have no tooltip, no hover highlight, and can't be added as wordcards.
+### 2026-09-28 — POS-based sentence splitting
+- Auto captions keep word-level timing (`words`); punctuation splitting now uses it, so auto-caption line changes are timed to the word.
+- Unpunctuated auto captions are split by POS / conjugation rules plus pauses. On real captions with punctuation removed, F1 rose from 22.7% (YouTube's own lines) to 73.1%; precision is 69.7%, short of the 80% goal. Unpunctuated manual captions are left as-is because POS splitting did not beat their original lines.
+- Added `test/segmenter-eval.mjs` and `test/kuromojiNode.mjs`; the setting is now labeled "Re-split sentences".

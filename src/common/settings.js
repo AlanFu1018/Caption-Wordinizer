@@ -21,7 +21,7 @@ const DEFAULT_SETTINGS = {
     wordcardProvider: "gemini",       // "gemini"
     geminiModel: "gemini-3.1-flash-lite",
     showTranslation: true,
-    sentenceSplit: true,              // 依標點符號重新斷句（關閉則用 YouTube 原本的斷行）
+    sentenceSplit: true,              // 重新斷句：依標點，沒標點的自動字幕依詞性（關閉則用 YouTube 原本的斷行）
     // 要顯示詞性名稱的詞性
     posLabels: ["動詞", "形容詞", "助動詞"],
 };

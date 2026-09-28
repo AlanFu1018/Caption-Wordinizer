@@ -2,3 +2,6 @@
 .env
 /.mcp.json
 /doc/UI mockups form/
+
+# 測試用的 YouTube 字幕（別人的影片內容，不提交；下載方式見 test/segmenter-eval.mjs）
+test/fixtures/

@@ -50,6 +50,7 @@
 - **2026-09-28**：字幕中的 `[音楽]`、`[拍手]` 等方括號標籤會自動刪除。
 - **2026-09-28**：依標點符號重新斷句，一句一行顯示（設定頁「依標點斷句」可關閉）。
 - **2026-09-28**：字幕中的標點符號不可點擊，不會被加入單字卡。
+- **2026-09-28**：沒有標點的自動字幕改用詞性＋停頓斷句；自動字幕的換句時間精確到詞。設定改名為「重新斷句」。
 
 ---
 
@@ -91,3 +92,4 @@ It's a chrome extension that can help you learn and understand Japanese.
 - **2026-09-28**: bracket tags such as `[音楽]` and `[拍手]` are removed from captions.
 - **2026-09-28**: captions are re-split at punctuation so each line is one sentence (toggle "Split by punctuation" in Settings).
 - **2026-09-28**: punctuation in captions is no longer clickable and can't be added as a wordcard.
+- **2026-09-28**: unpunctuated auto captions are split into sentences by part of speech and pauses; auto-caption timing is now word-accurate. The setting is now "Re-split sentences".
