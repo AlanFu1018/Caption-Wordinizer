@@ -206,7 +206,7 @@ IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依�
 - `GoogleTranslateProvider`：Google 翻譯公開端點，不需 API Key。多句用換行合併成一次請求，句數對不上時改為逐句翻譯。忽略 `title`。
 - `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`：將一批句子當作上下文一起送給 LLM，要求回傳 `{"translations": [...]}`；解析時也接受直接回傳的陣列。prompt 與解析共用 `translate/llmTranslatePrompt.js`。
 - prompt 說明這些是口語或歌詞、要意譯而不是逐字翻，並附上影片標題當背景資訊（由 `ytBridge` 從播放器資料取得，經 `translate` 訊息傳到 background），註明只供參考、不要翻譯或照標題改寫字幕。
-- NVIDIA / Groq 翻譯呼叫時關閉 `strictJson`（見 llmLib）：它們的 JSON 模式要求最外層是物件，模型常照樣回傳陣列，Groq 會直接回 400 `json_validate_failed`。
+- Groq 翻譯呼叫時關閉 `strictJson`（見 llmLib）：它的 JSON 模式要求最外層是物件，模型常照樣回傳陣列，Groq 會直接回 400 `json_validate_failed`。NVIDIA 完全不用 JSON 模式。
 ### translatorFactory
 依照設定選擇具體的翻譯實作：`translateProvider` 為 `google` 時用 Google 翻譯；為 `llm` 時依 `llmProvider`（`gemini` / `nvidia` / `groq`）選擇。
 ### WordCardInfoProvider
@@ -231,7 +231,8 @@ IPADIC 會把活用拆得很碎（戻っ｜た｜ん｜だ｜よ｜ね），依�
 - `geminiClient`：Gemini `generateContent`，支援 JSON 輸出（`responseMimeType`）。重試次數 8 次。
 - `nvidiaClient`：NVIDIA API（`integrate.api.nvidia.com`，OpenAI 相容格式），預設模型 `meta/llama-3.3-70b-instruct`。
 - `groqClient`：Groq API（`api.groq.com/openai/v1`，OpenAI 相容格式），預設模型 `llama-3.3-70b-versatile`。
-- NVIDIA / Groq 的 `generate(prompt, { json, strictJson })`：`strictJson`（預設開）會送 `response_format: json_object`，強制最外層是物件；關掉時不送，改用 `parseJsonLoose` 自己解析（會拆掉 \`\`\`json 圍欄）。
+- Groq 的 `generate(prompt, { json, strictJson })`：`strictJson`（預設開）會送 `response_format: json_object`，強制最外層是物件；關掉時不送，改用 `parseJsonLoose` 自己解析（會拆掉 \`\`\`json 圍欄）。
+- NVIDIA 的 `generate(prompt, { json })`：NIM 不接受沒有 schema 的 `json_object`（400 "requires a JSON schema"），所以從不送 `response_format`，只在 prompt 結尾要求只回 JSON；`parseJsonLoose` 會拆掉圍欄，失敗時再抓出第一段 `{…}` / `[…]` 解析。
 - `gptClient`：OpenAI Chat Completions（已實作，尚未接上 provider）。
 ### fetchRetry
 所有 LLM 與 Google 翻譯的請求都經過 `fetchWithRetry(url, init, retryOptions)`：
@@ -470,7 +471,7 @@ Translates whole caption lines (interface: `translateBatch(texts, targetLang, { 
 - `GoogleTranslateProvider`: Google Translate public endpoint, no API key. Lines are joined with newlines into one request; if the line count doesn't match, it falls back to line-by-line. Ignores `title`.
 - `GeminiTranslateProvider` / `NvidiaTranslateProvider` / `GroqTranslateProvider`: send a batch of lines to the LLM together as context and ask for `{"translations": [...]}` back; a bare array is accepted too. The prompt and parsing are shared in `translate/llmTranslatePrompt.js`.
 - The prompt says the lines are speech or lyrics to be translated for meaning, not word for word, and includes the video title as background (read by `ytBridge` from the player data and passed to the background in the `translate` message), marked as reference only: don't translate it or rewrite lines to match it.
-- NVIDIA / Groq translation calls turn off `strictJson` (see llmLib): their JSON mode requires an object at the top level, models often return an array anyway, and Groq rejects that with 400 `json_validate_failed`.
+- Groq translation calls turn off `strictJson` (see llmLib): its JSON mode requires an object at the top level, models often return an array anyway, and Groq rejects that with 400 `json_validate_failed`. NVIDIA doesn't use JSON mode at all.
 ### translatorFactory
 Picks the implementation: Google Translate when `translateProvider` is `google`; when it is `llm`, by `llmProvider` (`gemini` / `nvidia` / `groq`).
 ### WordcardInfoProvider
@@ -495,7 +496,8 @@ LLM API clients.
 - `geminiClient`: Gemini `generateContent`, supports JSON output (`responseMimeType`). Retries up to 8 times.
 - `nvidiaClient`: NVIDIA API (`integrate.api.nvidia.com`, OpenAI-compatible), default model `meta/llama-3.3-70b-instruct`.
 - `groqClient`: Groq API (`api.groq.com/openai/v1`, OpenAI-compatible), default model `llama-3.3-70b-versatile`.
-- NVIDIA / Groq `generate(prompt, { json, strictJson })`: `strictJson` (on by default) sends `response_format: json_object`, forcing an object at the top level; when off it isn't sent and `parseJsonLoose` parses the reply itself (stripping \`\`\`json fences).
+- Groq `generate(prompt, { json, strictJson })`: `strictJson` (on by default) sends `response_format: json_object`, forcing an object at the top level; when off it isn't sent and `parseJsonLoose` parses the reply itself (stripping \`\`\`json fences).
+- NVIDIA `generate(prompt, { json })`: NIM rejects `json_object` without a schema (400 "requires a JSON schema"), so `response_format` is never sent; the prompt ends with a JSON-only instruction, and `parseJsonLoose` strips fences and, if that fails, parses the first `{…}` / `[…]`.
 - `gptClient`: OpenAI Chat Completions (implemented, not yet wired to a provider).
 ### fetchRetry
 Every LLM and Google Translate request goes through `fetchWithRetry(url, init, retryOptions)`:

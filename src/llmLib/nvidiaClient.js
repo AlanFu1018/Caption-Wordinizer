@@ -6,9 +6,18 @@ import { fetchWithRetry } from "../common/fetchRetry.js";
 const NVIDIA_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 
 function parseJsonLoose(text) {
-    // 沒開 strictJson 時模型可能會用 ```json ... ``` 包起來，先拆掉再 parse
-    const match = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-    return JSON.parse(match ? match[1].trim() : text.trim());
+    // 模型可能會用 ```json ... ``` 包起來，或在 JSON 前後多寫說明文字
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const body = (fence ? fence[1] : text).trim();
+    try {
+        return JSON.parse(body);
+    } catch (err) {
+        // 抓出第一個 { 或 [ 到最後一個對應的 } 或 ] 再試一次
+        const start = body.search(/[{[]/);
+        const end = Math.max(body.lastIndexOf("}"), body.lastIndexOf("]"));
+        if (start === -1 || end <= start) throw err;
+        return JSON.parse(body.slice(start, end + 1));
+    }
 }
 
 class NvidiaClient {
@@ -18,9 +27,10 @@ class NvidiaClient {
         this.model = model || "meta/llama-3.3-70b-instruct";
     }
 
-    async generate(prompt, { json = false, temperature = 0.2, strictJson = true } = {}) {
-        // strictJson 會用 response_format 強制模型輸出「JSON 物件」，最外層不是 {...} 就會被拒絕；
-        // 要陣列形狀的資料（例如翻譯）就關掉，改用 parseJsonLoose 自己寬鬆解析。
+    async generate(prompt, { json = false, temperature = 0.2 } = {}) {
+        // NIM 不接受沒有 schema 的 response_format: json_object（會回 400 "requires a JSON schema"），
+        // 所以不送 response_format，只在 prompt 裡要求 JSON，再用 parseJsonLoose 自己寬鬆解析。
+        const content = json ? `${prompt}\n\nRespond with JSON only, no other text.` : prompt;
         const res = await fetchWithRetry(NVIDIA_ENDPOINT, {
             method: "POST",
             headers: {
@@ -30,8 +40,7 @@ class NvidiaClient {
             body: JSON.stringify({
                 model: this.model,
                 temperature,
-                messages: [{ role: "user", content: prompt }],
-                ...(json && strictJson ? { response_format: { type: "json_object" } } : {}),
+                messages: [{ role: "user", content }],
             }),
         });
         if (!res.ok) {

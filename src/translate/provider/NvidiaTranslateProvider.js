@@ -12,8 +12,7 @@ class NvidiaTranslateProvider extends Translator {
     }
 
     async translateBatch(texts, targetLang, context = {}) {
-        // 模型常照樣回傳陣列，關掉 strictJson 避免 json_object 模式因為最外層不是物件而拒絕
-        const result = await this.client.generate(buildTranslatePrompt(texts, targetLang, context), { json: true, strictJson: false });
+        const result = await this.client.generate(buildTranslatePrompt(texts, targetLang, context), { json: true });
         return readTranslations(result, texts.length, "NVIDIA");
     }
 }
